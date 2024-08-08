@@ -8,12 +8,16 @@ client.experiment(
     "MyExperiment",
     data=[
         {
-            "evaluated_model_input": "John",
-            "evaluated_model_gold_answer": "Hi John",
+            "evaluated_model_input": "Foo",
+            "evaluated_model_gold_answer": "Hi Foo",
         },
         {
-            "evaluated_model_input": "Alice",
-            "evaluated_model_gold_answer": "Hello Alice",
+            "evaluated_model_input": "Bar",
+            "evaluated_model_gold_answer": "Hello Bar",
+        },
+        {
+            "evaluated_model_input": "Bar",
+            "evaluated_model_gold_answer": "eloh Bar!",
         },
     ],
     task=simple_task(lambda input: f"Hi {input}"),

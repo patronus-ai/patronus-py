@@ -5,10 +5,10 @@ import urllib.parse
 
 from tqdm import tqdm
 
-from _evaluators import Evaluator, EvaluatorOutput
-from _tasks import Task
-from _client import Client
-import _api as api
+from ._evaluators import Evaluator, EvaluatorOutput
+from ._tasks import Task
+from ._client import Client
+from . import _api as api
 
 
 def experiment(

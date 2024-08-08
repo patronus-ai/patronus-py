@@ -3,10 +3,10 @@ import typing
 
 import httpx
 
-from _evaluators import Evaluator
-from _evaluators_remote import RemoteEvaluator
-from _tasks import Task
-from patronus._api import API
+from ._evaluators import Evaluator
+from ._evaluators_remote import RemoteEvaluator
+from ._tasks import Task
+from ._api import API
 
 
 class Client:

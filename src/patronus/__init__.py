@@ -4,11 +4,12 @@ __all__ = [
     "task",
     "simple_task",
     "evaluator",
+    "simple_evaluator",
     "Evaluator",
     "EvaluationResult",
     "TaskResult",
 ]
 
-from _evaluators import evaluator, Evaluator, EvaluationResult
-from _tasks import Task, task, simple_task, TaskResult
-from _client import Client
+from ._evaluators import evaluator, Evaluator, EvaluationResult, simple_evaluator
+from ._tasks import Task, task, simple_task, TaskResult
+from ._client import Client

@@ -2,7 +2,8 @@ import datetime
 import typing
 
 import pydantic
-from patronus._base_api import BaseAPIClient
+
+from ._base_api import BaseAPIClient
 
 
 class EvaluateEvaluator(pydantic.BaseModel):

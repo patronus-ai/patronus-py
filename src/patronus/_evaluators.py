@@ -1,5 +1,4 @@
 import dataclasses
-import functools
 import inspect
 import abc
 import time

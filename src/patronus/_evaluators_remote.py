@@ -1,5 +1,5 @@
-import _evaluators as evaluators
-import _api as api
+from . import _evaluators as evaluators
+from . import _api as api
 
 
 class RemoteEvaluatorError(evaluators.EvaluatorError):
