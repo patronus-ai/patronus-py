@@ -22,6 +22,7 @@ export PATRONUSAI_API_KEY=<PROVIDE KEY>
 export OPENAI_API_KEY=<PROVIDE KEY>
 
 pip install Levenshtein
+pip install openai
 
 python examples/ex_0_hello_world.py
 ```
