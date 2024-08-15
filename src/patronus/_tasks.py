@@ -1,7 +1,11 @@
 import abc
+import asyncio
 import dataclasses
 import inspect
 import typing
+from concurrent.futures import ThreadPoolExecutor
+
+from ._async_utils import run_as_coro
 
 TASK_ARGS = {
     "evaluated_model_system_prompt",
@@ -32,21 +36,22 @@ class TaskResult:
     tags: dict[str, str] | None = None
 
 
-R = typing.TypeVar("R", bound=TaskResultT)
-TaskFn = typing.Callable[..., R | str]
+TaskFn = typing.Callable[..., TaskResultT | str]
 
 
 class Task(abc.ABC):
     def __init__(self, accepted_args: set[str]):
         self.accepted_args = accepted_args
 
-    def __call__(
+    async def execute(
         self,
+        loop: asyncio.AbstractEventLoop,
+        executor: ThreadPoolExecutor,
         evaluated_model_system_prompt: str | None,
         evaluated_model_retrieved_context: list[str] | None,
         evaluated_model_input: str | None,
         tags: dict[str, str] | None = None,
-    ) -> R:
+    ) -> TaskResult:
         kwargs = {
             "evaluated_model_system_prompt": evaluated_model_system_prompt,
             "evaluated_model_retrieved_context": evaluated_model_retrieved_context,
@@ -54,14 +59,18 @@ class Task(abc.ABC):
             "tags": {**tags},
         }
         pass_kwargs = {k: v for k, v in kwargs.items() if k in self.accepted_args}
-        result = self.execute(**pass_kwargs)
+        result = await run_as_coro(
+            __loop=loop,
+            __executor=executor,
+            __fn=self.task,
+            **pass_kwargs,
+        )
         if isinstance(result, str):
             return TaskResult(evaluated_model_output=result)
         return result
 
     @abc.abstractmethod
-    def execute(self, **kwargs) -> str | R:
-        ...
+    def task(self, **kwargs) -> TaskResultT | str | typing.Awaitable[TaskResultT | str]: ...
 
 
 class FunctionalTask(Task):
@@ -71,7 +80,7 @@ class FunctionalTask(Task):
         self.fn = fn
         super().__init__(accepted_args)
 
-    def execute(self, **kwargs) -> str | R:
+    def task(self, **kwargs) -> TaskResultT | str:
         return self.fn(**kwargs)
 
 
@@ -84,7 +93,7 @@ def task(fn: TaskFn) -> Task:
     return FunctionalTask(fn, set(param_keys))
 
 
-def simple_task(lambda_fn):
+def simple_task(lambda_fn: typing.Callable[[str], str]) -> Task:
     @task
     def wrapper(evaluated_model_input: str) -> str:
         return lambda_fn(evaluated_model_input)

@@ -3,6 +3,7 @@ import typing
 
 import httpx
 
+from ._async_utils import run_until_complete
 from ._evaluators import Evaluator
 from ._evaluators_remote import RemoteEvaluator
 from ._tasks import Task
@@ -26,12 +27,33 @@ class Client:
 
         if api is None:
             # TODO allow passing http client as an argument
-            http_client = httpx.Client(timeout=timeout)
+            http_client = httpx.AsyncClient(timeout=timeout)
 
             # TODO use package version
             api = API(version="0.0.1", http=http_client)
         api.set_target(base_url, api_key)
         self.api = api
+
+    def experiment(
+        self,
+        name: str,
+        data: list[dict],
+        task: Task,
+        evaluators: list[Evaluator],
+        tags: dict[str, str] | None = None,
+        display_hist: bool = False,
+    ):
+        from ._experiment import experiment as ex
+
+        ex(
+            self,
+            name=name,
+            data=data,
+            task=task,
+            evaluators=evaluators,
+            tags=tags,
+            display_hist=display_hist,
+        )
 
     def remote_evaluator(
         self,
@@ -44,7 +66,8 @@ class Client:
         # config: dict[str, typing.Any] | None = None,
         # allow_upsert: bool = False,
     ) -> RemoteEvaluator:
-        profile = self.api.get_profile(family, profile_name)
+        # TODO this should be awaited
+        profile = run_until_complete(self.api.get_profile(family, profile_name))
         return RemoteEvaluator(
             evaluator=evaluator,
             profile_name=profile.name,
@@ -52,26 +75,9 @@ class Client:
         )
 
     def remote_dataset(self, dataset_id: str) -> list[dict[str, typing.Any]]:
-        data = self.api.list_dataset_data(dataset_id)
+        data = run_until_complete(self.api.list_dataset_data(dataset_id))
         return data.model_dump()["data"]
 
-    def experiment(
-        self,
-        name: str,
-        data: list[dict],
-        task: Task,
-        evaluators: list[Evaluator],
-        tags: dict[str, str] | None = None,
-        display_hist: bool = False,
-    ):
-        from patronus._experiment import experiment as ex
-
-        ex(
-            self,
-            name=name,
-            data=data,
-            task=task,
-            evaluators=evaluators,
-            tags=tags,
-            display_hist=display_hist,
-        )
+    def get_project_by_name(self, project_name: str):
+        # TODO
+        pass

@@ -27,7 +27,7 @@ def call_llm(evaluated_model_system_prompt: str, evaluated_model_input: str) -> 
     )
     return TaskResult(
         evaluated_model_output=model_output,
-        meta_evaluated_model_name="gpt-4o",
+        evaluated_model_name="gpt-4o",
         evaluated_model_provider="openai",
         evaluated_model_params={"temperature": 0},
         evaluated_model_selected_model="gpt4-o",

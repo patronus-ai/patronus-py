@@ -144,20 +144,25 @@ class ListDatasetData(pydantic.BaseModel):
 
 
 class API(BaseAPIClient):
-    def evaluate(self, request: EvaluateRequest) -> EvaluateResponse:
-        resp = self.call("POST", "/v1/evaluate", body=request, response_cls=EvaluateResponse)
+    async def evaluate(self, request: EvaluateRequest) -> EvaluateResponse:
+        resp = await self.call("POST", "/v1/evaluate", body=request, response_cls=EvaluateResponse)
         # TODO error handling
         resp.response.raise_for_status()
         return resp.data
 
-    def export_evaluations(self, request: ExportEvaluationRequest) -> ExportEvaluationResponse:
-        resp = self.call("POST", "/v1/evaluation-results/batch", body=request, response_cls=ExportEvaluationResponse)
+    async def export_evaluations(self, request: ExportEvaluationRequest) -> ExportEvaluationResponse:
+        resp = await self.call(
+            "POST",
+            "/v1/evaluation-results/batch",
+            body=request,
+            response_cls=ExportEvaluationResponse,
+        )
         # TODO error handling
         resp.response.raise_for_status()
         return resp.data
 
-    def get_profile(self, evaluator_family: str, name: str) -> EvaluatorProfile:
-        profiles = self.list_profiles(
+    async def get_profile(self, evaluator_family: str, name: str) -> EvaluatorProfile:
+        profiles = await self.list_profiles(
             ListProfilesRequest(
                 evaluator_family=evaluator_family,
                 name=name,
@@ -170,15 +175,20 @@ class API(BaseAPIClient):
         ), f"get_profile didn't return 1 profile. It returned {len(profiles.evaluator_profiles)!r} instead"
         return profiles.evaluator_profiles[0]
 
-    def list_profiles(self, request: ListProfilesRequest) -> ListProfilesResponse:
+    async def list_profiles(self, request: ListProfilesRequest) -> ListProfilesResponse:
         params = request.model_dump(exclude_none=True)
-        resp = self.call("GET", "/v1/evaluator-profiles", params=params, response_cls=ListProfilesResponse)
+        resp = await self.call(
+            "GET",
+            "/v1/evaluator-profiles",
+            params=params,
+            response_cls=ListProfilesResponse,
+        )
         # TODO error handling
         resp.response.raise_for_status()
         return resp.data
 
-    def list_dataset_data(self, dataset_id: str):
-        resp = self.call("GET", f"/v1/datasets/{dataset_id}/data", response_cls=ListDatasetData)
+    async def list_dataset_data(self, dataset_id: str):
+        resp = await self.call("GET", f"/v1/datasets/{dataset_id}/data", response_cls=ListDatasetData)
         # TODO error handling
         resp.response.raise_for_status()
         return resp.data

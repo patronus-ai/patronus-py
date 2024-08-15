@@ -1,4 +1,5 @@
 import dataclasses
+import logging
 import platform
 import typing
 from functools import lru_cache
@@ -7,6 +8,8 @@ import httpx
 import pydantic
 
 R = typing.TypeVar("R", bound=pydantic.BaseModel)
+
+log = logging.getLogger(__name__)
 
 
 @dataclasses.dataclass
@@ -19,7 +22,7 @@ class BaseAPIClient:
     base_url: str = None
     api_key: str = None
 
-    def __init__(self, *, version: str, http: httpx.Client):
+    def __init__(self, *, version: str, http: httpx.AsyncClient):
         self.version = version
         self.http = http
 
@@ -28,7 +31,7 @@ class BaseAPIClient:
         self.base_url = base_url
         self.api_key = api_key
 
-    def call(
+    async def call(
         self,
         method: str,
         path: str,
@@ -41,16 +44,19 @@ class BaseAPIClient:
         if body is not None:
             content = body.model_dump_json(by_alias=True)
 
-        response = self.http.request(
+        url = self._url(path)
+        log.debug(f"Sending HTTP request {url!r}")
+        response = await self.http.request(
             method,
-            self._url(path),
+            url,
             params=params,
             content=content,
             headers=self.headers(),
         )
+        log.debug(f"Received HTTP response {url!r} {response.status_code}")
 
         if response.is_error:
-            print(response.request.url, response.status_code, response.text)
+            log.error(f"{url!r} {response.status_code}: {response.text}")
         response.raise_for_status()
 
         data = None

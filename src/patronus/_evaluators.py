@@ -1,8 +1,12 @@
+import asyncio
 import dataclasses
 import inspect
 import abc
 import time
 import typing
+from concurrent.futures import ThreadPoolExecutor
+
+from ._async_utils import run_as_coro
 
 EVALUATION_ARGS = [
     "app",
@@ -46,6 +50,7 @@ class EvaluatorError(Exception):
 
 class Evaluator(abc.ABC):
     name = "unknown"
+    profile_name = None
     accepted_args: set[str]
     remote_capture = False
 
@@ -61,8 +66,13 @@ class Evaluator(abc.ABC):
                     )
             self.accepted_args = set(param_keys)
 
-    def __call__(
+    def display_name(self) -> str:
+        return self.name
+
+    async def execute(
         self,
+        loop: asyncio.AbstractEventLoop,
+        executor: ThreadPoolExecutor,
         app: str | None = None,
         evaluated_model_system_prompt: str | None = None,
         evaluated_model_retrieved_context: list[str] | None = None,
@@ -82,14 +92,18 @@ class Evaluator(abc.ABC):
         }
         pass_kwargs = {k: v for k, v in kwargs.items() if k in self.accepted_args}
         start_time = time.perf_counter()
-        result = self.evaluate(**pass_kwargs)
+        result = await run_as_coro(
+            __loop=loop,
+            __executor=executor,
+            __fn=self.evaluate,
+            **pass_kwargs,
+        )
         end_time = time.perf_counter()
         elapsed = end_time - start_time
         return EvaluatorOutput(result=result, duration=elapsed)
 
     @abc.abstractmethod
-    def evaluate(self, **kwargs) -> EvaluationResultT:
-        ...
+    def evaluate(self, **kwargs) -> EvaluationResultT | typing.Awaitable[EvaluationResultT]: ...
 
 
 class FunctionalEvaluator(Evaluator):

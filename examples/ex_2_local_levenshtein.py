@@ -18,7 +18,9 @@ class LevenshteinScorer(Evaluator):
             score = 1 - (distance(evaluated_model_output, evaluated_model_gold_answer) / max_len)
 
         return EvaluationResult(
-            score_raw=score, pass_=score >= self.pass_threshold, tags={"pass_threshold": str(self.pass_threshold)}
+            score_raw=score,
+            pass_=score >= self.pass_threshold,
+            tags={"pass_threshold": str(self.pass_threshold)},
         )
 
 

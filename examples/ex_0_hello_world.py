@@ -1,5 +1,5 @@
-from _evaluators import simple_evaluator
-from patronus import Client, simple_task
+from patronus import Client, simple_task, simple_evaluator
+
 
 client = Client()
 

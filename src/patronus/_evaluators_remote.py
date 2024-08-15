@@ -21,7 +21,7 @@ class RemoteEvaluator(evaluators.Evaluator):
 
         super().__init__(evaluators.EVALUATION_ARGS)
 
-    def evaluate(
+    async def evaluate(
         self,
         app: str,
         evaluated_model_system_prompt: str | None = None,
@@ -32,7 +32,7 @@ class RemoteEvaluator(evaluators.Evaluator):
         tags: dict[str, str] | None = None,
     ) -> evaluators.EvaluationResultT:
         # TODO error handling
-        response = self.api.evaluate(
+        response = await self.api.evaluate(
             api.EvaluateRequest(
                 evaluators=[
                     api.EvaluateEvaluator(

@@ -7,6 +7,11 @@ license = "MIT"
 readme = "README.md"
 packages = [{include = "patronus", from="src"}]
 
+[project.urls]
+Homepage = "https://www.patronus.ai"
+Documentation = "https://docs.patronus.ai"
+Repository = "https://github.com/patronus-ai/patronus-py"
+
 [tool.poetry.dependencies]
 python = ">=3.11"
 httpx = "^0.27.0"
@@ -18,6 +23,5 @@ tqdm = "^4.66.5"
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.black]
+[tool.ruff]
 line-length = 120
-

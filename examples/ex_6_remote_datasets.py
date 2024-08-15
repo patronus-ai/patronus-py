@@ -68,7 +68,7 @@ detect_pii = cli.remote_evaluator(
 
 cli.experiment(
     "PII",
-    data=random.sample(pii_dataset, 10),
+    data=random.sample(pii_dataset, 50),
     task=call_llm,
     evaluators=[detect_pii],
 )
