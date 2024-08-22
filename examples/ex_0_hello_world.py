@@ -1,8 +1,6 @@
 from patronus import Client, simple_task, simple_evaluator
 
-
 client = Client()
-
 
 client.experiment(
     "MyExperiment",

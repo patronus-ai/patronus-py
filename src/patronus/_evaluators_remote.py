@@ -23,12 +23,14 @@ class RemoteEvaluator(evaluators.Evaluator):
 
     async def evaluate(
         self,
-        app: str,
+        experiment_id: str,
         evaluated_model_system_prompt: str | None = None,
         evaluated_model_retrieved_context: list[str] | None = None,
         evaluated_model_input: str | None = None,
         evaluated_model_output: str | None = None,
         evaluated_model_gold_answer: str | None = None,
+        dataset_id: str | None = None,
+        dataset_sample_id: int | None = None,
         tags: dict[str, str] | None = None,
     ) -> evaluators.EvaluationResultT:
         # TODO error handling
@@ -46,8 +48,10 @@ class RemoteEvaluator(evaluators.Evaluator):
                 evaluated_model_input=evaluated_model_input,
                 evaluated_model_output=evaluated_model_output,
                 evaluated_model_gold_answer=evaluated_model_gold_answer,
-                app=app,
+                experiment_id=experiment_id,
                 capture="all",
+                dataset_id=dataset_id,
+                dataset_sample_id=dataset_sample_id,
                 tags=tags,
             )
         )

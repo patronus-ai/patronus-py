@@ -2,6 +2,7 @@ from Levenshtein import distance
 
 from patronus import Client, Evaluator, EvaluationResult, simple_task
 
+
 cli = Client()
 
 

@@ -1,3 +1,4 @@
+import inspect
 import logging
 import asyncio
 import datetime
@@ -8,9 +9,9 @@ import statistics
 import time
 import typing
 import urllib.parse
-import uuid
 from concurrent.futures import ThreadPoolExecutor
 
+from ._dataset import DatasetDatum, Dataset
 from ._async_utils import run_until_complete
 from . import _api as api
 from ._client import Client
@@ -20,21 +21,13 @@ from ._tasks import Task, TaskResult
 log = logging.getLogger(__name__)
 
 
-class DatasetDatum(typing.TypedDict):
-    evaluated_model_system_prompt: typing.NotRequired[str | None]
-    evaluated_model_retrieved_context: typing.NotRequired[list[str] | None]
-    evaluated_model_input: typing.NotRequired[str | None]
-    evaluated_model_output: typing.NotRequired[str | None]
-    evaluated_model_gold_answer: typing.NotRequired[str | None]
-
-
 class DefaultReporter:
     # batch_size 10 is max batch size that Patronus AI API accepts in single call
     batch_size = 10
 
-    def __init__(self, client: Client, project_name: str, flush_interval: int = 10):
+    def __init__(self, client: Client, experiment_id: str, flush_interval: int = 10):
         self._client = client
-        self.project_name = project_name
+        self.experiment_id = experiment_id
 
         self._lock = asyncio.Lock()
         self.last_export_slice = slice(0, 0)
@@ -54,10 +47,12 @@ class DefaultReporter:
         evaluation_result: EvaluatorOutput,
         tags: dict[str, str],
         *,
+        dataset_id: str,
+        dataset_sample_id: int,
         already_captured: bool,
     ):
         entry = api.ExportEvaluationResult(
-            app=self.project_name,
+            experiment_id=self.experiment_id,
             evaluator_id=evaluator_name,
             profile_name=profile_name,
             evaluated_model_system_prompt=task_result.evaluated_model_system_prompt
@@ -73,6 +68,8 @@ class DefaultReporter:
             evaluated_model_provider=task_result.evaluated_model_provider,
             evaluated_model_params=task_result.evaluated_model_params,
             evaluated_model_selected_model=task_result.evaluated_model_selected_model,
+            dataset_id=dataset_id,
+            dataset_sample_id=dataset_sample_id,
             tags=tags,
         )
         async with self._lock:
@@ -121,7 +118,10 @@ class DefaultReporter:
             results: typing.Iterator[api.ExportEvaluationResult] = itertools.chain(
                 self.outgoing_results, self.remote_results
             )
-            results = filter(lambda r: r.evaluator_id == evaluator_name and r.profile_name == profile_name, results)
+            results = filter(
+                lambda r: r.evaluator_id == evaluator_name and r.profile_name == profile_name,
+                results,
+            )
             scores_and_passes = list(map(lambda r: (r.score_raw, r.pass_), results))
 
             scores = [x[0] for x in scores_and_passes if x[0] is not None]
@@ -137,13 +137,15 @@ async def with_semaphore(sem, task):
 
 class Experiment:
     project_name: str
-    project_id: uuid.UUID | None
-    experiment_id: uuid.UUID
+    project_id: str | None
+    experiment_id: str | None
     # TODO handle with API?
     experiment_name: str
+    whoami: api.WhoAmIResponse | None
 
+    dataset: Dataset | None
     task: Task
-    evaluators: list[Evaluator]
+    evaluators: list[Evaluator] | None
 
     _client: Client | None
 
@@ -154,35 +156,84 @@ class Experiment:
         self,
         client: Client | None,
         project_name: str | None,
-        data: list[DatasetDatum],
+        data: list[DatasetDatum] | typing.Callable[[...], Dataset] | typing.Awaitable[Dataset],
         task: Task,
-        evaluators: list[Evaluator],
+        evaluators: list[Evaluator | typing.Awaitable[Evaluator]],
         tags: dict[str, str],
         max_concurrency: int,
-        name: str = "",
+        experiment_name: str = "",
     ):
         self._client = client
-        self.project_name = project_name or "default"
-        self.experiment_id = uuid.uuid4()
-        self.experiment_name = generate_experiment_name(name)
+        self.project_id = None
+        self.project_name = re.sub(r"[^a-zA-Z0-9\-_]", "-", project_name) or "default"
+        self.experiment_id = None
+        self.experiment_name = generate_experiment_name(experiment_name)
 
-        self.data = data
+        self.dataset = None
+        self.__data = data
         self.task = task
-        self.evaluators = evaluators
+        self.evaluators = None
+        self.__evaluators = evaluators
+
         self.tags = tags
 
         self._sem = asyncio.Semaphore(max_concurrency)
         self._pool = ThreadPoolExecutor()
 
-        self.reporter = DefaultReporter(client, self.project_name, flush_interval=10)
+        self.reporter = None
 
     async def prepare(self):
-        # TODO prepare() should initialize experiment doing pre-required API calls
-        #      such as checking API caller, creating project & experiment etc.
-        ...
-        # if self._client:
-        #     project = self._client.get_project_by_name(self.project_name)
-        #     self.project_id = project.id
+        print("Preparing dataset... ", end="")
+        self.dataset = await self.fetch_dataset()
+        print("DONE")
+
+        print("Preparing evaluators... ", end="")
+        self.evaluators = await self.prepare_evaluators()
+        print("DONE")
+
+        if not self._client:
+            return
+
+        self.whoami = await self._client.api.whoami()
+
+        project = await self._client.api.create_project(api.CreateProjectRequest(name=self.project_name))
+        self.project_id = project.id
+        self.project_name = project.name
+
+        ex = await self._client.api.create_experiment(
+            api.CreateExperimentRequest(project_id=self.project_id, name=self.experiment_name)
+        )
+        self.experiment_id = ex.id
+
+        # TODO associate reported that doesn't need client if client not available
+        self.reporter = DefaultReporter(self._client, self.experiment_id, flush_interval=10)
+
+    async def fetch_dataset(self) -> (str | None, list[DatasetDatum]):
+        if isinstance(self.__data, (list, tuple)):
+            dataset = self.__data
+        elif inspect.iscoroutine(self.__data):
+            dataset = await self.__data
+        elif inspect.iscoroutinefunction(self.__data):
+            dataset = await self.__data()
+        elif callable(self.__data):
+            return self.__data()
+        else:
+            raise ValueError("'data' passed to the experiment is an unexpected object")
+
+        if isinstance(dataset, Dataset):
+            return dataset
+        return Dataset(dataset_id=None, data=dataset)
+
+    async def prepare_evaluators(self) -> list[Evaluator]:
+        evaluators = []
+        for ev in self.__evaluators:
+            if inspect.iscoroutine(ev):
+                evaluators.append(await ev)
+            elif inspect.iscoroutinefunction(ev):
+                evaluators.append(await ev())
+            else:
+                evaluators.append(ev)
+        return evaluators
 
     async def run(self):
         title = f"Running experiment: {self.project_name}/{self.experiment_name}"
@@ -190,11 +241,10 @@ class Experiment:
         print(title)
         print("=" * len(title))
 
-        start_date = datetime.datetime.utcnow().isoformat() + "Z"
-
         tasks = []
-        for datum in self.data:
-            task = self.run_task_and_eval(datum)
+        for i, datum in enumerate(self.dataset.data, 1):
+            sample_id = datum.get("sid", i)
+            task = self.run_task_and_eval(datum, dataset_id=self.dataset.dataset_id, dataset_sample_id=sample_id)
             tasks.append(asyncio.create_task(with_semaphore(self._sem, task)))
 
         for t in tasks:
@@ -202,14 +252,12 @@ class Experiment:
 
         await self.reporter.flush()
 
-        end_date = (datetime.datetime.utcnow() + datetime.timedelta(hours=1)).isoformat() + "Z"
-
         self.reporter.summary()
 
         print()
-        print(get_link(self.project_name, start_date, end_date))
+        print(get_link(self.whoami.caller.api_key.account.id, self.experiment_id))
 
-    async def run_task_and_eval(self, datum):
+    async def run_task_and_eval(self, datum, dataset_id: str | None, dataset_sample_id: int):
         loop = asyncio.get_running_loop()
 
         em_system_prompt = datum.get("evaluated_model_system_prompt")
@@ -235,12 +283,14 @@ class Experiment:
                 evaluator.execute(
                     loop,
                     self._pool,
-                    app=self.project_name,
+                    experiment_id=self.experiment_id,
                     evaluated_model_system_prompt=em_system_prompt,
                     evaluated_model_retrieved_context=em_retrieved_context,
                     evaluated_model_input=em_input,
                     evaluated_model_output=task.evaluated_model_output,
                     evaluated_model_gold_answer=em_gold_answer,
+                    dataset_id=dataset_id,
+                    dataset_sample_id=dataset_sample_id,
                     tags=outgoing_tags,
                 )
             )
@@ -257,28 +307,30 @@ class Experiment:
                 task,
                 eval_result,
                 outgoing_tags,
+                dataset_id=dataset_id,
+                dataset_sample_id=dataset_sample_id,
                 already_captured=evaluator.remote_capture,
             )
 
 
 def experiment(
     client: Client | None,
-    name: str | None,
-    data: list[DatasetDatum],
+    project_name: str | None,
+    data: list[DatasetDatum] | typing.Callable[[...], list[DatasetDatum]] | typing.Awaitable[list[DatasetDatum]],
     task: Task,
     evaluators: list[Evaluator],
     tags: dict[str, str] | None = None,
-    display_hist: bool = False,
+    experiment_name: str = "",
 ):
     ex = Experiment(
         client=client,
-        project_name=name,
+        project_name=project_name,
         data=data,
         task=task,
         evaluators=evaluators,
         tags=tags or {},
         max_concurrency=10,
-        name="",
+        experiment_name=experiment_name,
     )
 
     async def run():
@@ -332,6 +384,13 @@ def print_histogram(data, bin_count=5):
     # Calculate the range of the data
     min_val = min(data)
     max_val = max(data)
+
+    if min_val == max_val:
+        if min_val > 0.5:
+            min_val = 0
+        else:
+            max_val = 1
+
     range_val = max_val - min_val
 
     # Calculate bin size
@@ -354,7 +413,7 @@ def print_histogram(data, bin_count=5):
     scale_factor = 20 / max_bin_count  # Scale the histogram to a max width of 50 characters
 
     # Print the histogram
-    print("Value Range".ljust(20), "Count".ljust(10), "Histogram")
+    print("Score Range".ljust(20), "Count".ljust(10), "Histogram")
     for i in range(bin_count):
         bin_start = min_val + i * bin_size
         bin_end = bin_start + bin_size
@@ -363,8 +422,8 @@ def print_histogram(data, bin_count=5):
         print(f"{bin_start:.2f} - {bin_end:.2f}".ljust(20), f"{bin_count}".ljust(10), bar)
 
 
-def get_link(app: str, start, end) -> str:
-    params = {"projectId": app, "startDate": start, "endDate": end}
+def get_link(account_id: str, experiment_id: str) -> str:
+    params = {"account_id": account_id, "experiment_id": experiment_id}
     return f"https://app.patronus.ai/monitoring?{urllib.parse.urlencode(params)}"
 
 

@@ -3,7 +3,6 @@ from patronus import Client, simple_task
 cli = Client()
 
 eval_patronus_is_similar = cli.remote_evaluator(
-    family="custom",
     evaluator="custom-small",
     profile_name="system:is-similar-to-gold-answer",
 )

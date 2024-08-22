@@ -49,7 +49,7 @@ Hello Adam, how are you?
 """
 
 cli.experiment(
-    name="custom-task",
+    project_name="custom-task",
     data=[
         {
             "evaluated_model_system_prompt": system_prompt,

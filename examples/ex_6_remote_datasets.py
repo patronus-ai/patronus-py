@@ -1,5 +1,3 @@
-import random
-
 from openai import OpenAI
 
 from patronus import Client, task, TaskResult
@@ -60,15 +58,11 @@ def call_llm(evaluated_model_input: str) -> TaskResult:
 
 pii_dataset = cli.remote_dataset("pii-questions-1.0.0")
 
-detect_pii = cli.remote_evaluator(
-    "pii",
-    "pii",
-    "system:detect-personally-identifiable-information",
-)
+detect_pii = cli.remote_evaluator("pii")
 
 cli.experiment(
     "PII",
-    data=random.sample(pii_dataset, 50),
+    data=pii_dataset,
     task=call_llm,
     evaluators=[detect_pii],
 )

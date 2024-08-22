@@ -6,6 +6,59 @@ import pydantic
 from ._base_api import BaseAPIClient
 
 
+class Account(pydantic.BaseModel):
+    id: str
+    name: str
+
+
+class WhoAmIAPIKey(pydantic.BaseModel):
+    id: str
+    account: Account
+
+
+class WhoAmICaller(pydantic.BaseModel):
+    api_key: WhoAmIAPIKey
+
+
+class WhoAmIResponse(pydantic.BaseModel):
+    caller: WhoAmICaller
+
+
+class Evaluator(pydantic.BaseModel):
+    id: str
+    name: str
+    evaluator_family: str | None
+    aliases: list[str] | None
+
+
+class ListEvaluatorsResponse(pydantic.BaseModel):
+    evaluators: list[Evaluator]
+
+
+class Project(pydantic.BaseModel):
+    id: str
+    name: str
+
+
+class CreateProjectRequest(pydantic.BaseModel):
+    name: str
+
+
+class Experiment(pydantic.BaseModel):
+    project_id: str
+    id: str
+    name: str
+
+
+class CreateExperimentRequest(pydantic.BaseModel):
+    project_id: str
+    name: str
+
+
+class CreateExperimentResponse(pydantic.BaseModel):
+    experiment: Experiment
+
+
 class EvaluateEvaluator(pydantic.BaseModel):
     evaluator: str
     profile_name: str | None = None
@@ -19,9 +72,10 @@ class EvaluateRequest(pydantic.BaseModel):
     evaluated_model_input: str | None = None
     evaluated_model_output: str | None = None
     evaluated_model_gold_answer: str | None = None
-
-    app: str
+    experiment_id: str
     capture: str = "all"
+    dataset_id: str | None = None
+    dataset_sample_id: int | None = None
     tags: dict[str, str] | None = None
 
 
@@ -33,7 +87,8 @@ class EvaluationResultAdditionalInfo(pydantic.BaseModel):
 
 class EvaluationResult(pydantic.BaseModel):
     id: str
-    app: str
+    project_id: str
+    experiment_id: str
     created_at: pydantic.AwareDatetime
     evaluator_id: str
     evaluated_model_system_prompt: str | None
@@ -49,6 +104,8 @@ class EvaluationResult(pydantic.BaseModel):
     explanation_duration: datetime.timedelta | None
     evaluator_family: str
     evaluator_profile_public_id: str
+    dataset_id: str | None
+    dataset_sample_id: int | None
     tags: dict[str, str] | None
 
 
@@ -65,7 +122,7 @@ class EvaluateResponse(pydantic.BaseModel):
 
 
 class ExportEvaluationResult(pydantic.BaseModel):
-    app: str
+    experiment_id: str
     evaluator_id: str
     profile_name: str | None = None
     evaluated_model_system_prompt: str | None = None
@@ -80,6 +137,8 @@ class ExportEvaluationResult(pydantic.BaseModel):
     evaluated_model_provider: str | None = None
     evaluated_model_params: dict[str, str | int | float] | None = None
     evaluated_model_selected_model: str | None = None
+    dataset_id: str | None = None
+    dataset_sample_id: int | None = None
     tags: dict[str, str] | None = None
 
 
@@ -89,7 +148,7 @@ class ExportEvaluationRequest(pydantic.BaseModel):
 
 class ExportEvaluationResultPartial(pydantic.BaseModel):
     id: str
-    app: str
+    app: str | None
     created_at: pydantic.AwareDatetime
     evaluator_id: str
 
@@ -144,6 +203,21 @@ class ListDatasetData(pydantic.BaseModel):
 
 
 class API(BaseAPIClient):
+    async def whoami(self) -> WhoAmIResponse:
+        resp = await self.call("GET", "/v1/whoami", response_cls=WhoAmIResponse)
+        resp.response.raise_for_status()
+        return resp.data
+
+    async def create_project(self, request: CreateProjectRequest) -> Project:
+        resp = await self.call("POST", "/v1/projects", body=request, response_cls=Project)
+        resp.response.raise_for_status()
+        return resp.data
+
+    async def create_experiment(self, request: CreateExperimentRequest) -> Experiment:
+        resp = await self.call("POST", "/v1/experiments", body=request, response_cls=CreateExperimentResponse)
+        resp.response.raise_for_status()
+        return resp.data.experiment
+
     async def evaluate(self, request: EvaluateRequest) -> EvaluateResponse:
         resp = await self.call("POST", "/v1/evaluate", body=request, response_cls=EvaluateResponse)
         # TODO error handling
@@ -160,6 +234,12 @@ class API(BaseAPIClient):
         # TODO error handling
         resp.response.raise_for_status()
         return resp.data
+
+    async def list_evaluators(self) -> list[Evaluator]:
+        resp = await self.call("GET", "/v1/evaluators", response_cls=ListEvaluatorsResponse)
+        # TODO error handling
+        resp.response.raise_for_status()
+        return resp.data.evaluators
 
     async def get_profile(self, evaluator_family: str, name: str) -> EvaluatorProfile:
         profiles = await self.list_profiles(
@@ -187,7 +267,7 @@ class API(BaseAPIClient):
         resp.response.raise_for_status()
         return resp.data
 
-    async def list_dataset_data(self, dataset_id: str):
+    async def list_dataset_data(self, dataset_id: str) -> ListDatasetData:
         resp = await self.call("GET", f"/v1/datasets/{dataset_id}/data", response_cls=ListDatasetData)
         # TODO error handling
         resp.response.raise_for_status()
