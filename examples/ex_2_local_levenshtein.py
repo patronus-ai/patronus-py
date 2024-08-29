@@ -8,7 +8,6 @@ cli = Client()
 
 class LevenshteinScorer(Evaluator):
     def __init__(self, pass_threshold: float):
-        self.name = "LevenshteinScorer"
         self.pass_threshold = pass_threshold
         super().__init__()
 
@@ -99,5 +98,4 @@ cli.experiment(
     ],
     task=simple_task(lambda input: f"Hi {input}"),
     evaluators=[LevenshteinScorer(pass_threshold=0.6)],
-    display_hist=True,
 )

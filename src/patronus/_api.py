@@ -114,7 +114,7 @@ class EvaluateResult(pydantic.BaseModel):
     profile_name: str
     status: str
     error_message: str | None
-    evaluation_result: EvaluationResult
+    evaluation_result: EvaluationResult | None
 
 
 class EvaluateResponse(pydantic.BaseModel):
@@ -220,6 +220,10 @@ class API(BaseAPIClient):
 
     async def evaluate(self, request: EvaluateRequest) -> EvaluateResponse:
         resp = await self.call("POST", "/v1/evaluate", body=request, response_cls=EvaluateResponse)
+        # TODO handle the error better
+        for res in resp.data.results:
+            if res.status != "success":
+                raise RuntimeError(f"Unexpected response from /v1/evaluate: {res}")
         # TODO error handling
         resp.response.raise_for_status()
         return resp.data

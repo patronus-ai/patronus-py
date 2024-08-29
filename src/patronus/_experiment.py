@@ -11,6 +11,7 @@ import typing
 import urllib.parse
 from concurrent.futures import ThreadPoolExecutor
 
+from ._config import config
 from ._dataset import DatasetDatum, Dataset
 from ._async_utils import run_until_complete
 from . import _api as api
@@ -162,6 +163,7 @@ class Experiment:
         tags: dict[str, str],
         max_concurrency: int,
         experiment_name: str = "",
+        **kwargs,
     ):
         self._client = client
         self.project_id = None
@@ -321,6 +323,7 @@ def experiment(
     evaluators: list[Evaluator],
     tags: dict[str, str] | None = None,
     experiment_name: str = "",
+    **kwargs,
 ):
     ex = Experiment(
         client=client,
@@ -331,6 +334,7 @@ def experiment(
         tags=tags or {},
         max_concurrency=10,
         experiment_name=experiment_name,
+        **kwargs,
     )
 
     async def run():
@@ -424,7 +428,8 @@ def print_histogram(data, bin_count=5):
 
 def get_link(account_id: str, experiment_id: str) -> str:
     params = {"account_id": account_id, "experiment_id": experiment_id}
-    return f"https://app.patronus.ai/monitoring?{urllib.parse.urlencode(params)}"
+    ui_url = config().ui_url.rstrip("/")
+    return f"{ui_url}/monitoring?{urllib.parse.urlencode(params)}"
 
 
 def generate_experiment_name(name: str) -> str:

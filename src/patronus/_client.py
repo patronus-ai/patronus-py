@@ -1,7 +1,6 @@
-import os
-
 import httpx
 
+from ._config import config
 from ._dataset import Dataset
 from ._evaluators import Evaluator
 from ._evaluators_remote import RemoteEvaluator
@@ -13,13 +12,13 @@ class Client:
     def __init__(
         self,
         api_key: str | None = None,
-        base_url: str = "https://api.patronus.ai",
+        base_url: str = "",
         api_client: api.API | None = None,
         # TODO Allow passing more types for the timeout: float, Timeout, None, NotSet
         timeout: float = 300,
     ):
-        if api_key is None:
-            api_key = os.environ.get("PATRONUSAI_API_KEY")
+        api_key = api_key or config().api_key
+        base_url = base_url or config().api_url
 
         if not api_key:
             raise ValueError("Provide 'api_key' argument or set PATRONUSAI_API_KEY environment variable.")
@@ -89,7 +88,7 @@ class Client:
         profile = profiles.evaluator_profiles[0]
 
         return RemoteEvaluator(
-            evaluator=evaluator,
+            evaluator=ev.id,
             profile_name=profile.name,
             api_=self.api,
         )

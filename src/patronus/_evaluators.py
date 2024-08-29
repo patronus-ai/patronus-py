@@ -56,7 +56,13 @@ class Evaluator(abc.ABC):
     accepted_args: set[str]
     remote_capture = False
 
-    def __init__(self, accepted_args: set[str] | None = None):
+    def __init__(
+        self,
+        accepted_args: set[str] | None = None,
+        *,
+        name: str | None = None,
+    ):
+        self.name = name or self.__class__.__name__
         self.accepted_args = accepted_args
         if not self.accepted_args:
             sig = inspect.signature(self.evaluate)
