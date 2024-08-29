@@ -27,8 +27,7 @@ class BaseAPIClient:
         self.http = http
 
     def set_target(self, base_url: str, api_key: str):
-        # TODO base_url should be sanitized
-        self.base_url = base_url
+        self.base_url = base_url.rstrip("/")
         self.api_key = api_key
 
     async def call(

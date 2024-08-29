@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "patronus"
-version = "0.0.1"
+version = "0.0.2"
 description = ""
 authors = ["Jędrzej Rosłaniec <jedrzej@patronus.ai>"]
 license = "MIT"
@@ -17,6 +17,8 @@ python = ">=3.11"
 httpx = "^0.27.0"
 pydantic = "^2.8.2"
 tqdm = "^4.66.5"
+pydantic-settings = "^2.4.0"
+pyyaml = "^6.0.2"
 
 
 [build-system]

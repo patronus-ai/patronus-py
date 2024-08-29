@@ -9,12 +9,14 @@ from concurrent.futures import ThreadPoolExecutor
 from ._async_utils import run_as_coro
 
 EVALUATION_ARGS = [
-    "app",
+    "experiment_id",
     "evaluated_model_system_prompt",
     "evaluated_model_retrieved_context",
     "evaluated_model_input",
     "evaluated_model_output",
     "evaluated_model_gold_answer",
+    "dataset_id",
+    "dataset_sample_id",
     "tags",
 ]
 
@@ -54,7 +56,13 @@ class Evaluator(abc.ABC):
     accepted_args: set[str]
     remote_capture = False
 
-    def __init__(self, accepted_args: set[str] | None = None):
+    def __init__(
+        self,
+        accepted_args: set[str] | None = None,
+        *,
+        name: str | None = None,
+    ):
+        self.name = name or self.__class__.__name__
         self.accepted_args = accepted_args
         if not self.accepted_args:
             sig = inspect.signature(self.evaluate)
@@ -73,21 +81,25 @@ class Evaluator(abc.ABC):
         self,
         loop: asyncio.AbstractEventLoop,
         executor: ThreadPoolExecutor,
-        app: str | None = None,
+        experiment_id: str,
         evaluated_model_system_prompt: str | None = None,
         evaluated_model_retrieved_context: list[str] | None = None,
         evaluated_model_input: str | None = None,
         evaluated_model_output: str | None = None,
         evaluated_model_gold_answer: str | None = None,
+        dataset_id: str | None = None,
+        dataset_sample_id: int | None = None,
         tags: dict[str, str] | None = None,
     ) -> EvaluatorOutput:
         kwargs = {
-            "app": app,
+            "experiment_id": experiment_id,
             "evaluated_model_system_prompt": evaluated_model_system_prompt,
             "evaluated_model_retrieved_context": evaluated_model_retrieved_context,
             "evaluated_model_input": evaluated_model_input,
             "evaluated_model_output": evaluated_model_output,
             "evaluated_model_gold_answer": evaluated_model_gold_answer,
+            "dataset_id": dataset_id,
+            "dataset_sample_id": dataset_sample_id,
             "tags": tags,
         }
         pass_kwargs = {k: v for k, v in kwargs.items() if k in self.accepted_args}

@@ -9,7 +9,6 @@ def iexact_match(evaluated_model_output: str, evaluated_model_gold_answer: str) 
 
 
 eval_patronus_is_similar = cli.remote_evaluator(
-    family="custom",
     evaluator="custom-small",
     profile_name="system:is-similar-to-gold-answer",
 )
