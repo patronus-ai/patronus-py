@@ -1,3 +1,5 @@
+import typing
+
 from . import _evaluators as evaluators
 from . import _api as api
 
@@ -13,10 +15,17 @@ class RemoteEvaluatorError(evaluators.EvaluatorError):
 class RemoteEvaluator(evaluators.Evaluator):
     remote_capture = True
 
-    def __init__(self, evaluator: str, profile_name: str, api_: api.API):
+    def __init__(
+        self,
+        evaluator: str,
+        profile_name: str,
+        explain_strategy: typing.Literal["never", "on-fail", "on-success", "always"],
+        api_: api.API,
+    ):
         self.name = evaluator
         self.evaluator = evaluator
         self.profile_name = profile_name
+        self.explain_strategy = explain_strategy
         self.api = api_
 
         super().__init__(evaluators.EVALUATION_ARGS)
@@ -40,7 +49,7 @@ class RemoteEvaluator(evaluators.Evaluator):
                     api.EvaluateEvaluator(
                         evaluator=self.evaluator,
                         profile_name=self.profile_name,
-                        explain_strategy="always",
+                        explain_strategy=self.explain_strategy,
                     )
                 ],
                 evaluated_model_system_prompt=evaluated_model_system_prompt,

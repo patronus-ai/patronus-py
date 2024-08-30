@@ -11,6 +11,8 @@ TASK_ARGS = {
     "evaluated_model_system_prompt",
     "evaluated_model_retrieved_context",
     "evaluated_model_input",
+    "evaluated_model_output",
+    "evaluated_model_gold_answer",
     "tags",
 }
 
@@ -50,12 +52,16 @@ class Task(abc.ABC):
         evaluated_model_system_prompt: str | None,
         evaluated_model_retrieved_context: list[str] | None,
         evaluated_model_input: str | None,
+        evaluated_model_output: str | None,
+        evaluated_model_gold_answer: str | None,
         tags: dict[str, str] | None = None,
     ) -> TaskResult:
         kwargs = {
             "evaluated_model_system_prompt": evaluated_model_system_prompt,
             "evaluated_model_retrieved_context": evaluated_model_retrieved_context,
             "evaluated_model_input": evaluated_model_input,
+            "evaluated_model_output": evaluated_model_output,
+            "evaluated_model_gold_answer": evaluated_model_gold_answer,
             "tags": {**tags},
         }
         pass_kwargs = {k: v for k, v in kwargs.items() if k in self.accepted_args}
@@ -99,3 +105,8 @@ def simple_task(lambda_fn: typing.Callable[[str], str]) -> Task:
         return lambda_fn(evaluated_model_input)
 
     return wrapper
+
+
+@task
+def nop_task(evaluated_model_output: str) -> str:
+    return evaluated_model_output

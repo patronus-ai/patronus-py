@@ -180,6 +180,24 @@ class EvaluatorProfile(pydantic.BaseModel):
     description: str | None
 
 
+class CreateProfileRequest(pydantic.BaseModel):
+    evaluator_family: str
+    name: str
+    config: dict[str, typing.Any]
+
+
+class CreateProfileResponse(pydantic.BaseModel):
+    evaluator_profile: EvaluatorProfile
+
+
+class AddEvaluatorProfileRevisionRequest(pydantic.BaseModel):
+    config: dict[str, typing.Any]
+
+
+class AddEvaluatorProfileRevisionResponse(pydantic.BaseModel):
+    evaluator_profile: EvaluatorProfile
+
+
 class ListProfilesResponse(pydantic.BaseModel):
     evaluator_profiles: list[EvaluatorProfile]
 
@@ -245,19 +263,24 @@ class API(BaseAPIClient):
         resp.response.raise_for_status()
         return resp.data.evaluators
 
-    async def get_profile(self, evaluator_family: str, name: str) -> EvaluatorProfile:
-        profiles = await self.list_profiles(
-            ListProfilesRequest(
-                evaluator_family=evaluator_family,
-                name=name,
-                get_last_revision=True,
-            )
+    async def create_profile(self, request: CreateProfileRequest) -> CreateProfileResponse:
+        resp = await self.call("POST", "/v1/evaluator-profiles", body=request, response_cls=CreateProfileResponse)
+        # TODO error handling
+        resp.response.raise_for_status()
+        return resp.data
+
+    async def add_evaluator_profile_revision(
+        self, evaluator_profile_id, request: AddEvaluatorProfileRevisionRequest
+    ) -> AddEvaluatorProfileRevisionResponse:
+        resp = await self.call(
+            "POST",
+            f"/v1/evaluator-profiles/{evaluator_profile_id}/revision",
+            body=request,
+            response_cls=AddEvaluatorProfileRevisionResponse,
         )
         # TODO error handling
-        assert (
-            len(profiles.evaluator_profiles) == 1
-        ), f"get_profile didn't return 1 profile. It returned {len(profiles.evaluator_profiles)!r} instead"
-        return profiles.evaluator_profiles[0]
+        resp.response.raise_for_status()
+        return resp.data
 
     async def list_profiles(self, request: ListProfilesRequest) -> ListProfilesResponse:
         params = request.model_dump(exclude_none=True)
