@@ -5,6 +5,7 @@ __all__ = [
     "read_jsonl",
 ]
 
+import os.path
 import re
 import csv
 import dataclasses
@@ -69,8 +70,9 @@ def read_csv(
                 )
             )
 
-    if dataset_id is not None:
-        dataset_id = _sanitize_dataset_id(dataset_id)
+    if dataset_id is None:
+        dataset_id = _extract_filename(filename)
+    dataset_id = _sanitize_dataset_id(dataset_id)
 
     return Dataset(
         dataset_id=dataset_id,
@@ -119,8 +121,9 @@ def read_jsonl(
                 )
             )
 
-    if dataset_id is not None:
-        dataset_id = _sanitize_dataset_id(dataset_id)
+    if dataset_id is None:
+        dataset_id = _extract_filename(filename)
+    dataset_id = _sanitize_dataset_id(dataset_id)
 
     return Dataset(
         dataset_id=dataset_id,
@@ -166,3 +169,9 @@ def _sanitize_dataset_id(dataset_id: str) -> str | None:
     if not dataset_id:
         return None
     return dataset_id
+
+
+def _extract_filename(filepath: str) -> str:
+    filename = os.path.basename(filepath)
+    f, _ = os.path.splitext(filename)
+    return f
