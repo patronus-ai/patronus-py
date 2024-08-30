@@ -17,7 +17,7 @@ from ._async_utils import run_until_complete
 from . import _api as api
 from ._client import Client
 from ._evaluators import Evaluator, EvaluatorOutput
-from ._tasks import Task, TaskResult
+from ._tasks import Task, TaskResult, nop_task
 
 log = logging.getLogger(__name__)
 
@@ -265,6 +265,7 @@ class Experiment:
         em_system_prompt = datum.get("evaluated_model_system_prompt")
         em_retrieved_context = datum.get("evaluated_model_retrieved_context")
         em_input = datum.get("evaluated_model_input")
+        em_output = datum.get("evaluated_model_output")
         em_gold_answer = datum.get("evaluated_model_gold_answer")
 
         task = await self.task.execute(
@@ -273,6 +274,8 @@ class Experiment:
             evaluated_model_system_prompt=em_system_prompt,
             evaluated_model_retrieved_context=em_retrieved_context,
             evaluated_model_input=em_input,
+            evaluated_model_output=em_output,
+            evaluated_model_gold_answer=em_gold_answer,
             tags=self.tags,
         )
 
@@ -318,8 +321,9 @@ class Experiment:
 def experiment(
     client: Client | None,
     project_name: str | None,
+    *,
     data: list[DatasetDatum] | typing.Callable[[...], list[DatasetDatum]] | typing.Awaitable[list[DatasetDatum]],
-    task: Task,
+    task: Task = nop_task,
     evaluators: list[Evaluator],
     tags: dict[str, str] | None = None,
     experiment_name: str = "",
