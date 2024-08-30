@@ -211,7 +211,9 @@ class Experiment:
         self.reporter = DefaultReporter(self._client, self.experiment_id, flush_interval=10)
 
     async def fetch_dataset(self) -> (str | None, list[DatasetDatum]):
-        if isinstance(self.__data, (list, tuple)):
+        if isinstance(self.__data, Dataset):
+            dataset = self.__data
+        elif isinstance(self.__data, (list, tuple)):
             dataset = self.__data
         elif inspect.iscoroutine(self.__data):
             dataset = await self.__data
