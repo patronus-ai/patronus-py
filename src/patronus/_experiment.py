@@ -11,6 +11,8 @@ import typing
 import urllib.parse
 from concurrent.futures import ThreadPoolExecutor
 
+from tqdm.asyncio import tqdm as tqdm_async
+
 from ._config import config
 from ._dataset import DatasetDatum, Dataset
 from ._async_utils import run_until_complete
@@ -240,9 +242,7 @@ class Experiment:
         return evaluators
 
     async def run(self):
-        title = f"Running experiment: {self.project_name}/{self.experiment_name}"
-        print("=" * len(title))
-        print(title)
+        title = f"Experiment  {self.project_name}/{self.experiment_name}"
         print("=" * len(title))
 
         tasks = []
@@ -251,8 +251,7 @@ class Experiment:
             task = self.run_task_and_eval(datum, dataset_id=self.dataset.dataset_id, dataset_sample_id=sample_id)
             tasks.append(asyncio.create_task(with_semaphore(self._sem, task)))
 
-        for t in tasks:
-            await t
+        await tqdm_async.gather(*tasks, desc=title, unit="sample")
 
         await self.reporter.flush()
 
@@ -329,6 +328,7 @@ def experiment(
     evaluators: list[Evaluator],
     tags: dict[str, str] | None = None,
     experiment_name: str = "",
+    max_concurrency: int = 10,
     **kwargs,
 ):
     ex = Experiment(
@@ -338,7 +338,7 @@ def experiment(
         task=task,
         evaluators=evaluators,
         tags=tags or {},
-        max_concurrency=10,
+        max_concurrency=max_concurrency,
         experiment_name=experiment_name,
         **kwargs,
     )
