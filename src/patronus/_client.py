@@ -46,6 +46,7 @@ class Client:
         evaluators: list[Evaluator],
         tags: dict[str, str] | None = None,
         experiment_name: str = "",
+        max_concurrency: int = 10,
         **kwargs,
     ):
         from ._experiment import experiment as ex
@@ -58,6 +59,7 @@ class Client:
             evaluators=evaluators,
             tags=tags,
             experiment_name=experiment_name,
+            max_concurrency=max_concurrency,
             **kwargs,
         )
 
