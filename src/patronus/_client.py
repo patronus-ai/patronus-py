@@ -1,4 +1,5 @@
 import logging
+import os
 import typing
 
 import httpx
@@ -22,8 +23,8 @@ class Client:
         # TODO Allow passing more types for the timeout: float, Timeout, None, NotSet
         timeout: float = 300,
     ):
-        api_key = api_key or config().api_key
-        base_url = base_url or config().api_url
+        api_key = api_key or config().api_key or os.environ.get("PATRONUSAI_API_KEY")
+        base_url = base_url or config().api_url or os.environ.get("PATRONUSAI_API_URL")
 
         if not api_key:
             raise ValueError("Provide 'api_key' argument or set PATRONUSAI_API_KEY environment variable.")
