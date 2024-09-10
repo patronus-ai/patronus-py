@@ -21,7 +21,10 @@ class Config(pydantic_settings.BaseSettings):
         dotenv_settings: pydantic_settings.PydanticBaseSettingsSource,
         file_secret_settings: pydantic_settings.PydanticBaseSettingsSource,
     ) -> typing.Tuple[pydantic_settings.PydanticBaseSettingsSource, ...]:
-        return (pydantic_settings.YamlConfigSettingsSource(settings_cls),)
+        return (
+            pydantic_settings.YamlConfigSettingsSource(settings_cls),
+            pydantic_settings.EnvSettingsSource(settings_cls),
+        )
 
 
 @functools.lru_cache()
