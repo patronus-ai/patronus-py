@@ -30,7 +30,7 @@ def call_llm(evaluated_model_system_prompt: str, evaluated_model_input: str) -> 
         evaluated_model_name="gpt-4o",
         evaluated_model_provider="openai",
         evaluated_model_params={"temperature": 0},
-        evaluated_model_selected_model="gpt4-o",
+        evaluated_model_selected_model="gpt-4o",
     )
 
 
@@ -65,7 +65,7 @@ cli.experiment(
         },
         {
             "evaluated_model_system_prompt": system_prompt,
-            "evaluated_model_input": "Who as the first president of the US?",
+            "evaluated_model_input": "Who is the first president of the US?",
         },
     ],
     task=call_llm,

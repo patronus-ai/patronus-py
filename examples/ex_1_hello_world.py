@@ -3,7 +3,7 @@ from patronus import Client, simple_task, simple_evaluator
 
 client = Client(
     # This is the default and can be omitted
-    api_key=os.environ.get("PATRONUS_API_KEY"),
+    api_key=os.environ.get("PATRONUSAI_API_KEY"),
 )
 
 task = simple_task(lambda input: f"{input} World")
