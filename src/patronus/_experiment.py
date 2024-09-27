@@ -433,6 +433,14 @@ def experiment(
     max_concurrency: int = 10,
     **kwargs,
 ):
+    if not isinstance(task, Task):
+        raise ValueError(f"task {task!r} must inherit from Task. Did you forget to use @task decorator?")
+    for e in evaluators:
+        if not isinstance(e, Evaluator):
+            raise ValueError(
+                f"evaluator {e!r} must inherit from Evaluator. Did you forget to use @evaluator decorator?"
+            )
+
     ex = Experiment(
         client=client,
         project_name=project_name,

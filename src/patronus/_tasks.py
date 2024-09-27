@@ -42,8 +42,12 @@ TaskFn = typing.Callable[..., TaskResultT | str | typing.Awaitable[TaskResultT |
 
 
 class Task(abc.ABC):
-    def __init__(self, accepted_args: set[str]):
+    def __init__(self, name: str, accepted_args: set[str]):
+        self.name = name
         self.accepted_args = accepted_args
+
+    def __repr__(self):
+        return f"<Task with name {self.name!r} of class {self.__class__.__name__}>"
 
     async def execute(
         self,
@@ -84,7 +88,7 @@ class FunctionalTask(Task):
 
     def __init__(self, fn: TaskFn, accepted_args: set[str]):
         self.fn = fn
-        super().__init__(accepted_args)
+        super().__init__(fn.__name__, accepted_args)
 
     async def task(self, **kwargs) -> TaskResultT | str:
         return await self.fn(**kwargs)
@@ -95,7 +99,7 @@ class SyncFunctionalTask(Task):
 
     def __init__(self, fn: TaskFn, accepted_args: set[str]):
         self.fn = fn
-        super().__init__(accepted_args)
+        super().__init__(fn.__name__, accepted_args)
 
     def task(self, **kwargs) -> TaskResultT | str:
         return self.fn(**kwargs)

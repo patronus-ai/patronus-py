@@ -71,6 +71,9 @@ class Evaluator(abc.ABC):
                     )
             self.accepted_args = set(param_keys)
 
+    def __repr__(self):
+        return f"<Evaluator with name {self.name!r} of class {self.__class__.__name__}>"
+
     def display_name(self) -> str:
         return self.name
 
