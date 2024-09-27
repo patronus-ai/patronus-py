@@ -279,12 +279,20 @@ class Experiment:
         self.reporter = None
 
     async def prepare(self):
+        if not isinstance(self.task, Task):
+            raise ValueError(f"task {self.task!r} must inherit from Task. Did you forget to use @task decorator?")
+
         print("Preparing dataset... ", end="")
         self.dataset = await self.fetch_dataset()
         print("DONE")
 
         print("Preparing evaluators... ", end="")
         self.evaluators = await self.prepare_evaluators()
+        for e in self.evaluators:
+            if not isinstance(e, Evaluator):
+                raise ValueError(
+                    f"evaluator {e!r} must inherit from Evaluator. Did you forget to use @evaluator decorator?"
+                )
         print("DONE")
 
         if not self._client:
@@ -433,14 +441,6 @@ def experiment(
     max_concurrency: int = 10,
     **kwargs,
 ):
-    if not isinstance(task, Task):
-        raise ValueError(f"task {task!r} must inherit from Task. Did you forget to use @task decorator?")
-    for e in evaluators:
-        if not isinstance(e, Evaluator):
-            raise ValueError(
-                f"evaluator {e!r} must inherit from Evaluator. Did you forget to use @evaluator decorator?"
-            )
-
     ex = Experiment(
         client=client,
         project_name=project_name,
