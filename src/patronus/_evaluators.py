@@ -42,9 +42,6 @@ class EvaluatorOutput:
     duration: float
 
 
-# TODO we should have more classes of evaluator errors
-#      some of them may be recoverable on retry e.g. on remote 500, 502, 429
-#      and some not, e.g. ZeroDivisionError locally, or 400, 422 remote
 class EvaluatorError(Exception):
     def __init__(self, message: str):
         super().__init__(message)
@@ -118,7 +115,7 @@ class Evaluator(abc.ABC):
     def evaluate(self, **kwargs) -> EvaluationResultT | typing.Awaitable[EvaluationResultT]: ...
 
 
-class FunctionalEvaluator(Evaluator):
+class SyncFunctionalEvaluator(Evaluator):
     fn: EvalF
 
     def __init__(self, name: str, fn: EvalF, accepted_args: set[str]):
@@ -133,14 +130,32 @@ class FunctionalEvaluator(Evaluator):
         return ret
 
 
-def evaluator(fn: EvalF, evaluator_name: str | None = None) -> FunctionalEvaluator:
+class FunctionalEvaluator(Evaluator):
+    fn: EvalF
+
+    def __init__(self, name: str, fn: EvalF, accepted_args: set[str]):
+        self.name = name
+        self.fn = fn
+        super().__init__(accepted_args)
+
+    async def evaluate(self, **kwargs) -> EvaluationResultT:
+        ret = await self.fn(**kwargs)
+        if isinstance(ret, bool):
+            return EvaluationResult(pass_=ret, score_raw=float(ret))
+        return ret
+
+
+def evaluator(fn: EvalF, evaluator_name: str | None = None) -> Evaluator:
     sig = inspect.signature(fn)
     param_keys = sig.parameters.keys()
     for name in param_keys:
         if name not in EVALUATION_ARGS:
             raise ValueError(f"{name!r} is not a valid evaluator argument. Valid arguments are: {EVALUATION_ARGS}")
     evaluator_name = evaluator_name or fn.__name__
-    return FunctionalEvaluator(evaluator_name, fn, set(param_keys))
+    if inspect.iscoroutinefunction(fn):
+        return FunctionalEvaluator(evaluator_name, fn, set(param_keys))
+    else:
+        return SyncFunctionalEvaluator(evaluator_name, fn, set(param_keys))
 
 
 def simple_evaluator(fn: typing.Callable[[str, str], bool], name: str | None = None) -> FunctionalEvaluator:

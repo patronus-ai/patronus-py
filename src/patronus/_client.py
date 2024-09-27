@@ -1,5 +1,6 @@
 import logging
 import typing
+import importlib.metadata
 
 import httpx
 
@@ -32,8 +33,7 @@ class Client:
             # TODO allow passing http client as an argument
             http_client = httpx.AsyncClient(timeout=timeout)
 
-            # TODO use package version
-            api_client = api.API(version="0.0.1", http=http_client)
+            api_client = api.API(version=importlib.metadata.version("patronus"), http=http_client)
         api_client.set_target(base_url, api_key)
         self.api = api_client
 
@@ -73,6 +73,8 @@ class Client:
         profile_config: dict[str, typing.Any] | None = None,
         allow_update: bool = False,
         explain_strategy: typing.Literal["never", "on-fail", "on-success", "always"] = "always",
+        # Maximum number of attempts in case when evaluation throws an exception.
+        max_attempts: int = 3,
     ) -> RemoteEvaluator:
         evaluators = await self.api.list_evaluators()
 
@@ -95,6 +97,7 @@ class Client:
                 profile_config=profile_config,
                 allow_update=allow_update,
                 explain_strategy=explain_strategy,
+                max_attempts=max_attempts,
             )
         else:
             return await self._remote_evaluator(
@@ -102,6 +105,7 @@ class Client:
                 profile_name=profile_name,
                 ev=ev,
                 explain_strategy=explain_strategy,
+                max_attempts=max_attempts,
             )
 
     async def _remote_evaluator_from_config(
@@ -113,6 +117,7 @@ class Client:
         profile_config: dict[str, typing.Any],
         allow_update: bool,
         explain_strategy: typing.Literal["never", "on-fail", "on-success", "always"],
+        max_attempts: int,
     ) -> RemoteEvaluator:
         if not profile_name:
             raise ValueError("profile_name is required when specifying profile_config")
@@ -172,6 +177,7 @@ class Client:
             profile_name=profile.name,
             explain_strategy=explain_strategy,
             api_=self.api,
+            max_attempts=max_attempts,
         )
 
     async def _create_profile_from_config(
@@ -196,6 +202,7 @@ class Client:
         profile_name: str | None,
         ev: api.Evaluator,
         explain_strategy: typing.Literal["never", "on-fail", "on-success", "always"],
+        max_attempts: int,
     ) -> RemoteEvaluator:
         profiles = await self.api.list_profiles(
             api.ListProfilesRequest(
@@ -216,6 +223,7 @@ class Client:
             profile_name=profile.name,
             explain_strategy=explain_strategy,
             api_=self.api,
+            max_attempts=max_attempts,
         )
 
     async def remote_dataset(self, dataset_id: str) -> Dataset:

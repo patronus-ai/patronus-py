@@ -1,9 +1,12 @@
 import datetime
+import logging
 import typing
 
 import pydantic
 
-from ._base_api import BaseAPIClient
+from ._base_api import BaseAPIClient, UnrecoverableAPIError, APIError, RPMLimitError
+
+log = logging.getLogger(__name__)
 
 
 class Account(pydantic.BaseModel):
@@ -66,7 +69,10 @@ class EvaluateEvaluator(pydantic.BaseModel):
 
 
 class EvaluateRequest(pydantic.BaseModel):
-    evaluators: list[EvaluateEvaluator]
+    # Currently we support calls with only one evaluator.
+    # One of the reasons is that we support "smart" retires on failures
+    # And it wouldn't be possible
+    evaluators: list[EvaluateEvaluator] = pydantic.Field(min_length=1, max_length=1)
     evaluated_model_system_prompt: str | None = None
     evaluated_model_retrieved_context: list[str] | None = None
     evaluated_model_input: str | None = None
@@ -223,27 +229,67 @@ class ListDatasetData(pydantic.BaseModel):
 class API(BaseAPIClient):
     async def whoami(self) -> WhoAmIResponse:
         resp = await self.call("GET", "/v1/whoami", response_cls=WhoAmIResponse)
-        resp.response.raise_for_status()
+        resp.raise_for_status()
         return resp.data
 
     async def create_project(self, request: CreateProjectRequest) -> Project:
         resp = await self.call("POST", "/v1/projects", body=request, response_cls=Project)
-        resp.response.raise_for_status()
+        resp.raise_for_status()
         return resp.data
 
     async def create_experiment(self, request: CreateExperimentRequest) -> Experiment:
         resp = await self.call("POST", "/v1/experiments", body=request, response_cls=CreateExperimentResponse)
-        resp.response.raise_for_status()
+        resp.raise_for_status()
         return resp.data.experiment
 
     async def evaluate(self, request: EvaluateRequest) -> EvaluateResponse:
         resp = await self.call("POST", "/v1/evaluate", body=request, response_cls=EvaluateResponse)
-        # TODO handle the error better
+
+        rpm_limit = int(resp.response.headers.get("x-ratelimit-rpm-limit-requests"))
+        rpm_remaining = int(resp.response.headers.get("x-ratelimit-rpm-remaining-requests"))
+        monthly_limit = int(resp.response.headers.get("x-ratelimit-monthly-limit-requests"))
+        monthly_remaining = int(resp.response.headers.get("x-ratelimit-monthly-remaining-requests"))
+
+        if resp.response.is_error:
+            if resp.response.status_code == 429 and monthly_remaining <= 0:
+                raise UnrecoverableAPIError(
+                    f"Monthly evaluation {monthly_limit!r} limit hit",
+                    response=resp.response,
+                )
+            if resp.response.status_code == 429 and rpm_remaining <= 0:
+                wait_for_s = None
+                try:
+                    val: str = resp.response.headers.get("date")
+                    response_date = datetime.datetime.strptime(val, "%a, %d %b %Y %H:%M:%S %Z")
+                    wait_for_s = 60 - response_date.second
+                except Exception as err:  # noqa
+                    log.debug(
+                        "Failed to extract RPM period from the response; "
+                        f"'date' header value {resp.response.headers.get('date')!r}: "
+                        f"{err}"
+                    )
+                    pass
+                raise RPMLimitError(
+                    limit=rpm_limit,
+                    wait_for_s=wait_for_s,
+                    response=resp.response,
+                )
+            if resp.response.status_code < 500:
+                raise UnrecoverableAPIError(
+                    f"Response with unexpected status code: {resp.response.status_code}",
+                    response=resp.response,
+                )
+            raise APIError(
+                f"Response with unexpected status code: {resp.response.status_code}",
+                response=resp.response,
+            )
+
         for res in resp.data.results:
+            if res.status == "validation_error":
+                raise UnrecoverableAPIError("", response=resp.response)
             if res.status != "success":
-                raise RuntimeError(f"Unexpected response from /v1/evaluate: {res}")
-        # TODO error handling
-        resp.response.raise_for_status()
+                raise APIError(f"evaluation failed with status {res.status!r} and message {res.error_message!r}'")
+
         return resp.data
 
     async def export_evaluations(self, request: ExportEvaluationRequest) -> ExportEvaluationResponse:
@@ -253,20 +299,17 @@ class API(BaseAPIClient):
             body=request,
             response_cls=ExportEvaluationResponse,
         )
-        # TODO error handling
-        resp.response.raise_for_status()
+        resp.raise_for_status()
         return resp.data
 
     async def list_evaluators(self) -> list[Evaluator]:
         resp = await self.call("GET", "/v1/evaluators", response_cls=ListEvaluatorsResponse)
-        # TODO error handling
-        resp.response.raise_for_status()
+        resp.raise_for_status()
         return resp.data.evaluators
 
     async def create_profile(self, request: CreateProfileRequest) -> CreateProfileResponse:
         resp = await self.call("POST", "/v1/evaluator-profiles", body=request, response_cls=CreateProfileResponse)
-        # TODO error handling
-        resp.response.raise_for_status()
+        resp.raise_for_status()
         return resp.data
 
     async def add_evaluator_profile_revision(
@@ -278,8 +321,7 @@ class API(BaseAPIClient):
             body=request,
             response_cls=AddEvaluatorProfileRevisionResponse,
         )
-        # TODO error handling
-        resp.response.raise_for_status()
+        resp.raise_for_status()
         return resp.data
 
     async def list_profiles(self, request: ListProfilesRequest) -> ListProfilesResponse:
@@ -290,12 +332,10 @@ class API(BaseAPIClient):
             params=params,
             response_cls=ListProfilesResponse,
         )
-        # TODO error handling
-        resp.response.raise_for_status()
+        resp.raise_for_status()
         return resp.data
 
     async def list_dataset_data(self, dataset_id: str) -> ListDatasetData:
         resp = await self.call("GET", f"/v1/datasets/{dataset_id}/data", response_cls=ListDatasetData)
-        # TODO error handling
-        resp.response.raise_for_status()
+        resp.raise_for_status()
         return resp.data

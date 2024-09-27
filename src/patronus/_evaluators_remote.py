@@ -1,6 +1,6 @@
 import typing
 
-from . import _evaluators as evaluators
+from . import _evaluators as evaluators, retry
 from . import _api as api
 
 
@@ -21,12 +21,14 @@ class RemoteEvaluator(evaluators.Evaluator):
         profile_name: str,
         explain_strategy: typing.Literal["never", "on-fail", "on-success", "always"],
         api_: api.API,
+        max_attempts: int,
     ):
         self.name = evaluator
         self.evaluator = evaluator
         self.profile_name = profile_name
         self.explain_strategy = explain_strategy
         self.api = api_
+        self.max_attempts = max_attempts
 
         super().__init__(evaluators.EVALUATION_ARGS)
 
@@ -42,28 +44,31 @@ class RemoteEvaluator(evaluators.Evaluator):
         dataset_sample_id: int | None = None,
         tags: dict[str, str] | None = None,
     ) -> evaluators.EvaluationResultT:
-        # TODO error handling
-        response = await self.api.evaluate(
-            api.EvaluateRequest(
-                evaluators=[
-                    api.EvaluateEvaluator(
-                        evaluator=self.evaluator,
-                        profile_name=self.profile_name,
-                        explain_strategy=self.explain_strategy,
-                    )
-                ],
-                evaluated_model_system_prompt=evaluated_model_system_prompt,
-                evaluated_model_retrieved_context=evaluated_model_retrieved_context,
-                evaluated_model_input=evaluated_model_input,
-                evaluated_model_output=evaluated_model_output,
-                evaluated_model_gold_answer=evaluated_model_gold_answer,
-                experiment_id=experiment_id,
-                capture="all",
-                dataset_id=dataset_id,
-                dataset_sample_id=dataset_sample_id,
-                tags=tags,
+        @retry(max_attempts=self.max_attempts)
+        async def call():
+            return await self.api.evaluate(
+                api.EvaluateRequest(
+                    evaluators=[
+                        api.EvaluateEvaluator(
+                            evaluator=self.evaluator,
+                            profile_name=self.profile_name,
+                            explain_strategy=self.explain_strategy,
+                        )
+                    ],
+                    evaluated_model_system_prompt=evaluated_model_system_prompt,
+                    evaluated_model_retrieved_context=evaluated_model_retrieved_context,
+                    evaluated_model_input=evaluated_model_input,
+                    evaluated_model_output=evaluated_model_output,
+                    evaluated_model_gold_answer=evaluated_model_gold_answer,
+                    experiment_id=experiment_id,
+                    capture="all",
+                    dataset_id=dataset_id,
+                    dataset_sample_id=dataset_sample_id,
+                    tags=tags,
+                )
             )
-        )
+
+        response = await call()
         data = response.results[0]
         if data.status != "success":
             raise RemoteEvaluatorError(self.evaluator, self.profile_name, data.status, data.error_message)

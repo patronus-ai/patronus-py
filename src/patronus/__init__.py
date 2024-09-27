@@ -13,8 +13,10 @@ __all__ = [
     "DatasetDatum",
     "read_csv",
     "read_jsonl",
+    "retry",
 ]
 
+from ._retry import retry
 from ._dataset import DatasetDatum, Dataset, read_csv, read_jsonl
 from ._evaluators import evaluator, Evaluator, EvaluationResult, simple_evaluator
 from ._tasks import Task, task, simple_task, TaskResult, nop_task

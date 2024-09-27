@@ -38,7 +38,7 @@ class TaskResult:
     tags: dict[str, str] | None = None
 
 
-TaskFn = typing.Callable[..., TaskResultT | str]
+TaskFn = typing.Callable[..., TaskResultT | str | typing.Awaitable[TaskResultT | str]]
 
 
 class Task(abc.ABC):
@@ -86,6 +86,17 @@ class FunctionalTask(Task):
         self.fn = fn
         super().__init__(accepted_args)
 
+    async def task(self, **kwargs) -> TaskResultT | str:
+        return await self.fn(**kwargs)
+
+
+class SyncFunctionalTask(Task):
+    fn: TaskFn
+
+    def __init__(self, fn: TaskFn, accepted_args: set[str]):
+        self.fn = fn
+        super().__init__(accepted_args)
+
     def task(self, **kwargs) -> TaskResultT | str:
         return self.fn(**kwargs)
 
@@ -96,7 +107,10 @@ def task(fn: TaskFn) -> Task:
     for name in param_keys:
         if name not in TASK_ARGS:
             raise ValueError(f"{name!r} is not a valid task argument. Valid arguments are: {TASK_ARGS}")
-    return FunctionalTask(fn, set(param_keys))
+    if inspect.iscoroutinefunction(fn):
+        return FunctionalTask(fn, set(param_keys))
+    else:
+        return SyncFunctionalTask(fn, set(param_keys))
 
 
 def simple_task(lambda_fn: typing.Callable[[str], str]) -> Task:
