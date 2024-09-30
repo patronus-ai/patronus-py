@@ -245,10 +245,13 @@ class API(BaseAPIClient):
     async def evaluate(self, request: EvaluateRequest) -> EvaluateResponse:
         resp = await self.call("POST", "/v1/evaluate", body=request, response_cls=EvaluateResponse)
 
-        rpm_limit = int(resp.response.headers.get("x-ratelimit-rpm-limit-requests"))
-        rpm_remaining = int(resp.response.headers.get("x-ratelimit-rpm-remaining-requests"))
-        monthly_limit = int(resp.response.headers.get("x-ratelimit-monthly-limit-requests"))
-        monthly_remaining = int(resp.response.headers.get("x-ratelimit-monthly-remaining-requests"))
+        # We set defaults in case ratelimits headers were not returned. It may happen in case of an error response,
+        # or in rare cases like proxy stripping response headers.
+        # The defaults are selected to proceed and fallback to standard retry mechanism.
+        rpm_limit = try_int(resp.response.headers.get("x-ratelimit-rpm-limit-requests"), -1)
+        rpm_remaining = try_int(resp.response.headers.get("x-ratelimit-rpm-remaining-requests"), 1)
+        monthly_limit = try_int(resp.response.headers.get("x-ratelimit-monthly-limit-requests"), -1)
+        monthly_remaining = try_int(resp.response.headers.get("x-ratelimit-monthly-remaining-requests"), 1)
 
         if resp.response.is_error:
             if resp.response.status_code == 429 and monthly_remaining <= 0:
@@ -274,7 +277,12 @@ class API(BaseAPIClient):
                     wait_for_s=wait_for_s,
                     response=resp.response,
                 )
-            if resp.response.status_code < 500:
+            # Generally, we assume that any 4xx error (excluding 429) is a user error
+            # And repeated calls won't be successful.
+            # 429 is an exception, but it should be handled above,
+            # and if it's not then it should be handled as recoverable error.
+            # It may not be handled above in rare cases - e.g. header is stripped by a proxy.
+            if resp.response.status_code != 429 and resp.response.status_code < 500:
                 raise UnrecoverableAPIError(
                     f"Response with unexpected status code: {resp.response.status_code}",
                     response=resp.response,
@@ -339,3 +347,12 @@ class API(BaseAPIClient):
         resp = await self.call("GET", f"/v1/datasets/{dataset_id}/data", response_cls=ListDatasetData)
         resp.raise_for_status()
         return resp.data
+
+
+def try_int(v, default: int) -> int:
+    if not v:
+        return default
+    try:
+        return int(v)
+    except ValueError:
+        return default
