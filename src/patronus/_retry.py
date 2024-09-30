@@ -34,7 +34,7 @@ def retry(max_attempts=3, initial_delay=1, backoff_factor=2):
                 except RPMLimitError as err:
                     last_error = err
                     stack_trace = traceback.format_exc()
-                    log.debug(f"api_retry: Attempt {attempts} of ouf {max_attempts}: {err}")
+                    log.debug(f"api_retry: Attempt {attempts} out of {max_attempts}: {err}")
                     wait_for_s = err.wait_for_s
                     if not wait_for_s:
                         now = datetime.datetime.now()
@@ -46,7 +46,7 @@ def retry(max_attempts=3, initial_delay=1, backoff_factor=2):
                         log.debug(f"Attempting again in {wait_for_s}s.")
                         await asyncio.sleep(wait_for_s)
                 except Exception as err:
-                    log.debug(f"api_retry: Attempt {attempts} of ouf {max_attempts}: {err}")
+                    log.debug(f"api_retry: Attempt {attempts} out of {max_attempts}: {err}")
                     last_error = err
                     stack_trace = traceback.format_exc()
                     if attempts < max_attempts:
