@@ -6,10 +6,13 @@ import itertools
 import os
 import re
 import statistics
+import sys
 import time
+import traceback
 import typing
 import urllib.parse
 from concurrent.futures import ThreadPoolExecutor
+from sys import version_info
 
 from tqdm.asyncio import tqdm as tqdm_async
 
@@ -17,6 +20,7 @@ from ._config import config
 from ._dataset import DatasetDatum, Dataset
 from ._async_utils import run_until_complete
 from . import _api as api
+from ._retry import retry
 from ._client import Client
 from ._evaluators import Evaluator, EvaluatorOutput
 from ._tasks import Task, TaskResult, nop_task
@@ -24,9 +28,54 @@ from ._tasks import Task, TaskResult, nop_task
 log = logging.getLogger(__name__)
 
 
+class AsyncTQDMWithHandle(tqdm_async):
+    """
+    Workaround for accessing tqdm instance with async tasks.
+    Instead of calling gather which don't provide access to tqdm instance:
+    ```
+    tqdm_async.gather(features)
+    ```
+
+    Call prep_gather() follow by gather()
+    ```
+    tqdm_instance = AsyncTQDMWithHandle.pre_gather(features)
+    ...
+    tqdm_instance.gather()
+    ```
+
+    tqdm_instance can be used to clear and display progress bar using tqdm_instance.clear() and tqdm_instance.display()
+    methods.
+    """
+
+    async def gather(self):
+        def into_iter():
+            yield from self
+
+        res = [await f for f in into_iter()]
+        return [i for _, i in sorted(res)]
+
+    @classmethod
+    async def prep_gather(cls, *fs, loop=None, timeout=None, total=None, **tqdm_kwargs) -> typing.Self:
+        async def wrap_awaitable(i, f):
+            return i, await f
+
+        ifs = [wrap_awaitable(i, f) for i, f in enumerate(fs)]
+        return cls.prep_as_completed(ifs, loop=loop, timeout=timeout, total=total, **tqdm_kwargs)
+
+    @classmethod
+    def prep_as_completed(cls, fs, *, loop=None, timeout=None, total=None, **tqdm_kwargs):
+        if total is None:
+            total = len(fs)
+        kwargs = {}
+        if version_info[:2] < (3, 10):
+            kwargs["loop"] = loop
+        return cls(asyncio.as_completed(fs, timeout=timeout, **kwargs), total=total, **tqdm_kwargs)
+
+
 class DefaultReporter:
     # batch_size 10 is max batch size that Patronus AI API accepts in single call
     batch_size = 10
+    tqdm = None
 
     def __init__(self, client: Client, experiment_id: str, flush_interval: int = 10):
         self._client = client
@@ -40,6 +89,12 @@ class DefaultReporter:
         self.evaluators = set()
         self.remote_results: list[api.ExportEvaluationResult] = []
         self.outgoing_results: list[api.ExportEvaluationResult] = []
+
+        self.task_errors = []
+        self.evaluator_errors = []
+
+    def set_tqdm(self, tqdm: AsyncTQDMWithHandle):
+        self.tqdm = tqdm
 
     async def add(
         self,
@@ -107,13 +162,43 @@ class DefaultReporter:
             )
             self.last_export_slice = slice(self.last_export_slice.stop, upper_idx)
             results_to_export = self.outgoing_results[self.last_export_slice]
-            await self._client.api.export_evaluations(
-                api.ExportEvaluationRequest(
-                    evaluation_results=results_to_export,
+
+            @retry(max_attempts=5, initial_delay=2)
+            async def call():
+                await self._client.api.export_evaluations(
+                    api.ExportEvaluationRequest(
+                        evaluation_results=results_to_export,
+                    )
                 )
-            )
-            log.debug(f"Flushed {len(results_to_export)} results")
+                log.debug(f"Exported {len(results_to_export)} results")
+
+            await call()
         self.last_flush_ts = time.time()
+
+    async def task_error(self, err: Exception, datum, dataset_data_id):
+        stack_trace = getattr(err, "stack_trace", None)
+        if stack_trace is None:
+            stack_trace = traceback.format_exc()
+        self.print_error(stack_trace)
+        self.print_error(f"Task failed on sample {dataset_data_id!r} with the  following error: {err}")
+        self.task_errors.append((err, datum, dataset_data_id))
+
+    async def evaluator_error(self, err: Exception, datum, dataset_data_id, evaluator: str, profile_name: str):
+        stack_trace = getattr(err, "stack_trace", None)
+        if stack_trace is None:
+            stack_trace = traceback.format_exc()
+        self.print_error(stack_trace)
+        self.print_error(
+            f"Evaluator ({evaluator}, {profile_name}) failed on sample {dataset_data_id} with the following error: {err}"
+        )
+        self.evaluator_errors.append((err, datum, dataset_data_id, evaluator, profile_name))
+
+    def print_error(self, message: str):
+        if self.tqdm:
+            self.tqdm.clear()
+        print(message, file=sys.stderr)
+        if self.tqdm:
+            self.tqdm.display()
 
     def summary(self):
         for evaluator_name, profile_name in self.evaluators:
@@ -131,6 +216,13 @@ class DefaultReporter:
             passes = [int(x[1]) for x in scores_and_passes if x[1] is not None]
 
             print_summary(name, scores, passes, len(scores_and_passes), display_hist=True)
+
+        if self.task_errors or self.evaluator_errors:
+            print()
+        if self.task_errors:
+            print(f"Task failures: {len(self.task_errors)}")
+        if self.evaluator_errors:
+            print(f"Evaluators failures: {len(self.evaluator_errors)}")
 
 
 async def with_semaphore(sem, task):
@@ -187,12 +279,20 @@ class Experiment:
         self.reporter = None
 
     async def prepare(self):
+        if not isinstance(self.task, Task):
+            raise ValueError(f"task {self.task!r} must inherit from Task. Did you forget to use @task decorator?")
+
         print("Preparing dataset... ", end="")
         self.dataset = await self.fetch_dataset()
         print("DONE")
 
         print("Preparing evaluators... ", end="")
         self.evaluators = await self.prepare_evaluators()
+        for e in self.evaluators:
+            if not isinstance(e, Evaluator):
+                raise ValueError(
+                    f"evaluator {e!r} must inherit from Evaluator. Did you forget to use @evaluator decorator?"
+                )
         print("DONE")
 
         if not self._client:
@@ -251,7 +351,9 @@ class Experiment:
             task = self.run_task_and_eval(datum, dataset_id=self.dataset.dataset_id, dataset_sample_id=sample_id)
             tasks.append(asyncio.create_task(with_semaphore(self._sem, task)))
 
-        await tqdm_async.gather(*tasks, desc=title, unit="sample")
+        tqdm = await AsyncTQDMWithHandle.prep_gather(*tasks, desc=title, unit="sample")
+        self.reporter.set_tqdm(tqdm)
+        await tqdm.gather()
 
         await self.reporter.flush()
 
@@ -269,16 +371,20 @@ class Experiment:
         em_output = datum.get("evaluated_model_output")
         em_gold_answer = datum.get("evaluated_model_gold_answer")
 
-        task = await self.task.execute(
-            loop,
-            self._pool,
-            evaluated_model_system_prompt=em_system_prompt,
-            evaluated_model_retrieved_context=em_retrieved_context,
-            evaluated_model_input=em_input,
-            evaluated_model_output=em_output,
-            evaluated_model_gold_answer=em_gold_answer,
-            tags=self.tags,
-        )
+        try:
+            task = await self.task.execute(
+                loop,
+                self._pool,
+                evaluated_model_system_prompt=em_system_prompt,
+                evaluated_model_retrieved_context=em_retrieved_context,
+                evaluated_model_input=em_input,
+                evaluated_model_output=em_output,
+                evaluated_model_gold_answer=em_gold_answer,
+                tags=self.tags,
+            )
+        except Exception as e:
+            await self.reporter.task_error(e, datum, dataset_sample_id)
+            return
 
         outgoing_tags = self.tags
         if task.tags:
@@ -304,7 +410,11 @@ class Experiment:
         ]
 
         for evaluator, f in zip(self.evaluators, futures):
-            eval_result = await f
+            try:
+                eval_result = await f
+            except Exception as e:
+                await self.reporter.evaluator_error(e, datum, dataset_sample_id, evaluator.name, evaluator.profile_name)
+                continue
 
             await self.reporter.add(
                 evaluator.name,
@@ -435,7 +545,7 @@ def print_histogram(data, bin_count=5):
 def get_link(account_id: str, experiment_id: str) -> str:
     params = {"account_id": account_id, "experiment_id": experiment_id}
     ui_url = config().ui_url.rstrip("/")
-    return f"{ui_url}/monitoring?{urllib.parse.urlencode(params)}"
+    return f"{ui_url}/logs?{urllib.parse.urlencode(params)}"
 
 
 def generate_experiment_name(name: str) -> str:

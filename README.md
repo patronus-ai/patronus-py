@@ -18,54 +18,42 @@ making it easier for developers to benchmark model performance on various tasks.
 
 ## Documentation
 
-[//]: # (TODO Update documentation link once it's up and live)
-For detailed documentation, including API references and advanced usage, please visit our [documentation](https://docs.patronus.ai/).
+For detailed documentation, including API references and advanced usage, please visit our [documentation](https://docs.patronus.ai/docs/experimentation-framework).
 
 ## Installation
 
-To get started with Patronus, clone the repository and install the package using Poetry:
-
 ```shell
-git clone https://github.com/patronus-ai/patronus-py
-cd patronus-py
-poetry install
+pip install patronus
 ```
 
-## Usage
+## Quickstart
 
-### Prerequisites
+```python
+import os
+from patronus import Client, task, evaluator
 
-Before running any examples, make sure you have the following API keys:
+client = Client(
+    # This is the default and can be omitted
+    api_key=os.environ.get("PATRONUSAI_API_KEY"),
+)
 
-- **Patronus AI API Key:** Required for all examples.
-- **OpenAI API Key:** Required for some examples that utilize OpenAI's services.
+@task
+def hello_world_task(evaluated_model_input: str) -> str:
+    return f"{evaluated_model_input} World"
 
-You can set these keys as environment variables:
+@evaluator
+def exact_match(evaluated_model_output: str, evaluated_model_gold_answer: str) -> bool:
+    return evaluated_model_output == evaluated_model_gold_answer
 
-```shell
-export PATRONUSAI_API_KEY=<YOUR_PATRONUSAI_API_KEY>
-export OPENAI_API_KEY=<YOUR_OPENAI_API_KEY>
-```
-
-### Running Examples
-
-Patronus comes with several example scripts to help you understand how to use the library. These examples can be found in the [examples](examples) directory.
-
-**Note:** Some examples require additional dependencies. For instance:
-- If you are using an evaluator that depends on the `Levenshtein` scoring method, you need to install the `Levenshtein` package:
-
-  ```shell
-  pip install Levenshtein
-  ```
-
-- If you are using examples that integrate with OpenAI, you need to install the `openai` package:
-
-  ```shell
-  pip install openai
-  ```
-
-You can then run an example script like this:
-
-```shell
-python examples/ex_0_hello_world.py
+client.experiment(
+    "Tutorial Project",
+    data=[
+        {
+            "evaluated_model_input": "Hello",
+            "evaluated_model_gold_answer": "Hello World",
+        },
+    ],
+    task=hello_world_task,
+    evaluators=[exact_match],
+)
 ```

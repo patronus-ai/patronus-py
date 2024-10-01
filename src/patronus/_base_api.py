@@ -7,15 +7,52 @@ from functools import lru_cache
 import httpx
 import pydantic
 
-R = typing.TypeVar("R", bound=pydantic.BaseModel)
 
 log = logging.getLogger(__name__)
+
+
+class APIError(Exception):
+    response: httpx.Response
+
+    def __init__(self, message: str | None = None, response: httpx.Response | None = None):
+        self.response = response
+        super().__init__(message)
+
+
+class UnrecoverableAPIError(APIError):
+    def __init__(self, message: str, response: httpx.Response):
+        message = f"{self.__class__.__name__}: {message}: response content: {response.text}"
+        super().__init__(message, response)
+
+
+class RPMLimitError(APIError):
+    def __init__(self, limit: int, wait_for_s: float | None, response: httpx.Response):
+        self.limit = limit
+        self.wait_for_s = wait_for_s
+        super().__init__(
+            f"RPMLimitError: Request per minute limit hit (quota limit: {self.limit})",
+            response=response,
+        )
+
+
+class RetryError(Exception):
+    stack_trace: str
+
+    def __init__(self, attempt: int, out_of: int, origin: Exception, stack_trace: str):
+        self.stack_trace = stack_trace
+        super().__init__(f"RetryError: execution failed after {attempt}/{out_of} attempts: {origin}")
+
+
+R = typing.TypeVar("R", bound=pydantic.BaseModel)
 
 
 @dataclasses.dataclass
 class CallResponse(typing.Generic[R]):
     data: R | None
     response: httpx.Response
+
+    def raise_for_status(self):
+        self.response.raise_for_status()
 
 
 class BaseAPIClient:
@@ -54,12 +91,8 @@ class BaseAPIClient:
         )
         log.debug(f"Received HTTP response {url!r} {response.status_code}")
 
-        if response.is_error:
-            log.error(f"{url!r} {response.status_code}: {response.text}")
-        response.raise_for_status()
-
         data = None
-        if response_cls is not None:
+        if response.is_success and response_cls is not None:
             data = response_cls.model_validate_json(response.content)
 
         return CallResponse(
