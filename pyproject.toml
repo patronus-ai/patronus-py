@@ -7,6 +7,9 @@ license = "MIT"
 readme = "README.md"
 packages = [{include = "patronus", from="src"}]
 
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.3"
+
 [project.urls]
 Homepage = "https://www.patronus.ai"
 Documentation = "https://docs.patronus.ai"
@@ -19,6 +22,8 @@ pydantic = "^2.8.2"
 tqdm = "^4.66.5"
 pydantic-settings = "^2.4.0"
 pyyaml = "^6.0.2"
+pandas = ">=2.0.0"
+typing-extensions = "^4.12.2"
 
 
 [build-system]

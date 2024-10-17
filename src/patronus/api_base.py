@@ -92,6 +92,8 @@ class BaseAPIClient:
         log.debug(f"Received HTTP response {url!r} {response.status_code}")
 
         data = None
+        if response.is_error:
+            log.debug(f"Response with error: content: {response.text}")
         if response.is_success and response_cls is not None:
             data = response_cls.model_validate_json(response.content)
 
