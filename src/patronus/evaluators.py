@@ -4,6 +4,8 @@ import abc
 import time
 import typing
 from concurrent.futures import ThreadPoolExecutor
+from typing import Optional, Union
+
 import typing_extensions
 
 from . import types, api_types
@@ -36,16 +38,16 @@ class EvaluatorError(Exception):
 
 class Evaluator(abc.ABC):
     name: str = ""
-    profile_name: str | None = None
+    profile_name: Optional[str] = None
     accepted_args: set[str]
     remote_capture = False
 
     def __init__(
         self,
-        accepted_args: set[str] | None = None,
+        accepted_args: Optional[set[str]] = None,
         *,
-        evaluator_name: str | None = None,
-        profile_name: str | None = None,
+        evaluator_name: Optional[str] = None,
+        profile_name: Optional[str] = None,
     ):
         self.name = self.name or evaluator_name or self.__class__.__name__
         self.profile_name = self.profile_name or profile_name
@@ -88,9 +90,9 @@ class Evaluator(abc.ABC):
         tags: dict[str, str],
         parent: _EvalParent,
         experiment_id: str,
-        dataset_id: str | None = None,
-        dataset_sample_id: int | None = None,
-    ) -> types.EvaluatorOutput | None:
+        dataset_id: Optional[str] = None,
+        dataset_sample_id: Optional[int] = None,
+    ) -> Optional[types.EvaluatorOutput]:
         kwargs = {
             "experiment_id": experiment_id,
             "row": row,
@@ -139,7 +141,7 @@ class Evaluator(abc.ABC):
 class SyncFunctionalEvaluator(Evaluator):
     fn: EvalF
 
-    def __init__(self, *, evaluator_name: str, profile_name: str | None = None, fn: EvalF, accepted_args: set[str]):
+    def __init__(self, *, evaluator_name: str, profile_name: Optional[str] = None, fn: EvalF, accepted_args: set[str]):
         self.fn = fn
         super().__init__(accepted_args, evaluator_name=evaluator_name, profile_name=profile_name)
 
@@ -150,7 +152,7 @@ class SyncFunctionalEvaluator(Evaluator):
 class FunctionalEvaluator(Evaluator):
     fn: EvalF
 
-    def __init__(self, *, evaluator_name: str, profile_name: str | None = None, fn: EvalF, accepted_args: set[str]):
+    def __init__(self, *, evaluator_name: str, profile_name: Optional[str] = None, fn: EvalF, accepted_args: set[str]):
         self.fn = fn
         super().__init__(accepted_args, evaluator_name=evaluator_name, profile_name=profile_name)
 
@@ -160,7 +162,7 @@ class FunctionalEvaluator(Evaluator):
 
 def evaluator(
     func=None, *, name: str = None, profile_name: str = None
-) -> Evaluator | typing.Callable[[...], Evaluator]:
+) -> Union[Evaluator, typing.Callable[[...], Evaluator]]:
     def decorator(fn: EvalF) -> Evaluator:
         sig = inspect.signature(fn)
         param_keys = sig.parameters.keys()
@@ -187,7 +189,7 @@ def evaluator(
 @typing_extensions.deprecated(
     "'simple_evaluator' is deprecated and will be removed in future versions. Use '@evaluator' decorator instead."
 )
-def simple_evaluator(fn: typing.Callable[[str, str], bool], name: str | None = None) -> FunctionalEvaluator:
+def simple_evaluator(fn: typing.Callable[[str, str], bool], name: Optional[str] = None) -> FunctionalEvaluator:
     """
     Simple evaluator allows to wrap functions boolean evaluation:
 

@@ -3,6 +3,7 @@ import asyncio
 import inspect
 import typing
 from concurrent.futures import ThreadPoolExecutor
+from typing import Union, Optional
 
 from . import types
 from .async_utils import run_as_coro
@@ -23,8 +24,8 @@ TASK_ARGS = {
     "parent",
 }
 
-TaskRetT = types.TaskResult | str
-TaskFn = typing.Callable[..., TaskRetT | typing.Awaitable[TaskRetT]]
+TaskRetT = Union[types.TaskResult, str]
+TaskFn = typing.Callable[..., Union[TaskRetT, typing.Awaitable[TaskRetT]]]
 
 
 class Task(abc.ABC):
@@ -44,7 +45,7 @@ class Task(abc.ABC):
         row: Row,
         tags: dict[str, str],
         parent: _EvalParent,
-    ) -> types.TaskResult | None:
+    ) -> Optional[types.TaskResult]:
         kwargs = {
             "row": row,
             "evaluated_model_system_prompt": row.evaluated_model_system_prompt,
@@ -72,13 +73,13 @@ class Task(abc.ABC):
         raise ValueError(f"Task {self.name!r} returned an object of unexpected type {type(result)!r}")
 
     @abc.abstractmethod
-    def task(self, **kwargs) -> TaskRetT | typing.Awaitable[TaskRetT]: ...
+    def task(self, **kwargs) -> Union[TaskRetT, typing.Awaitable[TaskRetT]]: ...
 
 
 class FunctionalTask(Task):
     fn: TaskFn
 
-    def __init__(self, *, name: str | None = None, fn: TaskFn, accepted_args: set[str]):
+    def __init__(self, *, name: Optional[str] = None, fn: TaskFn, accepted_args: set[str]):
         self.fn = fn
         super().__init__(name=name or fn.__name__, accepted_args=accepted_args)
 
@@ -89,7 +90,7 @@ class FunctionalTask(Task):
 class SyncFunctionalTask(Task):
     fn: TaskFn
 
-    def __init__(self, *, name: str | None = None, fn: TaskFn, accepted_args: set[str]):
+    def __init__(self, *, name: Optional[str] = None, fn: TaskFn, accepted_args: set[str]):
         self.fn = fn
         super().__init__(name=name or fn.__name__, accepted_args=accepted_args)
 
@@ -97,7 +98,7 @@ class SyncFunctionalTask(Task):
         return self.fn(**kwargs)
 
 
-def task(func=None, *, name: str | None = None) -> Task | typing.Callable[[...], Task]:
+def task(func=None, *, name: Optional[str] = None) -> Union[Task, typing.Callable[[...], Task]]:
     def decorator(fn: TaskFn) -> Task:
         sig = inspect.signature(fn)
         param_keys = sig.parameters.keys()

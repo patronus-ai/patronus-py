@@ -13,9 +13,11 @@ import typing
 import urllib.parse
 from concurrent.futures import ThreadPoolExecutor
 from sys import version_info
+from typing import Optional, Union
 
 import pandas as pd
 from tqdm.asyncio import tqdm as tqdm_async
+import typing_extensions as te
 
 from . import api_types
 from .config import config
@@ -63,7 +65,7 @@ class AsyncTQDMWithHandle(tqdm_async):
         return [i for _, i in sorted(res)]
 
     @classmethod
-    async def prep_gather(cls, *fs, loop=None, timeout=None, total=None, **tqdm_kwargs) -> typing.Self:
+    async def prep_gather(cls, *fs, loop=None, timeout=None, total=None, **tqdm_kwargs) -> te.Self:
         async def wrap_awaitable(i, f):
             return i, await f
 
@@ -95,10 +97,10 @@ class ReportedEvaluationResult(typing.NamedTuple):
     sid: int
     link_idx: int
     evaluator_id: str
-    profile_name: str | None
+    profile_name: Optional[str]
     evaluation_result: api_types.ExportEvaluationResult
-    evaluation_metadata: dict[str, typing.Any] | None
-    evaluation_explanation: str | None
+    evaluation_metadata: Optional[dict[str, typing.Any]]
+    evaluation_explanation: Optional[str]
 
 
 class Reporter:
@@ -135,7 +137,7 @@ class Reporter:
     async def add_evaluation_result(
         self,
         evaluator_name: str,
-        profile_name: str | None,
+        profile_name: Optional[str],
         link_idx: int,
         row: Row,
         task_result: types.TaskResult,
@@ -333,37 +335,35 @@ async def with_semaphore(sem, task):
 
 class Experiment:
     project_name: str
-    project_id: str | None
-    experiment_id: str | None
+    project_id: Optional[str]
+    experiment_id: Optional[str]
     # TODO handle with API?
     experiment_name: str
-    whoami: api_types.WhoAmIResponse | None
+    whoami: Optional[api_types.WhoAmIResponse]
 
     __raw_dataset: typing.Any
-    dataset: Dataset | None
+    dataset: Optional[Dataset]
     chain: list[EvalLink]
-    # task: Task
-    # evaluators: list[Evaluator] | None
 
     tags: dict[str, str]
 
-    reporter: Reporter | None
+    reporter: Optional[Reporter]
 
-    _client: Client | None
+    _client: Optional[Client]
 
     _pool: ThreadPoolExecutor
     _sem: asyncio.Semaphore
 
     def __init__(
         self,
-        client: Client | None,
-        project_name: str | None,
+        client: Optional[Client],
+        project_name: Optional[str],
         dataset,  # TODO type hint
         chain: list[EvalLink],
-        tags: dict[str, str] | None,
+        tags: Optional[dict[str, str]],
         max_concurrency: int,
         experiment_name: str = "",
-        experiment_id: str | None = None,
+        experiment_id: Optional[str] = None,
         **kwargs,
     ):
         self._client = client
@@ -473,7 +473,7 @@ class Experiment:
         print()
         print(get_link(self.whoami.caller.api_key.account.id, self.experiment_id))
 
-    async def run_task_and_eval(self, row: Row, dataset_id: str | None, dataset_sample_id: int):
+    async def run_task_and_eval(self, row: Row, dataset_id: Optional[str], dataset_sample_id: int):
         loop = asyncio.get_running_loop()
 
         parent = types._EvalParent(task=None, evals=None, parent=None)
@@ -527,7 +527,7 @@ class Experiment:
 
             for evaluator, f in zip(evaluators, futures):
                 try:
-                    eval_result: types.EvaluatorOutput | None = await f
+                    eval_result: Optional[types.EvaluatorOutput] = await f
                 except Exception as e:
                     await self.reporter.evaluator_error(
                         e, row, dataset_sample_id, evaluator.name, evaluator.profile_name
@@ -566,7 +566,9 @@ class Experiment:
         df = df.join(df_dataset, on="sid", how="left")
         return df
 
-    def to_dataset(self, *, dataset_id: str | None = None, rename_columns: dict[str, str] | None = None) -> Dataset:
+    def to_dataset(
+        self, *, dataset_id: Optional[str] = None, rename_columns: Optional[dict[str, str]] = None
+    ) -> Dataset:
         df = self.to_dataframe()
         if rename_columns:
             col_to_drop = [col for col in rename_columns.keys() if col in df.columns]
@@ -574,25 +576,25 @@ class Experiment:
             df.rename(columns=rename_columns, inplace=True)
         return Dataset.from_dataframe(df, dataset_id=dataset_id)
 
-    def to_csv(self, path_or_buf, sep: str = ",", **kwargs) -> str | None:
+    def to_csv(self, path_or_buf, sep: str = ",", **kwargs) -> Optional[str]:
         df = self.to_dataframe()
         return df.to_csv(path_or_buf, sep, **kwargs)
 
 
 def experiment(
-    client: Client | None,
-    project_name: str | None,
+    client: Optional[Client],
+    project_name: Optional[str],
     *,
     dataset,  # TODO type hint
     task: Task = nop_task,
-    evaluators: list[Evaluator] | None = None,
+    evaluators: Optional[list[Evaluator]] = None,
     #
-    chain: list[EvalLink] | None = None,
-    tags: dict[str, str] | None = None,
+    chain: Optional[list[EvalLink]] = None,
+    tags: Optional[dict[str, str]] = None,
     experiment_name: str = "",
     max_concurrency: int = 10,
     **kwargs,
-) -> typing.Awaitable[Experiment] | Experiment:
+) -> Union[typing.Awaitable[Experiment], Experiment]:
     if chain:
         assert (
             task is nop_task and not evaluators

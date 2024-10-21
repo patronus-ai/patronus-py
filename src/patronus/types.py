@@ -1,3 +1,5 @@
+from typing import Optional, Union
+
 import pydantic
 import typing
 
@@ -7,19 +9,19 @@ from .api_types import EvaluateResult
 
 class TaskResult(pydantic.BaseModel):
     evaluated_model_output: str
-    metadata: dict[str, typing.Any] | None = None
-    tags: dict[str, str] | None = None
+    metadata: Optional[dict[str, typing.Any]] = None
+    tags: Optional[dict[str, str]] = None
 
 
 class EvaluationResult(pydantic.BaseModel):
-    pass_: bool | None = None
-    score_raw: float | None = None
-    metadata: dict[str, typing.Any] | None = None
-    tags: dict[str, str] | None = None
+    pass_: Optional[bool] = None
+    score_raw: Optional[float] = None
+    metadata: Optional[dict[str, typing.Any]] = None
+    tags: Optional[dict[str, str]] = None
 
 
 class EvaluatorOutput(pydantic.BaseModel):
-    result: EvaluationResult | api_types.EvaluationResult
+    result: Union[EvaluationResult, api_types.EvaluationResult]
     duration: float
 
 
@@ -51,11 +53,11 @@ class EvalsMap(dict):
 class _EvalParent(pydantic.BaseModel):
     model_config = pydantic.ConfigDict(arbitrary_types_allowed=True)
 
-    task: TaskResult | None
+    task: Optional[TaskResult]
     evals: typing.Optional[EvalsMap]
     parent: typing.Optional["_EvalParent"]
 
-    def find_eval_result(self, evaluator_or_name) -> api_types.EvaluationResult | EvaluationResult | None:
+    def find_eval_result(self, evaluator_or_name) -> Union[api_types.EvaluationResult, EvaluationResult, None]:
         if not self.evals and self.parent:
             return self.parent.find_eval_result(evaluator_or_name)
         if evaluator_or_name in self.evals:

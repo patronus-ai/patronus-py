@@ -1,6 +1,9 @@
 import asyncio
 import logging
 import typing
+from typing import Optional
+
+import typing_extensions as te
 
 from . import api_types
 from . import evaluators
@@ -28,7 +31,7 @@ class RemoteEvaluator(evaluators.Evaluator):
         profile_name: str,
         *,
         explain_strategy: typing.Literal["never", "on-fail", "on-success", "always"] = "always",
-        profile_config: dict[str, typing.Any] | None = None,
+        profile_config: Optional[dict[str, typing.Any]] = None,
         allow_update: bool = False,
         # Maximum number of attempts in case when evaluation throws an exception.
         max_attempts: int = 3,
@@ -54,14 +57,14 @@ class RemoteEvaluator(evaluators.Evaluator):
         self.name = evaluator
         self.evaluator = evaluator
 
-    async def load(self) -> typing.Self:
+    async def load(self) -> te.Self:
         async with self.__lock:
             if self.__initialized:
                 return
 
             evs = await self.api.list_evaluators()
 
-            ev: api_types.Evaluator | None = None
+            ev: Optional[api_types.Evaluator] = None
             for e in evs:
                 if e.id == self.evaluator:
                     ev = e
@@ -161,16 +164,16 @@ class RemoteEvaluator(evaluators.Evaluator):
     async def evaluate(
         self,
         *,
-        evaluated_model_system_prompt: str | None = None,
-        evaluated_model_retrieved_context: list[str] | None = None,
-        evaluated_model_input: str | None = None,
-        evaluated_model_output: str | None = None,
-        evaluated_model_gold_answer: str | None = None,
-        app: str | None = None,
-        experiment_id: str | None = None,
-        tags: dict[str, str] | None = None,
-        dataset_id: str | None = None,
-        dataset_sample_id: int | None = None,
+        evaluated_model_system_prompt: Optional[str] = None,
+        evaluated_model_retrieved_context: Optional[list[str]] = None,
+        evaluated_model_input: Optional[str] = None,
+        evaluated_model_output: Optional[str] = None,
+        evaluated_model_gold_answer: Optional[str] = None,
+        app: Optional[str] = None,
+        experiment_id: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
+        dataset_id: Optional[str] = None,
+        dataset_sample_id: Optional[int] = None,
         **kwargs,
     ) -> api_types.EvaluationResult:
         # Make sure that evaluator is loaded

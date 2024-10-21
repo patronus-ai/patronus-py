@@ -1,5 +1,6 @@
 import datetime
 import logging
+from typing import Optional
 
 from .api_base import BaseAPIClient, UnrecoverableAPIError, APIError, RPMLimitError
 from . import api_types
@@ -28,7 +29,7 @@ class API(BaseAPIClient):
         resp.raise_for_status()
         return resp.data.experiment
 
-    async def get_experiment(self, experiment_id: str) -> api_types.Experiment | None:
+    async def get_experiment(self, experiment_id: str) -> Optional[api_types.Experiment]:
         resp = await self.call(
             "GET",
             f"/v1/experiments/{experiment_id}",

@@ -3,6 +3,7 @@ import logging
 import platform
 import typing
 from functools import lru_cache
+from typing import Optional
 
 import httpx
 import pydantic
@@ -14,7 +15,7 @@ log = logging.getLogger(__name__)
 class APIError(Exception):
     response: httpx.Response
 
-    def __init__(self, message: str | None = None, response: httpx.Response | None = None):
+    def __init__(self, message: Optional[str] = None, response: Optional[httpx.Response] = None):
         self.response = response
         super().__init__(message)
 
@@ -26,7 +27,7 @@ class UnrecoverableAPIError(APIError):
 
 
 class RPMLimitError(APIError):
-    def __init__(self, limit: int, wait_for_s: float | None, response: httpx.Response):
+    def __init__(self, limit: int, wait_for_s: Optional[float], response: httpx.Response):
         self.limit = limit
         self.wait_for_s = wait_for_s
         super().__init__(
@@ -48,7 +49,7 @@ R = typing.TypeVar("R", bound=pydantic.BaseModel)
 
 @dataclasses.dataclass
 class CallResponse(typing.Generic[R]):
-    data: R | None
+    data: Optional[R]
     response: httpx.Response
 
     def raise_for_status(self):
@@ -72,9 +73,9 @@ class BaseAPIClient:
         method: str,
         path: str,
         *,
-        params: dict[str, typing.Any] | None = None,
-        body: pydantic.BaseModel | None = None,
-        response_cls: type[R] | None,
+        params: Optional[dict[str, typing.Any]] = None,
+        body: Optional[pydantic.BaseModel] = None,
+        response_cls: Optional[type[R]],
     ) -> CallResponse[R]:
         content = None
         if body is not None:

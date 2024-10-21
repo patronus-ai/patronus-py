@@ -4,20 +4,23 @@ import pathlib
 import re
 import typing
 import json
+from typing import Optional, Union
 
 import pandas as pd
 
+import typing_extensions as te
 
-class Fields(typing.TypedDict):
-    sid: typing.NotRequired[int | None]
-    evaluated_model_system_prompt: typing.NotRequired[str | None]
-    evaluated_model_retrieved_context: typing.NotRequired[str | list[str] | None]
-    evaluated_model_input: typing.NotRequired[str | None]
-    evaluated_model_gold_answer: typing.NotRequired[str | None]
-    evaluated_model_name: typing.NotRequired[str | None]
-    evaluated_model_provider: typing.NotRequired[str | None]
-    evaluated_model_selected_model: typing.NotRequired[str | None]
-    evaluated_model_params: typing.NotRequired[dict[str, typing.Any] | None]
+
+class Fields(typing.TypedDict, total=False):
+    sid: te.NotRequired[Optional[int]]
+    evaluated_model_system_prompt: te.NotRequired[Optional[str]]
+    evaluated_model_retrieved_context: te.NotRequired[Union[str, list[str], None]]
+    evaluated_model_input: te.NotRequired[Optional[str]]
+    evaluated_model_gold_answer: te.NotRequired[Optional[str]]
+    evaluated_model_name: te.NotRequired[Optional[str]]
+    evaluated_model_provider: te.NotRequired[Optional[str]]
+    evaluated_model_selected_model: te.NotRequired[Optional[str]]
+    evaluated_model_params: te.NotRequired[Optional[dict[str, typing.Any]]]
 
 
 @dataclasses.dataclass
@@ -32,7 +35,7 @@ class Row:
         return self._row
 
     @property
-    def dataset_id(self) -> str | None:
+    def dataset_id(self) -> Optional[str]:
         return self._row.get("dataset_id")
 
     @property
@@ -40,13 +43,13 @@ class Row:
         return self._row.sid
 
     @property
-    def evaluated_model_system_prompt(self) -> str | None:
+    def evaluated_model_system_prompt(self) -> Optional[str]:
         if "evaluated_model_system_prompt" in self._row.index:
             return self._row.evaluated_model_system_prompt
         return None
 
     @property
-    def evaluated_model_retrieved_context(self) -> list[str] | None:
+    def evaluated_model_retrieved_context(self) -> Optional[list[str]]:
         ctx = None
         if "evaluated_model_retrieved_context" in self._row.index:
             ctx = self._row.evaluated_model_retrieved_context
@@ -58,19 +61,19 @@ class Row:
         return ctx
 
     @property
-    def evaluated_model_input(self) -> str | None:
+    def evaluated_model_input(self) -> Optional[str]:
         if "evaluated_model_input" in self._row.index:
             return self._row.evaluated_model_input
         return None
 
     @property
-    def evaluated_model_output(self) -> str | None:
+    def evaluated_model_output(self) -> Optional[str]:
         if "evaluated_model_output" in self._row.index:
             return self._row.evaluated_model_output
         return None
 
     @property
-    def evaluated_model_gold_answer(self) -> str | None:
+    def evaluated_model_gold_answer(self) -> Optional[str]:
         if "evaluated_model_gold_answer" in self._row.index:
             return self._row.evaluated_model_gold_answer
         return None
@@ -78,7 +81,7 @@ class Row:
 
 @dataclasses.dataclass
 class Dataset:
-    dataset_id: str | None
+    dataset_id: Optional[str]
     df: pd.DataFrame
 
     def iterrows(self) -> typing.Iterable[Row]:
@@ -86,14 +89,16 @@ class Dataset:
             yield Row(row)
 
     @classmethod
-    def from_dataframe(cls, df: pd.DataFrame, dataset_id: str | None = None) -> typing.Self:
+    def from_dataframe(cls, df: pd.DataFrame, dataset_id: Optional[str] = None) -> te.Self:
         df = cls.__sanitize_df(df, dataset_id)
         return cls(df=df, dataset_id=dataset_id)
 
     @classmethod
     def from_records(
-        cls, records: typing.Iterable[Fields] | typing.Iterable[dict[str, typing.Any]], dataset_id: str | None = None
-    ) -> typing.Self:
+        cls,
+        records: Union[typing.Iterable[Fields], typing.Iterable[dict[str, typing.Any]]],
+        dataset_id: Optional[str] = None,
+    ) -> te.Self:
         df = pd.DataFrame.from_records(records)
         df = cls.__sanitize_df(df, dataset_id)
         return cls(df=df, dataset_id=dataset_id)
@@ -120,7 +125,7 @@ class Dataset:
             except ValueError:
                 raise ValueError("'sid' column contains non-integer values that cannot be converted to integers.")
 
-        def normalize_context(value) -> list[str] | None:
+        def normalize_context(value) -> Optional[list[str]]:
             if value is None:
                 return None
 
@@ -170,9 +175,9 @@ class Dataset:
 
 
 def read_csv(
-    filename_or_buffer: str | pathlib.Path | typing.IO[typing.AnyStr],
+    filename_or_buffer: Union[str, pathlib.Path, typing.IO[typing.AnyStr]],
     *,
-    dataset_id: str | None = None,
+    dataset_id: Optional[str] = None,
     sid_field: str = "sid",
     evaluated_model_system_prompt_field: str = "evaluated_model_system_prompt",
     evaluated_model_retrieved_context_field: str = "evaluated_model_retrieved_context",
@@ -198,7 +203,7 @@ def read_csv(
 def read_jsonl(
     filename_or_buffer,
     *,
-    dataset_id: str | None = None,
+    dataset_id: Optional[str] = None,
     sid_field: str = "sid",
     evaluated_model_system_prompt_field: str = "evaluated_model_system_prompt",
     evaluated_model_input_field: str = "evaluated_model_input",
@@ -226,7 +231,7 @@ def _read_dataframe(
     reader_function,
     filename_or_buffer,
     *,
-    dataset_id: str | None = None,
+    dataset_id: Optional[str] = None,
     sid_field: str = "sid",
     evaluated_model_system_prompt_field: str = "evaluated_model_system_prompt",
     evaluated_model_retrieved_context_field: str = "evaluated_model_retrieved_context",
@@ -254,7 +259,7 @@ def _read_dataframe(
     return Dataset.from_dataframe(df, dataset_id=dataset_id)
 
 
-def _sanitize_dataset_id(dataset_id: str) -> str | None:
+def _sanitize_dataset_id(dataset_id: str) -> Optional[str]:
     if not dataset_id:
         return None
     dataset_id = re.sub(r"[^a-zA-Z0-9\-_]", "-", dataset_id.strip())
@@ -267,7 +272,7 @@ class DatasetLoader:
     def __init__(self, loader: typing.Awaitable[Dataset]):
         self.__lock = asyncio.Lock()
         self.__loader = loader
-        self.dataset: Dataset | None = None
+        self.dataset: Optional[Dataset] = None
 
     async def load(self) -> Dataset:
         async with self.__lock:

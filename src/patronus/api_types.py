@@ -1,5 +1,6 @@
 import datetime
 import typing
+from typing import Optional, Union
 
 import pydantic
 
@@ -25,8 +26,8 @@ class WhoAmIResponse(pydantic.BaseModel):
 class Evaluator(pydantic.BaseModel):
     id: str
     name: str
-    evaluator_family: str | None
-    aliases: list[str] | None
+    evaluator_family: Optional[str]
+    aliases: Optional[list[str]]
 
 
 class ListEvaluatorsResponse(pydantic.BaseModel):
@@ -67,7 +68,7 @@ class GetExperimentResponse(pydantic.BaseModel):
 
 class EvaluateEvaluator(pydantic.BaseModel):
     evaluator: str
-    profile_name: str | None = None
+    profile_name: Optional[str] = None
     explain_strategy: str = "always"
 
 
@@ -77,56 +78,56 @@ class EvaluateRequest(pydantic.BaseModel):
     # One of the reasons is that we support "smart" retires on failures,
     # and it wouldn't be possible with batch eval.
     evaluators: list[EvaluateEvaluator] = pydantic.Field(min_length=1, max_length=1)
-    evaluated_model_system_prompt: str | None = None
-    evaluated_model_retrieved_context: list[str] | None = None
-    evaluated_model_input: str | None = None
-    evaluated_model_output: str | None = None
-    evaluated_model_gold_answer: str | None = None
-    app: str | None = None
-    experiment_id: str | None = None
+    evaluated_model_system_prompt: Optional[str] = None
+    evaluated_model_retrieved_context: Optional[list[str]] = None
+    evaluated_model_input: Optional[str] = None
+    evaluated_model_output: Optional[str] = None
+    evaluated_model_gold_answer: Optional[str] = None
+    app: Optional[str] = None
+    experiment_id: Optional[str] = None
     capture: str = "all"
-    dataset_id: str | None = None
-    dataset_sample_id: int | None = None
-    tags: dict[str, str] | None = None
+    dataset_id: Optional[str] = None
+    dataset_sample_id: Optional[int] = None
+    tags: Optional[dict[str, str]] = None
 
 
 class EvaluationResultAdditionalInfo(pydantic.BaseModel):
-    positions: list | None
-    extra: dict | None
-    confidence_interval: dict | None
+    positions: Optional[list]
+    extra: Optional[dict]
+    confidence_interval: Optional[dict]
 
 
 class EvaluationResult(pydantic.BaseModel):
     id: str
-    project_id: str | None
-    app: str | None
-    experiment_id: str | None
+    project_id: Optional[str]
+    app: Optional[str]
+    experiment_id: Optional[str]
     created_at: pydantic.AwareDatetime
     evaluator_id: str
-    evaluated_model_system_prompt: str | None
-    evaluated_model_retrieved_context: list[str] | None
-    evaluated_model_input: str | None
-    evaluated_model_output: str | None
-    evaluated_model_gold_answer: str | None
-    pass_: bool | None = pydantic.Field(alias="pass")
-    score_raw: float | None
+    evaluated_model_system_prompt: Optional[str]
+    evaluated_model_retrieved_context: Optional[list[str]]
+    evaluated_model_input: Optional[str]
+    evaluated_model_output: Optional[str]
+    evaluated_model_gold_answer: Optional[str]
+    pass_: Optional[bool] = pydantic.Field(alias="pass")
+    score_raw: Optional[float]
     additional_info: EvaluationResultAdditionalInfo
-    explanation: str | None
-    evaluation_duration: datetime.timedelta | None
-    explanation_duration: datetime.timedelta | None
+    explanation: Optional[str]
+    evaluation_duration: Optional[datetime.timedelta]
+    explanation_duration: Optional[datetime.timedelta]
     evaluator_family: str
     evaluator_profile_public_id: str
-    dataset_id: str | None
-    dataset_sample_id: int | None
-    tags: dict[str, str] | None
+    dataset_id: Optional[str]
+    dataset_sample_id: Optional[int]
+    tags: Optional[dict[str, str]]
 
 
 class EvaluateResult(pydantic.BaseModel):
     evaluator_id: str
     profile_name: str
     status: str
-    error_message: str | None
-    evaluation_result: EvaluationResult | None
+    error_message: Optional[str]
+    evaluation_result: Optional[EvaluationResult]
 
 
 class EvaluateResponse(pydantic.BaseModel):
@@ -136,22 +137,22 @@ class EvaluateResponse(pydantic.BaseModel):
 class ExportEvaluationResult(pydantic.BaseModel):
     experiment_id: str
     evaluator_id: str
-    profile_name: str | None = None
-    evaluated_model_system_prompt: str | None = None
-    evaluated_model_retrieved_context: list[str] | None = None
-    evaluated_model_input: str | None = None
-    evaluated_model_output: str | None = None
-    evaluated_model_gold_answer: str | None = None
+    profile_name: Optional[str] = None
+    evaluated_model_system_prompt: Optional[str] = None
+    evaluated_model_retrieved_context: Optional[list[str]] = None
+    evaluated_model_input: Optional[str] = None
+    evaluated_model_output: Optional[str] = None
+    evaluated_model_gold_answer: Optional[str] = None
     pass_: bool = pydantic.Field(alias="pass_", serialization_alias="pass")
-    score_raw: float | None
-    evaluation_duration: datetime.timedelta | None = None
-    evaluated_model_name: str | None = None
-    evaluated_model_provider: str | None = None
-    evaluated_model_params: dict[str, str | int | float] | None = None
-    evaluated_model_selected_model: str | None = None
-    dataset_id: str | None = None
-    dataset_sample_id: int | None = None
-    tags: dict[str, str] | None = None
+    score_raw: Optional[float]
+    evaluation_duration: Optional[datetime.timedelta] = None
+    evaluated_model_name: Optional[str] = None
+    evaluated_model_provider: Optional[str] = None
+    evaluated_model_params: Optional[dict[str, Union[str, int, float]]] = None
+    evaluated_model_selected_model: Optional[str] = None
+    dataset_id: Optional[str] = None
+    dataset_sample_id: Optional[int] = None
+    tags: Optional[dict[str, str]] = None
 
 
 class ExportEvaluationRequest(pydantic.BaseModel):
@@ -160,7 +161,7 @@ class ExportEvaluationRequest(pydantic.BaseModel):
 
 class ExportEvaluationResultPartial(pydantic.BaseModel):
     id: str
-    app: str | None
+    app: Optional[str]
     created_at: pydantic.AwareDatetime
     evaluator_id: str
 
@@ -170,13 +171,13 @@ class ExportEvaluationResponse(pydantic.BaseModel):
 
 
 class ListProfilesRequest(pydantic.BaseModel):
-    public_id: str | None = None
-    evaluator_family: str | None = None
-    evaluator_id: str | None = None
-    name: str | None = None
-    revision: str | None = None
+    public_id: Optional[str] = None
+    evaluator_family: Optional[str] = None
+    evaluator_id: Optional[str] = None
+    name: Optional[str] = None
+    revision: Optional[str] = None
     get_last_revision: bool = False
-    is_patronus_managed: bool | None = None
+    is_patronus_managed: Optional[bool] = None
     limit: int = 1000
     offset: int = 0
 
@@ -186,10 +187,10 @@ class EvaluatorProfile(pydantic.BaseModel):
     evaluator_family: str
     name: str
     revision: int
-    config: dict[str, typing.Any] | None
+    config: Optional[dict[str, typing.Any]]
     is_patronus_managed: bool
     created_at: datetime.datetime
-    description: str | None
+    description: Optional[str]
 
 
 class CreateProfileRequest(pydantic.BaseModel):
@@ -217,15 +218,15 @@ class ListProfilesResponse(pydantic.BaseModel):
 class DatasetDatum(pydantic.BaseModel):
     dataset_id: str
     sid: int
-    evaluated_model_system_prompt: str | None = None
-    evaluated_model_retrieved_context: list[str] | None = None
-    evaluated_model_input: str | None = None
-    evaluated_model_output: str | None = None
-    evaluated_model_gold_answer: str | None = None
-    meta_evaluated_model_name: str | None = None
-    meta_evaluated_model_provider: str | None = None
-    meta_evaluated_model_selected_model: str | None = None
-    meta_evaluated_model_params: dict[str, str | int | float] | None = None
+    evaluated_model_system_prompt: Optional[str] = None
+    evaluated_model_retrieved_context: Optional[list[str]] = None
+    evaluated_model_input: Optional[str] = None
+    evaluated_model_output: Optional[str] = None
+    evaluated_model_gold_answer: Optional[str] = None
+    meta_evaluated_model_name: Optional[str] = None
+    meta_evaluated_model_provider: Optional[str] = None
+    meta_evaluated_model_selected_model: Optional[str] = None
+    meta_evaluated_model_params: Optional[dict[str, Union[str, int, float]]] = None
 
 
 class ListDatasetData(pydantic.BaseModel):

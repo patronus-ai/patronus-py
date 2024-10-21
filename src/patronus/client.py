@@ -1,6 +1,7 @@
 import logging
 import typing
 import importlib.metadata
+from typing import Optional
 
 import httpx
 
@@ -17,9 +18,9 @@ log = logging.getLogger(__name__)
 class Client:
     def __init__(
         self,
-        api_key: str | None = None,
+        api_key: Optional[str] = None,
         base_url: str = "",
-        api_client: api.API | None = None,
+        api_client: Optional[api.API] = None,
         # TODO Allow passing more types for the timeout: float, Timeout, None, NotSet
         timeout: float = 300,
     ):
@@ -43,12 +44,12 @@ class Client:
         *,
         dataset=None,  # TODO type hint
         task: Task = nop_task,
-        evaluators: list[Evaluator] | None = None,
-        chain: list[dict[str, typing.Any]] | None = None,
-        tags: dict[str, str] | None = None,
+        evaluators: Optional[list[Evaluator]] = None,
+        chain: Optional[list[dict[str, typing.Any]]] = None,
+        tags: Optional[dict[str, str]] = None,
         experiment_name: str = "",
         max_concurrency: int = 10,
-        experiment_id: str | None = None,
+        experiment_id: Optional[str] = None,
         **kwargs,
     ):
         from .experiment import experiment as ex
@@ -70,10 +71,10 @@ class Client:
     def remote_evaluator(
         self,
         evaluator_id_or_alias: str,
-        profile_name: str | None = None,
+        profile_name: Optional[str] = None,
         *,
         explain_strategy: typing.Literal["never", "on-fail", "on-success", "always"] = "always",
-        profile_config: dict[str, typing.Any] | None = None,
+        profile_config: Optional[dict[str, typing.Any]] = None,
         allow_update: bool = False,
         max_attempts: int = 3,
     ) -> RemoteEvaluator:
