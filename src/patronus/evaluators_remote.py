@@ -1,4 +1,5 @@
 import asyncio
+import inspect
 import logging
 import typing
 from typing import Optional
@@ -8,6 +9,8 @@ import typing_extensions as te
 from . import api_types
 from . import evaluators
 from . import api
+from . import types
+from .datasets import Row
 from .retry import retry
 
 
@@ -20,6 +23,36 @@ class RemoteEvaluatorError(evaluators.EvaluatorError):
             f"{evaluator!r} with profile {profile_name!r} "
             f"returned unexpected status {status!r} with error message {error_message!r}"
         )
+
+
+class EvaluateCall(typing.Protocol):
+    def __call__(
+        self,
+        evaluated_model_system_prompt: Optional[str] = None,
+        evaluated_model_retrieved_context: Optional[list[str]] = None,
+        evaluated_model_input: Optional[str] = None,
+        evaluated_model_output: Optional[str] = None,
+        evaluated_model_gold_answer: Optional[str] = None,
+        evaluated_model_attachments: Optional[list[dict[str, typing.Any]]] = None,
+    ) -> typing.Awaitable[api_types.EvaluateResponse]: ...
+
+
+class EvaluateWrapperFunction(typing.Protocol):
+    def __call__(
+        self,
+        call: EvaluateCall,
+        *,
+        row: Row,
+        task_result: typing.Optional[types.TaskResult] = None,
+        evaluated_model_system_prompt: Optional[str] = None,
+        evaluated_model_retrieved_context: Optional[list[str]] = None,
+        evaluated_model_input: Optional[str] = None,
+        evaluated_model_output: Optional[str] = None,
+        evaluated_model_gold_answer: Optional[str] = None,
+        evaluated_model_attachments: Optional[list[dict[str, typing.Any]]] = None,
+        parent: types.EvalParent = None,
+        **kwargs,
+    ) -> typing.Awaitable[api_types.EvaluateResponse]: ...
 
 
 class RemoteEvaluator(evaluators.Evaluator):
@@ -36,6 +69,7 @@ class RemoteEvaluator(evaluators.Evaluator):
         # Maximum number of attempts in case when evaluation throws an exception.
         max_attempts: int = 3,
         api_: api.API,
+        override_func: Optional[EvaluateWrapperFunction] = None,
     ):
         self.__lock = asyncio.Lock()
         self.__initialized = False
@@ -50,6 +84,8 @@ class RemoteEvaluator(evaluators.Evaluator):
         self.allow_update = allow_update
         self.max_attempts = max_attempts
         self.api = api_
+
+        self.override_func = override_func
 
         super().__init__(evaluators.EVALUATION_ARGS)
 
@@ -164,12 +200,15 @@ class RemoteEvaluator(evaluators.Evaluator):
     async def evaluate(
         self,
         *,
+        row: Row,
+        task_result: types.TaskResult,
         evaluated_model_system_prompt: Optional[str] = None,
         evaluated_model_retrieved_context: Optional[list[str]] = None,
         evaluated_model_input: Optional[str] = None,
         evaluated_model_output: Optional[str] = None,
         evaluated_model_gold_answer: Optional[str] = None,
         evaluated_model_attachments: Optional[list[dict[str, typing.Any]]] = None,
+        parent: types.EvalParent = None,
         app: Optional[str] = None,
         experiment_id: Optional[str] = None,
         tags: Optional[dict[str, str]] = None,
@@ -181,7 +220,14 @@ class RemoteEvaluator(evaluators.Evaluator):
         await self.load()
 
         @retry(max_attempts=self.max_attempts)
-        async def call():
+        async def call(
+            evaluated_model_system_prompt: Optional[str] = None,
+            evaluated_model_retrieved_context: Optional[list[str]] = None,
+            evaluated_model_input: Optional[str] = None,
+            evaluated_model_output: Optional[str] = None,
+            evaluated_model_gold_answer: Optional[str] = None,
+            evaluated_model_attachments: Optional[list[dict[str, typing.Any]]] = None,
+        ) -> typing.Optional[api_types.EvaluateResponse]:
             return await self.api.evaluate(
                 api_types.EvaluateRequest(
                     evaluators=[
@@ -206,9 +252,48 @@ class RemoteEvaluator(evaluators.Evaluator):
                 )
             )
 
-        response = await call()
+        if self.override_func is not None:
+            response = self.override_func(
+                call,
+                row=row,
+                task_result=task_result,
+                evaluated_model_system_prompt=evaluated_model_system_prompt,
+                evaluated_model_retrieved_context=evaluated_model_retrieved_context,
+                evaluated_model_input=evaluated_model_input,
+                evaluated_model_output=evaluated_model_output,
+                evaluated_model_gold_answer=evaluated_model_gold_answer,
+                evaluated_model_attachments=evaluated_model_attachments,
+                parent=parent,
+            )
+            if inspect.iscoroutine(response):
+                response = await response
+
+            if response is None:
+                return None
+        else:
+            response = await call(
+                evaluated_model_system_prompt=evaluated_model_system_prompt,
+                evaluated_model_retrieved_context=evaluated_model_retrieved_context,
+                evaluated_model_input=evaluated_model_input,
+                evaluated_model_output=evaluated_model_output,
+                evaluated_model_gold_answer=evaluated_model_gold_answer,
+                evaluated_model_attachments=evaluated_model_attachments,
+            )
+
         data = response.results[0]
         if data.status != "success":
             raise RemoteEvaluatorError(self.evaluator, self.profile_name, data.status, data.error_message)
 
         return data.evaluation_result
+
+    def wrap(self, fn: EvaluateWrapperFunction) -> "RemoteEvaluator":
+        return RemoteEvaluator(
+            evaluator_id_or_alias=self.name,
+            profile_name=self.profile_name,
+            explain_strategy=self.explain_strategy,
+            profile_config=self.profile_config,
+            allow_update=self.allow_update,
+            max_attempts=self.max_attempts,
+            api_=self.api,
+            override_func=fn,
+        )

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "patronus"
-version = "0.0.9.rc3"
+version = "0.0.9.rc4"
 description = ""
 authors = ["Jędrzej Rosłaniec <jedrzej@patronus.ai>"]
 license = "MIT"
