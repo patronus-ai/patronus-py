@@ -7,7 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 from . import types
 from .async_utils import run_as_coro
 from .datasets import Row
-from .types import EvalParent
+from .types import _EvalParent
 
 import typing_extensions
 
@@ -43,7 +43,7 @@ class Task(abc.ABC):
         executor: ThreadPoolExecutor,
         row: Row,
         tags: dict[str, str],
-        parent: EvalParent,
+        parent: _EvalParent,
     ) -> types.TaskResult | None:
         kwargs = {
             "row": row,

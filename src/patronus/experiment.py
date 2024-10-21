@@ -98,6 +98,7 @@ class ReportedEvaluationResult(typing.NamedTuple):
     profile_name: str | None
     evaluation_result: api_types.ExportEvaluationResult
     evaluation_metadata: dict[str, typing.Any] | None
+    evaluation_explanation: str | None
 
 
 class Reporter:
@@ -147,10 +148,13 @@ class Reporter:
     ):
         task_metadata = task_result.metadata or {}
         eval_metadata = {}
+        explanation = None
         if isinstance(evaluation_result.result, types.EvaluationResult):
             eval_metadata = evaluation_result.result.metadata
+            explanation = None
         elif isinstance(evaluation_result.result, api_types.EvaluationResult):
             eval_metadata = evaluation_result.result.additional_info.model_dump()
+            explanation = evaluation_result.result.explanation
 
         entry = ReportedEvaluationResult(
             sid=dataset_sample_id,
@@ -178,6 +182,7 @@ class Reporter:
                 tags=tags,
             ),
             evaluation_metadata=eval_metadata,
+            evaluation_explanation=explanation,
         )
 
         async with self._lock:
@@ -291,7 +296,7 @@ class Reporter:
         df = pd.DataFrame.from_records(map(dict_with_sid, self.task_results)).sort_values(
             ["sid", "link_idx", "task_name"]
         )
-        df.set_index("sid", inplace=True)
+        df.set_index(["sid", "link_idx"], inplace=True)
         return df
 
     def evaluation_results_df(self):
@@ -309,6 +314,7 @@ class Reporter:
                 "score_raw": r.evaluation_result.score_raw,
                 "evaluation_duration": r.evaluation_result.evaluation_duration,
                 "evaluation_metadata": r.evaluation_metadata,
+                "evaluation_explanation": r.evaluation_explanation,
                 "tags": r.evaluation_result.tags,
             }
 
@@ -470,7 +476,7 @@ class Experiment:
     async def run_task_and_eval(self, row: Row, dataset_id: str | None, dataset_sample_id: int):
         loop = asyncio.get_running_loop()
 
-        parent = types.EvalParent(task=None, evals=None, parent=None)
+        parent = types._EvalParent(task=None, evals=None, parent=None)
 
         for link_idx, eval_link in enumerate(self.chain):
             task = eval_link.get("task", nop_task)
@@ -489,7 +495,7 @@ class Experiment:
                 return
 
             if task_result is None:
-                parent = types.EvalParent(task=None, evals=None, parent=parent)
+                parent = types._EvalParent(task=None, evals=None, parent=parent)
                 # If task returned non it means the record processing should be skipped
                 return
 
@@ -517,7 +523,7 @@ class Experiment:
             ]
 
             has_eval_errors = False
-            eval_results_map = {}
+            eval_results_map = types.EvalsMap()
 
             for evaluator, f in zip(evaluators, futures):
                 try:
@@ -550,16 +556,14 @@ class Experiment:
 
             if has_eval_errors:
                 return
-            parent = types.EvalParent(task=task_result, evals=eval_results_map, parent=parent)
+            parent = types._EvalParent(task=task_result, evals=eval_results_map, parent=parent)
 
     def to_dataframe(self) -> pd.DataFrame:
-        df_dataset = self.dataset.df
+        df_dataset = self.dataset.df.set_index("sid", inplace=False)
         df_task_results = self.reporter.task_results_df()
         df_evaluation_results = self.reporter.evaluation_results_df()
-
-        df = df_evaluation_results.join(df_task_results, on="sid", how="left", rsuffix="foo")
-        df = df.join(df_dataset, on="sid", how="left", rsuffix="foo")
-
+        df = df_evaluation_results.join(df_task_results, on=["sid", "link_idx"], how="left")
+        df = df.join(df_dataset, on="sid", how="left")
         return df
 
     def to_dataset(self, *, dataset_id: str | None = None, rename_columns: dict[str, str] | None = None) -> Dataset:

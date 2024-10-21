@@ -9,7 +9,7 @@ import typing_extensions
 from . import types, api_types
 from .async_utils import run_as_coro
 from .datasets import Row
-from .types import EvalParent
+from .types import _EvalParent
 
 EVALUATION_ARGS = [
     "row",
@@ -86,7 +86,7 @@ class Evaluator(abc.ABC):
         row: Row,
         task_result: types.TaskResult,
         tags: dict[str, str],
-        parent: EvalParent,
+        parent: _EvalParent,
         experiment_id: str,
         dataset_id: str | None = None,
         dataset_sample_id: int | None = None,
