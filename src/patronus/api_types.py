@@ -72,6 +72,12 @@ class EvaluateEvaluator(pydantic.BaseModel):
     explain_strategy: str = "always"
 
 
+class EvaluatedModelAttachment(pydantic.BaseModel):
+    url: str
+    media_type: str
+    usage_type: str = "evaluated_model_input"
+
+
 # See https://docs.patronus.ai/reference/evaluate_v1_evaluate_post for request field descriptions.
 class EvaluateRequest(pydantic.BaseModel):
     # Currently we support calls with only one evaluator.
@@ -83,6 +89,7 @@ class EvaluateRequest(pydantic.BaseModel):
     evaluated_model_input: Optional[str] = None
     evaluated_model_output: Optional[str] = None
     evaluated_model_gold_answer: Optional[str] = None
+    evaluated_model_attachments: Optional[list[EvaluatedModelAttachment]] = None
     app: Optional[str] = None
     experiment_id: Optional[str] = None
     capture: str = "all"

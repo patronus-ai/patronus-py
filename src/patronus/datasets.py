@@ -78,6 +78,12 @@ class Row:
             return self._row.evaluated_model_gold_answer
         return None
 
+    @property
+    def evaluated_model_attachments(self) -> Optional[list[dict[str, typing.Any]]]:
+        if "evaluated_model_attachments" in self._row.index:
+            return self._row.evaluated_model_attachments
+        return None
+
 
 @dataclasses.dataclass
 class Dataset:
@@ -147,6 +153,42 @@ class Dataset:
 
             return [str(value)]
 
+        def _assert_attachment(value: dict):
+            assert isinstance(
+                value.get("url"), str
+            ), "parsing 'evaluated_model_attachments': missing or invalid type (expected str) of 'url' field"
+            assert isinstance(
+                value.get("media_type"), str
+            ), "parsing 'evaluated_model_attachments': missing or invalid type (expected str) of 'media_type' field"
+            usage_type = value.get("usage_type")
+            assert (
+                isinstance(usage_type, str) or usage_type is None
+            ), "parsing 'evaluated_model_attachments': invalid type (expected str) of 'usage_type' field"
+
+        def _normalize_attachment(value) -> dict[str, typing.Any]:
+            if isinstance(value, dict):
+                _assert_attachment(value)
+                return value
+
+        def normalize_attachments(value) -> Optional[list[dict[str, typing.Any]]]:
+            if value is None:
+                return None
+
+            if isinstance(value, list):
+                return [_normalize_attachment(v) for v in value]
+
+            if isinstance(value, dict):
+                _assert_attachment(value)
+                return [value]
+
+            if isinstance(value, str):
+                try:
+                    return normalize_attachments(json.loads(value))
+                except json.JSONDecodeError as exc:
+                    raise ValueError(f"parsing 'evaluated_model_attachments': {exc}")
+
+            raise ValueError("parsing 'evaluated_model_attachments': unexpected value type")
+
         if "evaluated_model_system_prompt" in df.columns:
             df["evaluated_model_system_prompt"] = df["evaluated_model_system_prompt"].astype("string[python]")
             df["evaluated_model_system_prompt"] = df["evaluated_model_system_prompt"].replace({pd.NA: None})
@@ -162,6 +204,9 @@ class Dataset:
         if "evaluated_model_gold_answer" in df.columns:
             df["evaluated_model_gold_answer"] = df["evaluated_model_gold_answer"].astype("string[python]")
             df["evaluated_model_gold_answer"] = df["evaluated_model_gold_answer"].replace({pd.NA: None})
+        if "evaluated_model_attachments" in df.columns:
+            df["evaluated_model_attachments"] = df["evaluated_model_attachments"].apply(normalize_attachments)
+            df["evaluated_model_attachments"] = df["evaluated_model_attachments"].astype("object")
 
         # Backfill "dataset_id"
         if dataset_id:
