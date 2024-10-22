@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "patronus"
-version = "0.0.9.rc4"
+version = "0.0.9"
 description = ""
 authors = ["Jędrzej Rosłaniec <jedrzej@patronus.ai>"]
 license = "MIT"
@@ -9,6 +9,7 @@ packages = [{include = "patronus", from="src"}]
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
+mypy = "^1.12.1"
 
 [project.urls]
 Homepage = "https://www.patronus.ai"
@@ -32,3 +33,6 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.ruff]
 line-length = 120
+
+[tool.mypy]
+python_version = "3.9"
