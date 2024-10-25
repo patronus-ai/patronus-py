@@ -95,15 +95,15 @@ class Evaluator(abc.ABC):
         dataset_sample_id: Optional[int] = None,
     ) -> Optional[types.EvaluatorOutput]:
         kwargs = {
-            "experiment_id": experiment_id,
-            "row": row,
-            "task_result": task_result,
             "evaluated_model_system_prompt": row.evaluated_model_system_prompt,
             "evaluated_model_retrieved_context": row.evaluated_model_retrieved_context,
             "evaluated_model_input": row.evaluated_model_input,
             "evaluated_model_output": task_result.evaluated_model_output,
             "evaluated_model_gold_answer": row.evaluated_model_gold_answer,
             "evaluated_model_attachments": row.evaluated_model_attachments,
+            "experiment_id": experiment_id,
+            "row": row,
+            "task_result": task_result,
             "parent": parent,
             "dataset_id": dataset_id,
             "dataset_sample_id": dataset_sample_id,

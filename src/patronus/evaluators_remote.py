@@ -200,20 +200,24 @@ class RemoteEvaluator(evaluators.Evaluator):
     async def evaluate(
         self,
         *,
-        row: Row,
-        task_result: types.TaskResult,
         evaluated_model_system_prompt: Optional[str] = None,
         evaluated_model_retrieved_context: Optional[list[str]] = None,
         evaluated_model_input: Optional[str] = None,
         evaluated_model_output: Optional[str] = None,
         evaluated_model_gold_answer: Optional[str] = None,
         evaluated_model_attachments: Optional[list[dict[str, typing.Any]]] = None,
-        parent: types.EvalParent = None,
-        app: Optional[str] = None,
-        experiment_id: Optional[str] = None,
         tags: Optional[dict[str, str]] = None,
         dataset_id: Optional[str] = None,
         dataset_sample_id: Optional[int] = None,
+        app: Optional[str] = None,
+        # experiment_id is generally used by the framework.
+        experiment_id: Optional[str] = None,
+        # row is framework specific field. It's not necessary when using evaluator outside of framework.
+        row: Optional[Row] = None,
+        # task_result is framework specific field. It's not necessary when using evaluator outside of framework.
+        task_result: Optional[types.TaskResult] = None,
+        # parent is framework specific field. It's not necessary when using evaluator outside of framework.
+        parent: types.EvalParent = None,
         **kwargs,
     ) -> api_types.EvaluationResult:
         # Make sure that evaluator is loaded
