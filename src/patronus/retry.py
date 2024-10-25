@@ -4,8 +4,9 @@ import functools
 import inspect
 import random
 import traceback
+from typing import Optional
 
-from ._base_api import UnrecoverableAPIError, RPMLimitError, log, RetryError
+from .api_base import UnrecoverableAPIError, RPMLimitError, log, RetryError
 
 
 def retry(max_attempts=3, initial_delay=1, backoff_factor=2):
@@ -20,7 +21,7 @@ def retry(max_attempts=3, initial_delay=1, backoff_factor=2):
             attempts = 1
             delay = initial_delay
             last_error = None
-            stack_trace: str = None
+            stack_trace: Optional[str] = None
 
             while attempts <= max_attempts:
                 call_time = datetime.datetime.now()

@@ -1,5 +1,6 @@
 import functools
 import typing
+from typing import Optional
 
 import pydantic
 import pydantic_settings
@@ -8,7 +9,7 @@ import pydantic_settings
 class Config(pydantic_settings.BaseSettings):
     model_config = pydantic_settings.SettingsConfigDict(env_prefix="patronusai_", yaml_file="patronusai.yaml")
 
-    api_key: str | None = pydantic.Field(None)
+    api_key: Optional[str] = pydantic.Field(None)
     api_url: str = pydantic.Field("https://api.patronus.ai")
     ui_url: str = pydantic.Field("https://app.patronus.ai")
 
