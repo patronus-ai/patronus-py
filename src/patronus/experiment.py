@@ -34,7 +34,7 @@ log = logging.getLogger(__name__)
 
 
 class EvalLink(typing.TypedDict, total=False):
-    task: Task
+    task: Optional[Task]
     evaluators: list[Evaluator]
 
 
@@ -140,7 +140,7 @@ class Reporter:
         profile_name: Optional[str],
         link_idx: int,
         row: Row,
-        task_result: types.TaskResult,
+        task_result: Optional[types.TaskResult],
         evaluation_result: types.EvaluatorOutput,
         tags: dict[str, str],
         *,
@@ -148,7 +148,8 @@ class Reporter:
         dataset_sample_id: int,
         already_captured: bool,
     ):
-        task_metadata = task_result.metadata or {}
+        model_output = (task_result and task_result.evaluated_model_output) or row.evaluated_model_output
+        task_metadata = (task_result and task_result.metadata) or {}
         eval_metadata = {}
         explanation = None
         if isinstance(evaluation_result.result, types.EvaluationResult):
@@ -170,7 +171,7 @@ class Reporter:
                 evaluated_model_system_prompt=row.evaluated_model_system_prompt,
                 evaluated_model_retrieved_context=row.evaluated_model_retrieved_context,
                 evaluated_model_input=row.evaluated_model_input,
-                evaluated_model_output=task_result.evaluated_model_output,
+                evaluated_model_output=model_output,
                 evaluated_model_gold_answer=row.evaluated_model_gold_answer,
                 pass_=evaluation_result.result.pass_,
                 score_raw=evaluation_result.result.score_raw,
@@ -268,7 +269,15 @@ class Reporter:
                 and r.evaluation_result.profile_name == profile_name,
                 results,
             )
-            scores_and_passes = list(map(lambda r: (r.evaluation_result.score_raw, r.evaluation_result.pass_), results))
+            scores_and_passes = list(
+                map(
+                    lambda r: (
+                        r.evaluation_result.score_raw,
+                        r.evaluation_result.pass_,
+                    ),
+                    results,
+                )
+            )
 
             scores = [x[0] for x in scores_and_passes if x[0] is not None]
             passes = [int(x[1]) for x in scores_and_passes if x[1] is not None]
@@ -479,31 +488,34 @@ class Experiment:
         parent = types._EvalParent(task=None, evals=None, parent=None)
 
         for link_idx, eval_link in enumerate(self.chain):
-            task = eval_link.get("task", nop_task)
+            task = eval_link.get("task")
             evaluators = eval_link.get("evaluators", [])
 
-            try:
-                task_result = await task.execute(
-                    loop,
-                    self._pool,
-                    row=row,
-                    tags=self.tags,
-                    parent=parent,
-                )
-            except Exception as e:
-                await self.reporter.task_error(e, row, dataset_sample_id)
-                return
-
-            if task_result is None:
-                parent = types._EvalParent(task=None, evals=None, parent=parent)
-                # If task returned non it means the record processing should be skipped
-                return
-
-            self.reporter.add_task_result(dataset_sample_id, link_idx, task.name, task_result)
-
             outgoing_tags = self.tags
-            if task_result.tags:
-                outgoing_tags = {**self.tags, **task_result.tags}
+            task_result = None
+
+            if task:
+                try:
+                    task_result = await task.execute(
+                        loop,
+                        self._pool,
+                        row=row,
+                        tags=self.tags,
+                        parent=parent,
+                    )
+                except Exception as e:
+                    await self.reporter.task_error(e, row, dataset_sample_id)
+                    return
+
+                if task_result is None:
+                    parent = types._EvalParent(task=None, evals=None, parent=parent)
+                    # If task returned non it means the record processing should be skipped
+                    return
+
+                self.reporter.add_task_result(dataset_sample_id, link_idx, task.name, task_result)
+
+                if task_result.tags:
+                    outgoing_tags = {**self.tags, **task_result.tags}
 
             futures = [
                 loop.create_task(
@@ -530,7 +542,11 @@ class Experiment:
                     eval_result: Optional[types.EvaluatorOutput] = await f
                 except Exception as e:
                     await self.reporter.evaluator_error(
-                        e, row, dataset_sample_id, evaluator.name, evaluator.profile_name
+                        e,
+                        row,
+                        dataset_sample_id,
+                        evaluator.name,
+                        evaluator.profile_name,
                     )
                     eval_results_map[evaluator.display_name()] = None
                     has_eval_errors = True
@@ -567,7 +583,10 @@ class Experiment:
         return df
 
     def to_dataset(
-        self, *, dataset_id: Optional[str] = None, rename_columns: Optional[dict[str, str]] = None
+        self,
+        *,
+        dataset_id: Optional[str] = None,
+        rename_columns: Optional[dict[str, str]] = None,
     ) -> Dataset:
         df = self.to_dataframe()
         if rename_columns:
@@ -585,8 +604,8 @@ def experiment(
     client: Optional[Client],
     project_name: Optional[str],
     *,
-    dataset,  # TODO type hint
-    task: Task = nop_task,
+    dataset,
+    task: Optional[Task] = None,
     evaluators: Optional[list[Evaluator]] = None,
     #
     chain: Optional[list[EvalLink]] = None,

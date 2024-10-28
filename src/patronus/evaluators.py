@@ -87,18 +87,19 @@ class Evaluator(abc.ABC):
         loop: asyncio.AbstractEventLoop,
         executor: ThreadPoolExecutor,
         row: Row,
-        task_result: types.TaskResult,
+        task_result: Optional[types.TaskResult],
         tags: dict[str, str],
         parent: _EvalParent,
         experiment_id: str,
         dataset_id: Optional[str] = None,
         dataset_sample_id: Optional[int] = None,
     ) -> Optional[types.EvaluatorOutput]:
+        model_output = task_result and task_result.evaluated_model_output or row.evaluated_model_output
         kwargs = {
             "evaluated_model_system_prompt": row.evaluated_model_system_prompt,
             "evaluated_model_retrieved_context": row.evaluated_model_retrieved_context,
             "evaluated_model_input": row.evaluated_model_input,
-            "evaluated_model_output": task_result.evaluated_model_output,
+            "evaluated_model_output": model_output,
             "evaluated_model_gold_answer": row.evaluated_model_gold_answer,
             "evaluated_model_attachments": row.evaluated_model_attachments,
             "experiment_id": experiment_id,
@@ -176,11 +177,17 @@ def evaluator(
         evaluator_name = name or fn.__name__
         if inspect.iscoroutinefunction(fn):
             return FunctionalEvaluator(
-                evaluator_name=evaluator_name, profile_name=profile_name, fn=fn, accepted_args=set(param_keys)
+                evaluator_name=evaluator_name,
+                profile_name=profile_name,
+                fn=fn,
+                accepted_args=set(param_keys),
             )
         else:
             return SyncFunctionalEvaluator(
-                evaluator_name=evaluator_name, profile_name=profile_name, fn=fn, accepted_args=set(param_keys)
+                evaluator_name=evaluator_name,
+                profile_name=profile_name,
+                fn=fn,
+                accepted_args=set(param_keys),
             )
 
     if func is None:

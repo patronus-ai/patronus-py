@@ -8,7 +8,7 @@ import httpx
 from .config import config
 from .evaluators import Evaluator
 from .evaluators_remote import RemoteEvaluator
-from .tasks import Task, nop_task
+from .tasks import Task
 from . import api
 from .datasets import Dataset, DatasetLoader
 
@@ -28,7 +28,7 @@ class Client:
         base_url = base_url or config().api_url
 
         if not api_key:
-            raise ValueError("Provide 'api_key' argument or set PATRONUSAI_API_KEY environment variable.")
+            raise ValueError("Provide 'api_key' argument or set PATRONUS_API_KEY environment variable.")
 
         if api_client is None:
             # TODO allow passing http client as an argument
@@ -43,7 +43,7 @@ class Client:
         project_name: str,
         *,
         dataset=None,  # TODO type hint
-        task: Task = nop_task,
+        task: Optional[Task] = None,
         evaluators: Optional[list[Evaluator]] = None,
         chain: Optional[list[dict[str, typing.Any]]] = None,
         tags: Optional[dict[str, str]] = None,
