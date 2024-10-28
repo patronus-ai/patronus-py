@@ -144,7 +144,9 @@ class RemoteEvaluator(evaluators.Evaluator):
             profile = (
                 await self.api.create_profile(
                     api_types.CreateProfileRequest(
-                        evaluator_family=ev.evaluator_family, name=self.profile_name, config=self.profile_config
+                        evaluator_family=ev.evaluator_family,
+                        name=self.profile_name,
+                        config=self.profile_config,
                     )
                 )
             ).evaluator_profile
@@ -257,18 +259,22 @@ class RemoteEvaluator(evaluators.Evaluator):
             )
 
         if self.override_func is not None:
-            response = self.override_func(
-                call,
-                row=row,
-                task_result=task_result,
-                evaluated_model_system_prompt=evaluated_model_system_prompt,
-                evaluated_model_retrieved_context=evaluated_model_retrieved_context,
-                evaluated_model_input=evaluated_model_input,
-                evaluated_model_output=evaluated_model_output,
-                evaluated_model_gold_answer=evaluated_model_gold_answer,
-                evaluated_model_attachments=evaluated_model_attachments,
-                parent=parent,
-            )
+            try:
+                response = self.override_func(
+                    call,
+                    row=row,
+                    task_result=task_result,
+                    evaluated_model_system_prompt=evaluated_model_system_prompt,
+                    evaluated_model_retrieved_context=evaluated_model_retrieved_context,
+                    evaluated_model_input=evaluated_model_input,
+                    evaluated_model_output=evaluated_model_output,
+                    evaluated_model_gold_answer=evaluated_model_gold_answer,
+                    evaluated_model_attachments=evaluated_model_attachments,
+                    parent=parent,
+                )
+            except TypeError as exc:
+                if "got an unexpected keyword argument" in "".join(exc.args):
+                    raise TypeError(f"{exc}. Did you forgot to add '**kwargs' to the function parameters?")
             if inspect.iscoroutine(response):
                 response = await response
 

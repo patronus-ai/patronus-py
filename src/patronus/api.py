@@ -30,11 +30,7 @@ class API(BaseAPIClient):
         return resp.data.experiment
 
     async def get_experiment(self, experiment_id: str) -> Optional[api_types.Experiment]:
-        resp = await self.call(
-            "GET",
-            f"/v1/experiments/{experiment_id}",
-            response_cls=api_types.GetExperimentResponse,
-        )
+        resp = await self.call("GET", f"/v1/experiments/{experiment_id}", response_cls=api_types.GetExperimentResponse)
         if resp.response.status_code == 404:
             return None
         resp.raise_for_status()
@@ -126,7 +122,9 @@ class API(BaseAPIClient):
         return resp.data
 
     async def add_evaluator_profile_revision(
-        self, evaluator_profile_id, request: api_types.AddEvaluatorProfileRevisionRequest
+        self,
+        evaluator_profile_id,
+        request: api_types.AddEvaluatorProfileRevisionRequest,
     ) -> api_types.AddEvaluatorProfileRevisionResponse:
         resp = await self.call(
             "POST",
@@ -149,7 +147,11 @@ class API(BaseAPIClient):
         return resp.data
 
     async def list_dataset_data(self, dataset_id: str) -> api_types.ListDatasetData:
-        resp = await self.call("GET", f"/v1/datasets/{dataset_id}/data", response_cls=api_types.ListDatasetData)
+        resp = await self.call(
+            "GET",
+            f"/v1/datasets/{dataset_id}/data",
+            response_cls=api_types.ListDatasetData,
+        )
         resp.raise_for_status()
         return resp.data
 

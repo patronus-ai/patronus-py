@@ -127,5 +127,8 @@ def simple_task(lambda_fn: typing.Callable[[str], str]) -> Task:
 
 
 @task
+@typing_extensions.deprecated(
+    "'nop_task' is deprecated and will be removed in future versions.",
+)
 def nop_task(evaluated_model_output: str) -> str:
     return evaluated_model_output

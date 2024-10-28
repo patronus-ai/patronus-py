@@ -7,7 +7,7 @@ import pydantic_settings
 
 
 class Config(pydantic_settings.BaseSettings):
-    model_config = pydantic_settings.SettingsConfigDict(env_prefix="patronusai_", yaml_file="patronusai.yaml")
+    model_config = pydantic_settings.SettingsConfigDict(env_prefix="patronus_", yaml_file="patronus.yaml")
 
     api_key: Optional[str] = pydantic.Field(None)
     api_url: str = pydantic.Field("https://api.patronus.ai")
