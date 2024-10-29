@@ -1,20 +1,9 @@
-# Patronus LLM Evaluation library
+# Patronus Python SDK
 
-
-Patronus is a Python library developed by [Patronus AI](https://www.patronus.ai/)
-that provides a robust framework and utility functions for evaluating Large Language Models (LLMs).
-This library simplifies the process of running and scoring evaluations across different LLMs,
-making it easier for developers to benchmark model performance on various tasks.
+The Patronus Python SDK is a Python library for systematic evaluation of Large Language Models (LLMs).
+Build, test, and improve your LLM applications with customizable tasks, evaluators, and comprehensive experiment tracking.
 
 **Note:** This library is currently in **beta** and is not stable. The APIs may change in future releases.
-
-**Note:** This library requires Python 3.11 or greater.
-
-## Features
-
-- **Modular Evaluation Framework:** Easily plug in different models and evaluation/scoring mechanisms.
-- **Seamless Integration with Patronus AI Platform:** Effortlessly connect with the Patronus AI platform to run evaluations and export results.
-- **Custom Evaluators:** Use built-in evaluators, create your own based on various scoring methods, or leverage our state-of-the-art remote evaluators.
 
 ## Documentation
 
@@ -28,32 +17,42 @@ pip install patronus
 
 ## Quickstart
 
+### Experiment
+
 ```python
 import os
-from patronus import Client, task, evaluator
+from patronus import Client, Row, TaskResult, evaluator, task
 
 client = Client(
     # This is the default and can be omitted
-    api_key=os.environ.get("PATRONUSAI_API_KEY"),
+    api_key=os.environ.get("PATRONUS_API_KEY"),
 )
 
+
 @task
-def hello_world_task(evaluated_model_input: str) -> str:
-    return f"{evaluated_model_input} World"
+def my_task(row: Row):
+    return f"{row.evaluated_model_input} World"
+
 
 @evaluator
-def exact_match(evaluated_model_output: str, evaluated_model_gold_answer: str) -> bool:
-    return evaluated_model_output == evaluated_model_gold_answer
+def exact_match(row: Row, task_result: TaskResult):
+    # exact_match is locally defined and run evaluator
+    return task_result.evaluated_model_output == row.evaluated_model_gold_answer
+
+
+# Reference remote Judge Patronus Evaluator with is-concise criteria.
+# This evaluator runs remotely on Patronus infrastructure.
+is_concise = client.remote_evaluator("judge", "patronus:is-concise")
 
 client.experiment(
     "Tutorial Project",
-    data=[
+    dataset=[
         {
             "evaluated_model_input": "Hello",
             "evaluated_model_gold_answer": "Hello World",
         },
     ],
-    task=hello_world_task,
-    evaluators=[exact_match],
+    task=my_task,
+    evaluators=[exact_match, is_concise],
 )
 ```
