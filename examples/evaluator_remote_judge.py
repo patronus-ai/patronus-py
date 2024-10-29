@@ -2,15 +2,16 @@ import textwrap
 
 from patronus import Client
 
-cli = Client()
 
-evaluate_proper_language = cli.remote_evaluator(
-    "custom-large",
+client = Client()
+
+evaluate_proper_language = client.remote_evaluator(
+    "judge-large",
     "detect-requested-programming-languages",
     profile_config={
         "pass_criteria": textwrap.dedent(
             """
-            The MODEL OUTPUT should provide only valid code in a well-known programming language.
+            The MODEL OUTPUT should provide only valid code in any well-known programming language.
             The MODEL OUTPUT should consist of the code in a programming language specified in the USER INPUT.
             """
         ),
@@ -18,7 +19,7 @@ evaluate_proper_language = cli.remote_evaluator(
     allow_update=True,
 )
 
-data = [
+dataset = [
     {
         "evaluated_model_input": "Write a hello world example in Python.",
         "evaluated_model_output": "print('Hello World!')",
@@ -29,8 +30,9 @@ data = [
     },
 ]
 
-cli.experiment(
-    "Programming Language Detection",
-    data=data,
+client.experiment(
+    "Tutorial",
+    dataset=dataset,
     evaluators=[evaluate_proper_language],
+    experiment_name="Detect Programming Languages",
 )
