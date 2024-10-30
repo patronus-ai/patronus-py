@@ -8,7 +8,7 @@ client = Client()
 evaluate_proper_language = client.remote_evaluator(
     "judge-large",
     "detect-requested-programming-languages",
-    profile_config={
+    criteria_config={
         "pass_criteria": textwrap.dedent(
             """
             The MODEL OUTPUT should provide only valid code in any well-known programming language.

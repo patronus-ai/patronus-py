@@ -14,9 +14,9 @@ log = logging.getLogger(__name__)
 
 
 class RemoteEvaluatorError(evaluators.EvaluatorError):
-    def __init__(self, evaluator: str, profile_name: str, status: str, error_message: str):
+    def __init__(self, evaluator: str, criteria: str, status: str, error_message: str):
         super().__init__(
-            f"{evaluator!r} with profile {profile_name!r} "
+            f"{evaluator!r} with criteria {criteria!r} "
             f"returned unexpected status {status!r} with error message {error_message!r}"
         )
 
@@ -57,10 +57,10 @@ class RemoteEvaluator(evaluators.Evaluator):
     def __init__(
         self,
         evaluator_id_or_alias: str,
-        profile_name: str,
+        criteria: str,
         *,
         explain_strategy: typing.Literal["never", "on-fail", "on-success", "always"] = "always",
-        profile_config: Optional[dict[str, typing.Any]] = None,
+        criteria_config: Optional[dict[str, typing.Any]] = None,
         allow_update: bool = False,
         # Maximum number of attempts in case when evaluation throws an exception.
         max_attempts: int = 3,
@@ -73,10 +73,10 @@ class RemoteEvaluator(evaluators.Evaluator):
         self.name = evaluator_id_or_alias
         self.evaluator = evaluator_id_or_alias
 
-        self.profile_name = profile_name
+        self.criteria = criteria
 
         self.explain_strategy = explain_strategy
-        self.profile_config = profile_config
+        self.criteria_config = criteria_config
         self.allow_update = allow_update
         self.max_attempts = max_attempts
         self.api = api_
@@ -107,7 +107,7 @@ class RemoteEvaluator(evaluators.Evaluator):
             if ev is None:
                 raise ValueError(f"Evaluator {self.evaluator!r} not found")
 
-            if self.profile_config:
+            if self.criteria_config:
                 await self._init_from_config(ev)
             else:
                 await self._init_existing(ev=ev)
@@ -116,83 +116,83 @@ class RemoteEvaluator(evaluators.Evaluator):
         return self
 
     async def _init_from_config(self, ev: api_types.Evaluator):
-        if not self.profile_name:
-            raise ValueError("profile_name is required when specifying profile_config")
-        if self.profile_name.startswith("system:"):
+        if not self.criteria:
+            raise ValueError("criteria is required when specifying criteria_config")
+        if self.criteria.startswith("system:"):
             raise ValueError(
-                f"Cannot use profile_config with system profiles. Provided profile was {self.profile_name!r}"
+                f"Cannot use criteria_config with patronus criteria. Provided criteria was {self.criteria!r}"
             )
 
-        profiles = (
-            await self.api.list_profiles(
-                api_types.ListProfilesRequest(
+        criteria_list = (
+            await self.api.list_criteria(
+                api_types.ListCriteriaRequest(
                     evaluator_family=ev.evaluator_family,
-                    name=self.profile_name,
+                    name=self.criteria,
                     get_last_revision=True,
                 )
             )
-        ).evaluator_profiles
+        ).evaluator_criteria
 
-        if not profiles:
+        if not criteria_list:
             log.info(
-                f"No evaluator profile {self.profile_name!r} for evaluator {ev.evaluator_family!r} found. Creating one..."
+                f"No evaluator criteria {self.criteria!r} for evaluator {ev.evaluator_family!r} found. Creating one..."
             )
-            profile = (
-                await self.api.create_profile(
-                    api_types.CreateProfileRequest(
+            criteria = (
+                await self.api.create_criteria(
+                    api_types.CreateCriteriaRequest(
                         evaluator_family=ev.evaluator_family,
-                        name=self.profile_name,
-                        config=self.profile_config,
+                        name=self.criteria,
+                        config=self.criteria_config,
                     )
                 )
-            ).evaluator_profile
-            log.info(f"Evaluator profile {self.profile_name} created for evaluator family {ev.evaluator_family}.")
-        elif len(profiles) > 1:
+            ).evaluator_criteria
+            log.info(f"Evaluator criteria {self.criteria} created for evaluator family {ev.evaluator_family}.")
+        elif len(criteria_list) > 1:
             raise Exception(
-                f"Unexpected number of profiles retrieved for "
-                f"evaluator {self.evaluator!r} and profile name {self.profile_name!r}"
+                f"Unexpected number of criteria retrieved for "
+                f"evaluator {self.evaluator!r} and criteria name {self.criteria!r}"
             )
         else:
-            profile = profiles[0]
+            criteria = criteria_list[0]
 
-        # Check if user provided profile config is subset of existing config
-        # This checks only one level of the config, but we don't support profiles with nested
+        # Check if user provided criteria config is subset of existing config
+        # This checks only one level of the config, but we don't support criteria with nested
         # structure at this point so, it's alright.
-        is_subset = {**profile.config, **self.profile_config} == profile.config
+        is_subset = {**criteria.config, **self.criteria_config} == criteria.config
 
         if not is_subset and not self.allow_update:
             raise ValueError(
-                "Provided 'profile_config' differs from existing profile. "
-                "Please set 'allow_update=True' if you wish to update the profile. "
-                "Updating profiles can be unsafe if they're used in production system or by other people."
+                "Provided 'criteria_config' differs from existing criteria. "
+                "Please set 'allow_update=True' if you wish to update the criteria. "
+                "Updating criteria can be unsafe if they're used in production system or by other people."
             )
 
         if not is_subset:
-            log.info("Existing profile config differs from the provided config. Adding revision to the profile...")
-            profile_resp = await self.api.add_evaluator_profile_revision(
-                profile.public_id,
-                api_types.AddEvaluatorProfileRevisionRequest(
-                    config={**profile.config, **self.profile_config},
+            log.info("Existing criteria config differs from the provided config. Adding revision to the criteria...")
+            criteria_resp = await self.api.add_evaluator_criteria_revision(
+                criteria.public_id,
+                api_types.AddEvaluatorCriteriaRevisionRequest(
+                    config={**criteria.config, **self.criteria_config},
                 ),
             )
-            log.info(f"Revision added to evaluator profile {profile_resp.evaluator_profile.name}.")
+            log.info(f"Revision added to evaluator criteria {criteria_resp.evaluator_criteria.name}.")
 
         self.set_evaluator_ref(ev.id)
 
     async def _init_existing(self, ev: api_types.Evaluator):
-        profiles = await self.api.list_profiles(
-            api_types.ListProfilesRequest(
+        criteria_list = await self.api.list_criteria(
+            api_types.ListCriteriaRequest(
                 evaluator_family=ev.evaluator_family,
-                name=self.profile_name,
+                name=self.criteria,
                 get_last_revision=True,
             )
         )
-        if len(profiles.evaluator_profiles) == 0:
-            raise ValueError(f"Profile for evaluator {self.evaluator!r} given name {self.profile_name!r} not found")
-        if len(profiles.evaluator_profiles) > 1:
-            raise ValueError(f"More than 1 profile found for evaluator {self.evaluator!r}")
+        if len(criteria_list.evaluator_criteria) == 0:
+            raise ValueError(f"Criteria for evaluator {self.evaluator!r} given name {self.criteria!r} not found")
+        if len(criteria_list.evaluator_criteria) > 1:
+            raise ValueError(f"More than 1 criteria found for evaluator {self.evaluator!r}")
 
-        self.profile_name = profiles.evaluator_profiles[0].name
+        self.criteria = criteria_list.evaluator_criteria[0].name
         self.set_evaluator_ref(ev.id)
 
     async def evaluate(
@@ -235,7 +235,7 @@ class RemoteEvaluator(evaluators.Evaluator):
                     evaluators=[
                         api_types.EvaluateEvaluator(
                             evaluator=self.evaluator,
-                            profile_name=self.profile_name,
+                            criteria=self.criteria,
                             explain_strategy=self.explain_strategy,
                         )
                     ],
@@ -292,9 +292,9 @@ class RemoteEvaluator(evaluators.Evaluator):
     def wrap(self, fn: EvaluateWrapperFunction) -> "RemoteEvaluator":
         return RemoteEvaluator(
             evaluator_id_or_alias=self.name,
-            profile_name=self.profile_name,
+            criteria=self.criteria,
             explain_strategy=self.explain_strategy,
-            profile_config=self.profile_config,
+            criteria_config=self.criteria_config,
             allow_update=self.allow_update,
             max_attempts=self.max_attempts,
             api_=self.api,

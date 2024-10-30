@@ -39,7 +39,7 @@ class EvaluatorError(Exception):
 
 class Evaluator(abc.ABC):
     name: str = ""
-    profile_name: Optional[str] = None
+    criteria: Optional[str] = None
     accepted_args: set[str]
     remote_capture = False
 
@@ -48,10 +48,10 @@ class Evaluator(abc.ABC):
         accepted_args: Optional[set[str]] = None,
         *,
         evaluator_name: Optional[str] = None,
-        profile_name: Optional[str] = None,
+        criteria: Optional[str] = None,
     ):
         self.name = self.name or evaluator_name or self.__class__.__name__
-        self.profile_name = self.profile_name or profile_name
+        self.criteria = self.criteria or criteria
         self.accepted_args = accepted_args
         if not self.accepted_args:
             sig = inspect.signature(self.evaluate)
@@ -64,21 +64,19 @@ class Evaluator(abc.ABC):
             self.accepted_args = set(param_keys)
 
     def __repr__(self):
-        return (
-            f"<Evaluator (id: {self.name!r}, profile_name: {self.profile_name!r}) of class {self.__class__.__name__}>"
-        )
+        return f"<Evaluator (id: {self.name!r}, criteria: {self.criteria!r}) of class {self.__class__.__name__}>"
 
     def display_name(self) -> str:
-        if not self.profile_name:
+        if not self.criteria:
             return self.name
-        return f"{self.name}:{self.profile_name}"
+        return f"{self.name}:{self.criteria}"
 
     @property
     def column_prefix(self):
         """
         Returns a column prefix that is used in exported dataframe for result columns created by the evaluator.
         """
-        p = self.profile_name or ""
+        p = self.criteria or ""
         return f"{self.name}.{p}"
 
     async def execute(
@@ -144,9 +142,9 @@ class Evaluator(abc.ABC):
 class SyncFunctionalEvaluator(Evaluator):
     fn: EvalF
 
-    def __init__(self, *, evaluator_name: str, profile_name: Optional[str] = None, fn: EvalF, accepted_args: set[str]):
+    def __init__(self, *, evaluator_name: str, criteria: Optional[str] = None, fn: EvalF, accepted_args: set[str]):
         self.fn = fn
-        super().__init__(accepted_args, evaluator_name=evaluator_name, profile_name=profile_name)
+        super().__init__(accepted_args, evaluator_name=evaluator_name, criteria=criteria)
 
     def evaluate(self, **kwargs):
         return self.fn(**kwargs)
@@ -155,16 +153,16 @@ class SyncFunctionalEvaluator(Evaluator):
 class FunctionalEvaluator(Evaluator):
     fn: EvalF
 
-    def __init__(self, *, evaluator_name: str, profile_name: Optional[str] = None, fn: EvalF, accepted_args: set[str]):
+    def __init__(self, *, evaluator_name: str, criteria: Optional[str] = None, fn: EvalF, accepted_args: set[str]):
         self.fn = fn
-        super().__init__(accepted_args, evaluator_name=evaluator_name, profile_name=profile_name)
+        super().__init__(accepted_args, evaluator_name=evaluator_name, criteria=criteria)
 
     async def evaluate(self, **kwargs):
         return await self.fn(**kwargs)
 
 
 def evaluator(
-    func=None, *, name: str = None, profile_name: str = None
+    func=None, *, name: str = None, criteria: str = None
 ) -> Union[Evaluator, typing.Callable[[...], Evaluator]]:
     def decorator(fn: EvalF) -> Evaluator:
         sig = inspect.signature(fn)
@@ -178,14 +176,14 @@ def evaluator(
         if inspect.iscoroutinefunction(fn):
             return FunctionalEvaluator(
                 evaluator_name=evaluator_name,
-                profile_name=profile_name,
+                criteria=criteria,
                 fn=fn,
                 accepted_args=set(param_keys),
             )
         else:
             return SyncFunctionalEvaluator(
                 evaluator_name=evaluator_name,
-                profile_name=profile_name,
+                criteria=criteria,
                 fn=fn,
                 accepted_args=set(param_keys),
             )

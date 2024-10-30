@@ -40,7 +40,7 @@ def call_gpt(evaluated_model_system_prompt: str, evaluated_model_input: str) -> 
 evaluate_on_point = cli.remote_evaluator(
     "custom-large",
     "is-on-point",
-    profile_config={
+    criteria_config={
         "pass_criteria": textwrap.dedent(
             """
             The MODEL OUTPUT should accurately and concisely answer the USER INPUT.

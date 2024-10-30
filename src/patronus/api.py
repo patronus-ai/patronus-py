@@ -174,72 +174,72 @@ class API(BaseAPIClient):
         resp.raise_for_status()
         return resp.data.evaluators
 
-    async def create_profile(self, request: api_types.CreateProfileRequest) -> api_types.CreateProfileResponse:
+    async def create_criteria(self, request: api_types.CreateCriteriaRequest) -> api_types.CreateCriteriaResponse:
         resp = await self.call(
             "POST",
-            "/v1/evaluator-profiles",
+            "/v1/evaluator-criteria",
             body=request,
-            response_cls=api_types.CreateProfileResponse,
+            response_cls=api_types.CreateCriteriaResponse,
         )
         resp.raise_for_status()
         return resp.data
 
-    def create_profile_sync(self, request: api_types.CreateProfileRequest) -> api_types.CreateProfileResponse:
+    def create_criteria_sync(self, request: api_types.CreateCriteriaRequest) -> api_types.CreateCriteriaResponse:
         resp = self.call_sync(
             "POST",
-            "/v1/evaluator-profiles",
+            "/v1/evaluator-criteria",
             body=request,
-            response_cls=api_types.CreateProfileResponse,
+            response_cls=api_types.CreateCriteriaResponse,
         )
         resp.raise_for_status()
         return resp.data
 
-    async def add_evaluator_profile_revision(
+    async def add_evaluator_criteria_revision(
         self,
-        evaluator_profile_id,
-        request: api_types.AddEvaluatorProfileRevisionRequest,
-    ) -> api_types.AddEvaluatorProfileRevisionResponse:
+        evaluator_criteria_id,
+        request: api_types.AddEvaluatorCriteriaRevisionRequest,
+    ) -> api_types.AddEvaluatorCriteriaRevisionResponse:
         resp = await self.call(
             "POST",
-            f"/v1/evaluator-profiles/{evaluator_profile_id}/revision",
+            f"/v1/evaluator-criteria/{evaluator_criteria_id}/revision",
             body=request,
-            response_cls=api_types.AddEvaluatorProfileRevisionResponse,
+            response_cls=api_types.AddEvaluatorCriteriaRevisionResponse,
         )
         resp.raise_for_status()
         return resp.data
 
-    def add_evaluator_profile_revision_sync(
+    def add_evaluator_criteria_revision_sync(
         self,
-        evaluator_profile_id,
-        request: api_types.AddEvaluatorProfileRevisionRequest,
-    ) -> api_types.AddEvaluatorProfileRevisionResponse:
+        evaluator_criteria_id,
+        request: api_types.AddEvaluatorCriteriaRevisionRequest,
+    ) -> api_types.AddEvaluatorCriteriaRevisionResponse:
         resp = self.call_sync(
             "POST",
-            f"/v1/evaluator-profiles/{evaluator_profile_id}/revision",
+            f"/v1/evaluator-criteria/{evaluator_criteria_id}/revision",
             body=request,
-            response_cls=api_types.AddEvaluatorProfileRevisionResponse,
+            response_cls=api_types.AddEvaluatorCriteriaRevisionResponse,
         )
         resp.raise_for_status()
         return resp.data
 
-    async def list_profiles(self, request: api_types.ListProfilesRequest) -> api_types.ListProfilesResponse:
+    async def list_criteria(self, request: api_types.ListCriteriaRequest) -> api_types.ListCriteriaResponse:
         params = request.model_dump(exclude_none=True)
         resp = await self.call(
             "GET",
-            "/v1/evaluator-profiles",
+            "/v1/evaluator-criteria",
             params=params,
-            response_cls=api_types.ListProfilesResponse,
+            response_cls=api_types.ListCriteriaResponse,
         )
         resp.raise_for_status()
         return resp.data
 
-    def list_profiles_sync(self, request: api_types.ListProfilesRequest) -> api_types.ListProfilesResponse:
+    def list_criteria_sync(self, request: api_types.ListCriteriaRequest) -> api_types.ListCriteriaResponse:
         params = request.model_dump(exclude_none=True)
         resp = self.call_sync(
             "GET",
-            "/v1/evaluator-profiles",
+            "/v1/evaluator-criteria",
             params=params,
-            response_cls=api_types.ListProfilesResponse,
+            response_cls=api_types.ListCriteriaResponse,
         )
         resp.raise_for_status()
         return resp.data
