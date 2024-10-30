@@ -91,7 +91,7 @@ class Client:
                 evaluators=[
                     api_types.EvaluateEvaluator(
                         evaluator=evaluator,
-                        profile_name=criteria,
+                        criteria=criteria,
                         explain_strategy=explain_strategy,
                     )
                 ],
@@ -143,18 +143,18 @@ class Client:
     def remote_evaluator(
         self,
         evaluator_id_or_alias: str,
-        profile_name: Optional[str] = None,
+        criteria: Optional[str] = None,
         *,
         explain_strategy: typing.Literal["never", "on-fail", "on-success", "always"] = "always",
-        profile_config: Optional[dict[str, typing.Any]] = None,
+        criteria_config: Optional[dict[str, typing.Any]] = None,
         allow_update: bool = False,
         max_attempts: int = 3,
     ) -> RemoteEvaluator:
         return RemoteEvaluator(
             evaluator_id_or_alias=evaluator_id_or_alias,
-            profile_name=profile_name,
+            criteria=criteria,
             explain_strategy=explain_strategy,
-            profile_config=profile_config,
+            criteria_config=criteria_config,
             allow_update=allow_update,
             max_attempts=max_attempts,
             api_=self.api,

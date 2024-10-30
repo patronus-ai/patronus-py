@@ -68,7 +68,7 @@ class GetExperimentResponse(pydantic.BaseModel):
 
 class EvaluateEvaluator(pydantic.BaseModel):
     evaluator: str
-    profile_name: Optional[str] = None
+    criteria: Optional[str] = None
     explain_strategy: str = "always"
 
 
@@ -108,6 +108,7 @@ class EvaluationResult(pydantic.BaseModel):
     experiment_id: Optional[str]
     created_at: pydantic.AwareDatetime
     evaluator_id: str
+    criteria: str
     evaluated_model_system_prompt: Optional[str]
     evaluated_model_retrieved_context: Optional[list[str]]
     evaluated_model_input: Optional[str]
@@ -128,7 +129,7 @@ class EvaluationResult(pydantic.BaseModel):
 
 class EvaluateResult(pydantic.BaseModel):
     evaluator_id: str
-    profile_name: str
+    criteria: str
     status: str
     error_message: Optional[str]
     evaluation_result: Optional[EvaluationResult]
@@ -142,7 +143,7 @@ class ExportEvaluationResult(pydantic.BaseModel):
     app: Optional[str] = None
     experiment_id: Optional[str] = None
     evaluator_id: str
-    profile_name: Optional[str] = None
+    criteria: Optional[str] = None
     evaluated_model_system_prompt: Optional[str] = None
     evaluated_model_retrieved_context: Optional[list[str]] = None
     evaluated_model_input: Optional[str] = None
@@ -175,7 +176,7 @@ class ExportEvaluationResponse(pydantic.BaseModel):
     evaluation_results: list[ExportEvaluationResultPartial]
 
 
-class ListProfilesRequest(pydantic.BaseModel):
+class ListCriteriaRequest(pydantic.BaseModel):
     public_id: Optional[str] = None
     evaluator_family: Optional[str] = None
     evaluator_id: Optional[str] = None
@@ -187,7 +188,7 @@ class ListProfilesRequest(pydantic.BaseModel):
     offset: int = 0
 
 
-class EvaluatorProfile(pydantic.BaseModel):
+class EvaluatorCriteria(pydantic.BaseModel):
     public_id: str
     evaluator_family: str
     name: str
@@ -198,26 +199,26 @@ class EvaluatorProfile(pydantic.BaseModel):
     description: Optional[str]
 
 
-class CreateProfileRequest(pydantic.BaseModel):
+class CreateCriteriaRequest(pydantic.BaseModel):
     evaluator_family: str
     name: str
     config: dict[str, typing.Any]
 
 
-class CreateProfileResponse(pydantic.BaseModel):
-    evaluator_profile: EvaluatorProfile
+class CreateCriteriaResponse(pydantic.BaseModel):
+    evaluator_criteria: EvaluatorCriteria
 
 
-class AddEvaluatorProfileRevisionRequest(pydantic.BaseModel):
+class AddEvaluatorCriteriaRevisionRequest(pydantic.BaseModel):
     config: dict[str, typing.Any]
 
 
-class AddEvaluatorProfileRevisionResponse(pydantic.BaseModel):
-    evaluator_profile: EvaluatorProfile
+class AddEvaluatorCriteriaRevisionResponse(pydantic.BaseModel):
+    evaluator_criteria: EvaluatorCriteria
 
 
-class ListProfilesResponse(pydantic.BaseModel):
-    evaluator_profiles: list[EvaluatorProfile]
+class ListCriteriaResponse(pydantic.BaseModel):
+    evaluator_criteria: list[EvaluatorCriteria]
 
 
 class DatasetDatum(pydantic.BaseModel):

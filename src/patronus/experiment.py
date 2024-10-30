@@ -96,7 +96,7 @@ class ReportedEvaluationResult(typing.NamedTuple):
     sid: int
     link_idx: int
     evaluator_id: str
-    profile_name: Optional[str]
+    criteria: Optional[str]
     evaluation_result: api_types.ExportEvaluationResult
     evaluation_metadata: Optional[dict[str, typing.Any]]
     evaluation_explanation: Optional[str]
@@ -119,8 +119,8 @@ class Reporter:
         self.task_results: list[ReportedTaskResult] = []
 
         EvaluatorIDT = str
-        ProfileNameT = str
-        self.evaluators: set[tuple[EvaluatorIDT, ProfileNameT]] = set()
+        CriteriaT = str
+        self.evaluators: set[tuple[EvaluatorIDT, CriteriaT]] = set()
         self.remote_results: list[ReportedEvaluationResult] = []
         self.outgoing_results: list[ReportedEvaluationResult] = []
 
@@ -136,7 +136,7 @@ class Reporter:
     async def add_evaluation_result(
         self,
         evaluator_name: str,
-        profile_name: Optional[str],
+        criteria: Optional[str],
         link_idx: int,
         row: Row,
         task_result: Optional[types.TaskResult],
@@ -162,11 +162,11 @@ class Reporter:
             sid=dataset_sample_id,
             link_idx=link_idx,
             evaluator_id=evaluator_name,
-            profile_name=profile_name,
+            criteria=criteria,
             evaluation_result=api_types.ExportEvaluationResult(
                 experiment_id=self.experiment_id,
                 evaluator_id=evaluator_name,
-                profile_name=profile_name,
+                criteria=criteria,
                 evaluated_model_system_prompt=row.evaluated_model_system_prompt,
                 evaluated_model_retrieved_context=row.evaluated_model_retrieved_context,
                 evaluated_model_input=row.evaluated_model_input,
@@ -188,7 +188,7 @@ class Reporter:
         )
 
         async with self._lock:
-            self.evaluators.add((evaluator_name, profile_name))
+            self.evaluators.add((evaluator_name, criteria))
             if already_captured:
                 self.remote_results.append(entry)
             else:
@@ -240,15 +240,15 @@ class Reporter:
         self.print_error(f"Task failed on sample {dataset_data_id!r} with the  following error: {err}")
         self.task_errors.append((err, datum, dataset_data_id))
 
-    async def evaluator_error(self, err: Exception, datum, dataset_data_id, evaluator: str, profile_name: str):
+    async def evaluator_error(self, err: Exception, datum, dataset_data_id, evaluator: str, criteria: str):
         stack_trace = getattr(err, "stack_trace", None)
         if stack_trace is None:
             stack_trace = traceback.format_exc()
         self.print_error(stack_trace)
         self.print_error(
-            f"Evaluator ({evaluator}, {profile_name}) failed on sample {dataset_data_id} with the following error: {err}"
+            f"Evaluator ({evaluator}, {criteria}) failed on sample {dataset_data_id} with the following error: {err}"
         )
-        self.evaluator_errors.append((err, datum, dataset_data_id, evaluator, profile_name))
+        self.evaluator_errors.append((err, datum, dataset_data_id, evaluator, criteria))
 
     def print_error(self, message: str):
         if self.tqdm:
@@ -258,14 +258,14 @@ class Reporter:
             self.tqdm.display()
 
     def summary(self):
-        for evaluator_name, profile_name in self.evaluators:
-            name = evaluator_name if not profile_name else f"{evaluator_name}:{profile_name}"
+        for evaluator_name, criteria in self.evaluators:
+            name = evaluator_name if not criteria else f"{evaluator_name}:{criteria}"
             results: typing.Iterator[ReportedEvaluationResult] = itertools.chain(
                 self.outgoing_results, self.remote_results
             )
             results = filter(
                 lambda r: r.evaluation_result.evaluator_id == evaluator_name
-                and r.evaluation_result.profile_name == profile_name,
+                and r.evaluation_result.criteria == criteria,
                 results,
             )
             scores_and_passes = list(
@@ -319,7 +319,7 @@ class Reporter:
                 "sid": r.sid,
                 "link_idx": r.link_idx,
                 "evaluator_id": r.evaluator_id,
-                "profile_name": r.profile_name,
+                "criteria": r.criteria,
                 "pass": r.evaluation_result.pass_,
                 "score_raw": r.evaluation_result.score_raw,
                 "evaluation_duration": r.evaluation_result.evaluation_duration,
@@ -331,7 +331,7 @@ class Reporter:
         df = pd.DataFrame.from_records(map(mapper, all_eval_results))
         if df.empty:
             return df
-        df = df.sort_values(["sid", "link_idx", "evaluator_id", "profile_name"])
+        df = df.sort_values(["sid", "link_idx", "evaluator_id", "criteria"])
         df.set_index("sid", inplace=True)
         return df
 
@@ -545,7 +545,7 @@ class Experiment:
                         row,
                         dataset_sample_id,
                         evaluator.name,
-                        evaluator.profile_name,
+                        evaluator.criteria,
                     )
                     eval_results_map[evaluator.display_name()] = None
                     has_eval_errors = True
@@ -558,7 +558,7 @@ class Experiment:
 
                 await self.reporter.add_evaluation_result(
                     evaluator.name,
-                    evaluator.profile_name,
+                    evaluator.criteria,
                     link_idx,
                     row,
                     task_result,
