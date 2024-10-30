@@ -292,7 +292,14 @@ class Reporter:
 
     def task_results_df(self) -> pd.DataFrame:
         if not self.task_results:
-            return pd.DataFrame()
+            columns = [
+                "sid",
+                "link_idx",
+                "task_name",
+                "task_result_evaluated_model_output",
+                "task_result_evaluated_model_output",
+            ]
+            return pd.DataFrame(columns=columns).set_index(["sid", "link_idx"])
 
         def dict_with_sid(r: ReportedTaskResult) -> dict:
             return {
