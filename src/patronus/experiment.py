@@ -1,8 +1,8 @@
-import inspect
-import logging
 import asyncio
 import datetime
+import inspect
 import itertools
+import logging
 import os
 import re
 import statistics
@@ -16,19 +16,18 @@ from sys import version_info
 from typing import Optional, Union
 
 import pandas as pd
-from tqdm.asyncio import tqdm as tqdm_async
 import typing_extensions as te
+from tqdm.asyncio import tqdm as tqdm_async
 
-from . import api_types
-from .config import config
+from . import api_types, types
 from .async_utils import run_until_complete
-from . import types
+from .client import Client
+from .config import config
+from .datasets import Dataset, DatasetLoader, Row
+from .evaluators import Evaluator
 from .evaluators_remote import RemoteEvaluator
 from .retry import retry
-from .client import Client
-from .evaluators import Evaluator
 from .tasks import Task, nop_task
-from .datasets import DatasetLoader, Dataset, Row
 
 log = logging.getLogger(__name__)
 
