@@ -80,12 +80,9 @@ class EvaluatedModelAttachment(pydantic.BaseModel):
 
 # See https://docs.patronus.ai/reference/evaluate_v1_evaluate_post for request field descriptions.
 class EvaluateRequest(pydantic.BaseModel):
-    # Currently we support calls with only one evaluator.
-    # One of the reasons is that we support "smart" retires on failures,
-    # and it wouldn't be possible with batch eval.
-    evaluators: list[EvaluateEvaluator] = pydantic.Field(min_length=1, max_length=1)
+    evaluators: list[EvaluateEvaluator] = pydantic.Field(min_length=1)
     evaluated_model_system_prompt: Optional[str] = None
-    evaluated_model_retrieved_context: Optional[list[str]] = None
+    evaluated_model_retrieved_context: Optional[Union[list[str], str]] = None
     evaluated_model_input: Optional[str] = None
     evaluated_model_output: Optional[str] = None
     evaluated_model_gold_answer: Optional[str] = None
@@ -142,7 +139,8 @@ class EvaluateResponse(pydantic.BaseModel):
 
 
 class ExportEvaluationResult(pydantic.BaseModel):
-    experiment_id: str
+    app: Optional[str] = None
+    experiment_id: Optional[str] = None
     evaluator_id: str
     profile_name: Optional[str] = None
     evaluated_model_system_prompt: Optional[str] = None

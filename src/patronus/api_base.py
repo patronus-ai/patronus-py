@@ -8,7 +8,6 @@ from typing import Optional
 import httpx
 import pydantic
 
-
 log = logging.getLogger(__name__)
 
 
@@ -57,12 +56,16 @@ class CallResponse(typing.Generic[R]):
 
 
 class BaseAPIClient:
+    version: str
+    http: httpx.AsyncClient
+    http_sync: httpx.Client
     base_url: str = None
     api_key: str = None
 
-    def __init__(self, *, version: str, http: httpx.AsyncClient):
+    def __init__(self, *, version: str, http: httpx.AsyncClient, http_sync: httpx.Client):
         self.version = version
         self.http = http
+        self.http_sync = http_sync
 
     def set_target(self, base_url: str, api_key: str):
         self.base_url = base_url.rstrip("/")
@@ -90,6 +93,34 @@ class BaseAPIClient:
             content=content,
             headers=self.headers(),
         )
+        return self._call_process_resp(url, response, response_cls)
+
+    def call_sync(
+        self,
+        method: str,
+        path: str,
+        *,
+        params: Optional[dict[str, typing.Any]] = None,
+        body: Optional[pydantic.BaseModel] = None,
+        response_cls: Optional[type[R]],
+    ) -> CallResponse[R]:
+        content = None
+        if body is not None:
+            content = body.model_dump_json(by_alias=True)
+
+        url = self._url(path)
+        log.debug(f"Sending HTTP request {url!r}")
+        response = self.http_sync.request(
+            method,
+            url,
+            params=params,
+            content=content,
+            headers=self.headers(),
+        )
+        return self._call_process_resp(url, response, response_cls)
+
+    @staticmethod
+    def _call_process_resp(url: str, response: httpx.Response, response_cls: Optional[type[R]]) -> CallResponse[R]:
         log.debug(f"Received HTTP response {url!r} {response.status_code}")
 
         data = None

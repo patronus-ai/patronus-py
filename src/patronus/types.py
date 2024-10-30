@@ -1,7 +1,7 @@
+import typing
 from typing import Optional, Union
 
 import pydantic
-import typing
 
 from . import api_types
 from .api_types import EvaluateResult

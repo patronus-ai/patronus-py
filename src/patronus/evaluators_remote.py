@@ -6,13 +6,9 @@ from typing import Optional
 
 import typing_extensions as te
 
-from . import api_types
-from . import evaluators
-from . import api
-from . import types
+from . import api, api_types, evaluators, types
 from .datasets import Row
 from .retry import retry
-
 
 log = logging.getLogger(__name__)
 
@@ -34,7 +30,7 @@ class EvaluateCall(typing.Protocol):
         evaluated_model_output: Optional[str] = None,
         evaluated_model_gold_answer: Optional[str] = None,
         evaluated_model_attachments: Optional[list[dict[str, typing.Any]]] = None,
-    ) -> typing.Awaitable[api_types.EvaluateResponse]: ...
+    ) -> typing.Awaitable[api_types.EvaluationResult]: ...
 
 
 class EvaluateWrapperFunction(typing.Protocol):
@@ -233,8 +229,8 @@ class RemoteEvaluator(evaluators.Evaluator):
             evaluated_model_output: Optional[str] = None,
             evaluated_model_gold_answer: Optional[str] = None,
             evaluated_model_attachments: Optional[list[dict[str, typing.Any]]] = None,
-        ) -> typing.Optional[api_types.EvaluateResponse]:
-            return await self.api.evaluate(
+        ) -> api_types.EvaluationResult:
+            return await self.api.evaluate_one(
                 api_types.EvaluateRequest(
                     evaluators=[
                         api_types.EvaluateEvaluator(
@@ -275,6 +271,7 @@ class RemoteEvaluator(evaluators.Evaluator):
             except TypeError as exc:
                 if "got an unexpected keyword argument" in "".join(exc.args):
                     raise TypeError(f"{exc}. Did you forgot to add '**kwargs' to the function parameters?")
+                raise exc
             if inspect.iscoroutine(response):
                 response = await response
 
@@ -290,11 +287,7 @@ class RemoteEvaluator(evaluators.Evaluator):
                 evaluated_model_attachments=evaluated_model_attachments,
             )
 
-        data = response.results[0]
-        if data.status != "success":
-            raise RemoteEvaluatorError(self.evaluator, self.profile_name, data.status, data.error_message)
-
-        return data.evaluation_result
+        return response
 
     def wrap(self, fn: EvaluateWrapperFunction) -> "RemoteEvaluator":
         return RemoteEvaluator(

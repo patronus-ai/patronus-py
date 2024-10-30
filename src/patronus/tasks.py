@@ -3,15 +3,14 @@ import asyncio
 import inspect
 import typing
 from concurrent.futures import ThreadPoolExecutor
-from typing import Union, Optional
+from typing import Optional, Union
+
+import typing_extensions
 
 from . import types
 from .async_utils import run_as_coro
 from .datasets import Row
 from .types import _EvalParent
-
-import typing_extensions
-
 
 TASK_ARGS = {
     "row",

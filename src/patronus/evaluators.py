@@ -1,6 +1,6 @@
+import abc
 import asyncio
 import inspect
-import abc
 import time
 import typing
 from concurrent.futures import ThreadPoolExecutor
@@ -8,7 +8,7 @@ from typing import Optional, Union
 
 import typing_extensions
 
-from . import types, api_types
+from . import api_types, types
 from .async_utils import run_as_coro
 from .datasets import Row
 from .types import _EvalParent
