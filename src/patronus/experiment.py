@@ -343,9 +343,9 @@ class Reporter:
         return df
 
 
-async def with_semaphore(sem, task):
+async def with_semaphore(sem, coro):
     async with sem:
-        return await task
+        return await coro
 
 
 class Experiment:
@@ -525,16 +525,19 @@ class Experiment:
 
             futures = [
                 loop.create_task(
-                    evaluator.execute(
-                        loop=loop,
-                        executor=self._pool,
-                        row=row,
-                        task_result=task_result,
-                        tags=outgoing_tags,
-                        parent=parent,
-                        experiment_id=self.experiment_id,
-                        dataset_id=dataset_id,
-                        dataset_sample_id=dataset_sample_id,
+                    with_semaphore(
+                        self._sem,
+                        evaluator.execute(
+                            loop=loop,
+                            executor=self._pool,
+                            row=row,
+                            task_result=task_result,
+                            tags=outgoing_tags,
+                            parent=parent,
+                            experiment_id=self.experiment_id,
+                            dataset_id=dataset_id,
+                            dataset_sample_id=dataset_sample_id,
+                        ),
                     )
                 )
                 for evaluator in evaluators
