@@ -297,7 +297,7 @@ class Reporter:
                 "link_idx",
                 "task_name",
                 "task_result_evaluated_model_output",
-                "task_result_evaluated_model_output",
+                "task_result_metadata",
             ]
             return pd.DataFrame(columns=columns).set_index(["sid", "link_idx"])
 
