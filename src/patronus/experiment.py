@@ -149,14 +149,22 @@ class Reporter:
     ):
         model_output = (task_result and task_result.evaluated_model_output) or row.evaluated_model_output
         task_metadata = (task_result and task_result.metadata) or {}
+
         eval_metadata = {}
-        explanation = None
+        evaluation_duration = None
+        explanation_duration = None
         if isinstance(evaluation_result.result, types.EvaluationResult):
             eval_metadata = evaluation_result.result.metadata
-            explanation = None
+            edur = evaluation_result.result.evaluation_duration_s
+            if not edur:
+                edur = evaluation_result.duration
+            evaluation_duration = datetime.timedelta(seconds=edur)
+            if evaluation_result.result.explanation_duration_s:
+                explanation_duration = datetime.timedelta(seconds=evaluation_result.result.explanation_duration_s)
         elif isinstance(evaluation_result.result, api_types.EvaluationResult):
-            eval_metadata = evaluation_result.result.additional_info.model_dump()
-            explanation = evaluation_result.result.explanation
+            eval_metadata = evaluation_result.result.evaluation_metadata
+            evaluation_duration = evaluation_result.result.evaluation_duration
+            explanation_duration = evaluation_result.result.explanation_duration
 
         entry = ReportedEvaluationResult(
             sid=dataset_sample_id,
@@ -172,9 +180,14 @@ class Reporter:
                 evaluated_model_input=row.evaluated_model_input,
                 evaluated_model_output=model_output,
                 evaluated_model_gold_answer=row.evaluated_model_gold_answer,
+                evaluated_model_attachments=row.evaluated_model_attachments,
                 pass_=evaluation_result.result.pass_,
                 score_raw=evaluation_result.result.score_raw,
-                evaluation_duration=datetime.timedelta(seconds=evaluation_result.duration),
+                text_output=evaluation_result.result.text_output,
+                explanation=evaluation_result.result.explanation,
+                evaluation_duration=evaluation_duration,
+                explanation_duration=explanation_duration,
+                evaluation_metadata=eval_metadata,
                 evaluated_model_name=task_metadata.get("evaluated_model_name"),
                 evaluated_model_provider=task_metadata.get("evaluated_model_provider"),
                 evaluated_model_params=task_metadata.get("evaluated_model_params"),
@@ -184,7 +197,7 @@ class Reporter:
                 tags=tags,
             ),
             evaluation_metadata=eval_metadata,
-            evaluation_explanation=explanation,
+            evaluation_explanation=evaluation_result.result.explanation,
         )
 
         async with self._lock:
@@ -565,6 +578,9 @@ class Experiment:
                 if eval_result is None:
                     # If evaluator returned None it means the evaluation has been skipped
                     continue
+
+                eval_tags = eval_result.result.tags or {}
+                outgoing_tags = {**outgoing_tags, **eval_tags}
 
                 await self.reporter.add_evaluation_result(
                     evaluator.name,

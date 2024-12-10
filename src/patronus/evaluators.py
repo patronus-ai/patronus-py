@@ -79,6 +79,9 @@ class Evaluator(abc.ABC):
         p = self.criteria or ""
         return f"{self.name}.{p}"
 
+    def __call__(self, *args, **kwargs):
+        return self.evaluate(*args, **kwargs)
+
     async def execute(
         self,
         *,
@@ -128,6 +131,9 @@ class Evaluator(abc.ABC):
             result = types.EvaluationResult(pass_=None, score_raw=float(result))
         if isinstance(result, api_types.EvaluationResult):
             elapsed = result.evaluation_duration and result.evaluation_duration.seconds
+        if isinstance(result, types.EvaluationResult):
+            if not result.evaluation_duration_s:
+                result.evaluation_duration_s = elapsed
         if not isinstance(result, (types.EvaluationResult, api_types.EvaluationResult)):
             raise ValueError(
                 f"Evaluator {self.display_name()!r} returned an object of unexpected type {type(result)!r}"

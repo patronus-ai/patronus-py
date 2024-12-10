@@ -16,8 +16,27 @@ class TaskResult(pydantic.BaseModel):
 class EvaluationResult(pydantic.BaseModel):
     pass_: Optional[bool] = None
     score_raw: Optional[float] = None
+    text_output: Optional[str] = None
+    explanation: Optional[str] = None
     metadata: Optional[dict[str, typing.Any]] = None
     tags: Optional[dict[str, str]] = None
+    evaluation_duration_s: Optional[float] = None
+    explanation_duration_s: Optional[float] = None
+
+
+class LocalEvaluator(typing.Protocol):
+    def __call__(
+        self,
+        evaluated_model_system_prompt: Optional[str],
+        evaluated_model_retrieved_context: Optional[Union[typing.List[str], str]],
+        evaluated_model_input: Optional[str],
+        evaluated_model_output: Optional[str],
+        evaluated_model_gold_answer: Optional[str],
+        evaluated_model_attachments: Optional[list[dict[str, typing.Any]]],
+        tags: Optional[typing.Dict[str, str]] = None,
+        explain_strategy: typing.Literal["never", "on-fail", "on-success", "always"] = "always",
+        **kwargs,
+    ) -> EvaluationResult: ...
 
 
 class EvaluatorOutput(pydantic.BaseModel):

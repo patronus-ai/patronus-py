@@ -1,8 +1,10 @@
 import datetime
+import re
 import typing
 from typing import Optional, Union
 
 import pydantic
+from typing_extensions import Annotated
 
 
 class Account(pydantic.BaseModel):
@@ -75,7 +77,7 @@ class EvaluateEvaluator(pydantic.BaseModel):
 class EvaluatedModelAttachment(pydantic.BaseModel):
     url: str
     media_type: str
-    usage_type: str = "evaluated_model_input"
+    usage_type: Optional[str] = "evaluated_model_input"
 
 
 # See https://docs.patronus.ai/reference/evaluate_v1_evaluate_post for request field descriptions.
@@ -114,17 +116,19 @@ class EvaluationResult(pydantic.BaseModel):
     evaluated_model_input: Optional[str]
     evaluated_model_output: Optional[str]
     evaluated_model_gold_answer: Optional[str]
-    pass_: Optional[bool] = pydantic.Field(alias="pass")
-    score_raw: Optional[float]
-    additional_info: EvaluationResultAdditionalInfo
-    explanation: Optional[str]
-    evaluation_duration: Optional[datetime.timedelta]
-    explanation_duration: Optional[datetime.timedelta]
+    pass_: Optional[bool] = pydantic.Field(default=None, alias="pass")
+    score_raw: Optional[float] = None
+    text_output: Optional[str] = None
+    additional_info: Optional[EvaluationResultAdditionalInfo] = None
+    evaluation_metadata: Optional[dict] = None
+    explanation: Optional[str] = None
+    evaluation_duration: Optional[datetime.timedelta] = None
+    explanation_duration: Optional[datetime.timedelta] = None
     evaluator_family: str
     evaluator_profile_public_id: str
-    dataset_id: Optional[str]
-    dataset_sample_id: Optional[int]
-    tags: Optional[dict[str, str]]
+    dataset_id: Optional[str] = None
+    dataset_sample_id: Optional[int] = None
+    tags: Optional[dict[str, str]] = None
 
 
 class EvaluateResult(pydantic.BaseModel):
@@ -139,19 +143,31 @@ class EvaluateResponse(pydantic.BaseModel):
     results: list[EvaluateResult]
 
 
+def sanitize_evaluator_id(v: typing.Any, info: pydantic.ValidationInfo):
+    if not isinstance(v, str):
+        return v
+    v = v.strip()
+    return re.sub(r"[^a-zA-Z0-9\-_./]", "-", v)
+
+
 class ExportEvaluationResult(pydantic.BaseModel):
     app: Optional[str] = None
     experiment_id: Optional[str] = None
-    evaluator_id: str
+    evaluator_id: Annotated[str, pydantic.BeforeValidator(sanitize_evaluator_id)]
     criteria: Optional[str] = None
     evaluated_model_system_prompt: Optional[str] = None
     evaluated_model_retrieved_context: Optional[list[str]] = None
     evaluated_model_input: Optional[str] = None
     evaluated_model_output: Optional[str] = None
     evaluated_model_gold_answer: Optional[str] = None
-    pass_: bool = pydantic.Field(alias="pass_", serialization_alias="pass")
-    score_raw: Optional[float]
+    evaluated_model_attachments: Optional[list[EvaluatedModelAttachment]] = None
+    pass_: Optional[bool] = pydantic.Field(default=None, serialization_alias="pass")
+    score_raw: Optional[float] = None
+    text_output: Optional[str] = None
+    explanation: Optional[str] = None
     evaluation_duration: Optional[datetime.timedelta] = None
+    explanation_duration: Optional[datetime.timedelta] = None
+    evaluation_metadata: Optional[dict[str, typing.Any]] = None
     evaluated_model_name: Optional[str] = None
     evaluated_model_provider: Optional[str] = None
     evaluated_model_params: Optional[dict[str, Union[str, int, float]]] = None
