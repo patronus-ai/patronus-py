@@ -14,7 +14,7 @@ class TaskResult(pydantic.BaseModel):
 
 
 class EvaluationResult(pydantic.BaseModel):
-    pass_: Optional[bool] = None
+    pass_: Optional[bool] = pydantic.Field(default=False, serialization_alias="pass")
     score_raw: Optional[float] = None
     text_output: Optional[str] = None
     explanation: Optional[str] = None
