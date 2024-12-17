@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "patronus"
-version = "0.0.13"
-description = ""
+version = "0.0.15"
+description = "Patronus Python SDK"
 authors = ["Jędrzej Rosłaniec <jedrzej@patronus.ai>"]
 license = "MIT"
 readme = "README.md"

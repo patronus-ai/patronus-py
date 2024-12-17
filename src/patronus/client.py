@@ -1,11 +1,13 @@
+import datetime
 import importlib.metadata
 import logging
+import time
 import typing
 from typing import Optional, Union
 
 import httpx
 
-from . import api, api_types
+from . import api, api_types, types
 from .config import config
 from .datasets import Dataset, DatasetLoader
 from .evaluators import Evaluator
@@ -44,6 +46,129 @@ class Client:
         api_client.set_target(base_url, api_key)
         self.api = api_client
 
+        self._local_evaluators: typing.Dict[str, types.LocalEvaluator] = {}
+
+    def register_local_evaluator(
+        self, evaluator_id: str
+    ) -> typing.Callable[[types.LocalEvaluator], types.LocalEvaluator]:
+        """
+        Register local evaluator function for the client.
+        Registered local evaluators can be used with `Client.evaluate` method.
+
+        Local evaluators have to follow the following signature:
+
+        ```python
+        @client.register_local_evaluator("evaluator_name")
+            def local_evaluator(
+                evaluated_model_system_prompt: Optional[str],
+                evaluated_model_retrieved_context: Optional[Union[list[str], str]],
+                evaluated_model_input: Optional[str],
+                evaluated_model_output: Optional[str],
+                evaluated_model_gold_answer: Optional[str],
+                evaluated_model_attachments: Optional[list[dict[str, Any]]],
+                tags: Optional[dict[str, str]] = None,
+                explain_strategy: Literal["never", "on-fail", "on-success", "always"] = "always",
+                **kwargs,
+            ) -> patronus.EvaluationResult:
+            ...
+        ```
+
+        Note that client will always pass named arguments so function parameters needs to be defined as above.
+        """
+
+        def decorator(func: types.LocalEvaluator):
+            return self._register_local_evaluator(evaluator_id, func)
+
+        return decorator
+
+    def _register_local_evaluator(self, evaluator_id: str, func: types.LocalEvaluator) -> types.LocalEvaluator:
+        if evaluator_id in self._local_evaluators:
+            log.warning(f"Local evaluator with id {evaluator_id!r} was already is already registered.")
+        self._local_evaluators[evaluator_id] = func
+        return func
+
+    def _evaluate_local(
+        self,
+        evaluator_id: str,
+        evaluation_fn: types.LocalEvaluator,
+        *,
+        evaluated_model_system_prompt: Optional[str] = None,
+        evaluated_model_retrieved_context: Optional[Union[list[str], str]] = None,
+        evaluated_model_input: Optional[str] = None,
+        evaluated_model_output: Optional[str] = None,
+        evaluated_model_gold_answer: Optional[str] = None,
+        evaluated_model_attachments: Optional[list[dict[str, typing.Any]]] = None,
+        tags: Optional[dict[str, str]] = None,
+        app: Optional[str] = None,
+        experiment_id: Optional[str] = None,
+        dataset_id: Optional[str] = None,
+        dataset_sample_id: Optional[int] = None,
+        explain_strategy: typing.Literal["never", "on-fail", "on-success", "always"] = "always",
+        capture: typing.Literal["all", "fails-only", "none"] = "all",
+    ) -> Optional[types.EvaluationResult]:
+        started = time.perf_counter()
+        result = evaluation_fn(
+            evaluated_model_system_prompt=evaluated_model_system_prompt,
+            evaluated_model_retrieved_context=evaluated_model_retrieved_context,
+            evaluated_model_input=evaluated_model_input,
+            evaluated_model_output=evaluated_model_output,
+            evaluated_model_gold_answer=evaluated_model_gold_answer,
+            evaluated_model_attachments=evaluated_model_attachments,
+            tags=tags,
+            explain_strategy=explain_strategy,
+        )
+        elapsed = time.perf_counter() - started
+
+        if result is None:
+            return None
+
+        if capture == "none":
+            return result
+
+        if capture == "fails-only" and result.pass_ is True:
+            return result
+
+        if result.evaluation_duration_s is None and result.explanation_duration_s is None:
+            result.evaluation_duration_s = elapsed
+
+        outgoing_tags = tags or {}
+        outgoing_tags.update(result.tags or {})
+
+        if evaluated_model_retrieved_context is not None and not isinstance(evaluated_model_retrieved_context, list):
+            evaluated_model_retrieved_context = [evaluated_model_retrieved_context]
+
+        self.api.export_evaluations_sync(
+            api_types.ExportEvaluationRequest(
+                evaluation_results=[
+                    api_types.ExportEvaluationResult(
+                        app=app,
+                        experiment_id=experiment_id,
+                        evaluator_id=evaluator_id,
+                        criteria=None,
+                        evaluated_model_system_prompt=evaluated_model_system_prompt,
+                        evaluated_model_retrieved_context=evaluated_model_retrieved_context,
+                        evaluated_model_input=evaluated_model_input,
+                        evaluated_model_output=evaluated_model_output,
+                        evaluated_model_gold_answer=evaluated_model_gold_answer,
+                        evaluated_model_attachments=evaluated_model_attachments,
+                        pass_=result.pass_,
+                        score_raw=result.score_raw,
+                        text_output=result.text_output,
+                        explanation=result.explanation,
+                        evaluation_duration=result.evaluation_duration_s
+                        and datetime.timedelta(seconds=result.evaluation_duration_s),
+                        explanation_duration=result.explanation_duration_s
+                        and datetime.timedelta(seconds=result.explanation_duration_s),
+                        evaluation_metadata=result.metadata,
+                        dataset_id=dataset_id,
+                        dataset_sample_id=dataset_sample_id,
+                        tags=outgoing_tags,
+                    )
+                ]
+            )
+        )
+        return result
+
     def evaluate(
         self,
         evaluator: str,
@@ -62,9 +187,9 @@ class Client:
         dataset_sample_id: Optional[int] = None,
         explain_strategy: typing.Literal["never", "on-fail", "on-success", "always"] = "always",
         capture: typing.Literal["all", "fails-only", "none"] = "all",
-    ) -> api_types.EvaluationResult:
+    ) -> Union[api_types.EvaluationResult, types.EvaluationResult, None]:
         """
-        Synchronously evaluates a sample using specified remote evaluators.
+        Synchronously evaluates a sample using specified remote and local evaluators.
 
         This is a convenience method primarily intended for quick testing and exploration.
         For production use cases or when you need features like automatic retries, use:
@@ -85,7 +210,48 @@ class Client:
             evaluated_model_retrieved_context="My name is John.",
         )
         ```
+
+        To use local evaluators, first register it using `register_local_evaluator` decorator.
+        Example:
+        ```python
+        from patronus import Client, EvaluationResult
+
+        client = Client()
+
+        @client.register_local_evaluator("local_evaluator_name")
+        def my_evaluator(**kwargs):
+            return EvaluationResult(text_output="abc")
+
+        client.evaluate(
+            "local_evaluator_name",
+            evaluated_model_input="Who are you?",
+            evaluated_model_output="My name is Barry.",
+            evaluated_model_retrieved_context="My name is John.",
+        )
+        ```
         """
+        evaluation_fn = None
+        if not criteria:
+            evaluation_fn = self._local_evaluators.get(evaluator)
+        if evaluation_fn:
+            return self._evaluate_local(
+                evaluator,
+                evaluation_fn,
+                evaluated_model_system_prompt=evaluated_model_system_prompt,
+                evaluated_model_retrieved_context=evaluated_model_retrieved_context,
+                evaluated_model_input=evaluated_model_input,
+                evaluated_model_output=evaluated_model_output,
+                evaluated_model_gold_answer=evaluated_model_gold_answer,
+                evaluated_model_attachments=evaluated_model_attachments,
+                tags=tags,
+                app=app,
+                experiment_id=experiment_id,
+                dataset_id=dataset_id,
+                dataset_sample_id=dataset_sample_id,
+                explain_strategy=explain_strategy,
+                capture=capture,
+            )
+
         return self.api.evaluate_one_sync(
             api_types.EvaluateRequest(
                 evaluators=[
