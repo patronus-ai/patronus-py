@@ -19,6 +19,12 @@ class APIError(Exception):
         super().__init__(message)
 
 
+class ClientError(APIError):
+    def __init__(self, response: httpx.Response):
+        self.response = response
+        super().__init__(f"Client error '{response.status_code}' for url '{response.request.url}: {response.text}'")
+
+
 class UnrecoverableAPIError(APIError):
     def __init__(self, message: str, response: httpx.Response):
         message = f"{self.__class__.__name__}: {message}: response content: {response.text}"
@@ -52,6 +58,8 @@ class CallResponse(typing.Generic[R]):
     response: httpx.Response
 
     def raise_for_status(self):
+        if self.response.status_code in (400, 422):
+            raise ClientError(self.response)
         self.response.raise_for_status()
 
 
