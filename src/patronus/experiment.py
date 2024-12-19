@@ -11,6 +11,7 @@ import time
 import traceback
 import typing
 import urllib.parse
+import warnings
 from concurrent.futures import ThreadPoolExecutor
 from sys import version_info
 from typing import Optional, Union
@@ -447,7 +448,7 @@ class Experiment:
             self.project_name = project.name
 
             ex = await self._client.api.create_experiment(
-                api_types.CreateExperimentRequest(project_id=self.project_id, name=self.experiment_name)
+                api_types.CreateExperimentRequest(project_id=self.project_id, name=self.experiment_name, tags=self.tags)
             )
             self.experiment_id = ex.id
         else:
@@ -534,7 +535,7 @@ class Experiment:
                 self.reporter.add_task_result(dataset_sample_id, link_idx, task.name, task_result)
 
                 if task_result.tags:
-                    outgoing_tags = {**self.tags, **task_result.tags}
+                    outgoing_tags = merge_tags({}, task_result.tags, experiment_tags=self.tags)
 
             futures = [
                 loop.create_task(
@@ -580,7 +581,7 @@ class Experiment:
                     continue
 
                 eval_tags = eval_result.result.tags or {}
-                outgoing_tags = {**outgoing_tags, **eval_tags}
+                outgoing_tags = merge_tags(outgoing_tags, eval_tags, experiment_tags=self.tags)
 
                 await self.reporter.add_evaluation_result(
                     evaluator.name,
@@ -765,3 +766,12 @@ def generate_experiment_name(name: str) -> str:
         return f"{login}-{ts}"
     except OSError:  # Possible in-cluster error: No such device or address
         return str(ts)
+
+
+def merge_tags(tags: dict, new_tags: dict, experiment_tags: dict) -> dict:
+    tags = {**tags, **new_tags}
+    common_keys = set(tags.keys()) & set(experiment_tags.keys())
+    diff = {key for key in common_keys if tags[key] != experiment_tags[key]}
+    if diff:
+        warnings.warn(f"Overriding experiment tags is not allowed. Tried to override tag: {list(diff)!r}")
+    return {**tags, **experiment_tags}
