@@ -53,11 +53,13 @@ class Experiment(pydantic.BaseModel):
     project_id: str
     id: str
     name: str
+    tags: Optional[dict[str, str]] = None
 
 
 class CreateExperimentRequest(pydantic.BaseModel):
     project_id: str
     name: str
+    tags: dict[str, str] = pydantic.Field(default_factory=dict)
 
 
 class CreateExperimentResponse(pydantic.BaseModel):
