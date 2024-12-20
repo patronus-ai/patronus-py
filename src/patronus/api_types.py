@@ -106,18 +106,18 @@ class EvaluationResultAdditionalInfo(pydantic.BaseModel):
 
 
 class EvaluationResult(pydantic.BaseModel):
-    id: str
-    project_id: Optional[str]
-    app: Optional[str]
-    experiment_id: Optional[str]
-    created_at: pydantic.AwareDatetime
+    id: Optional[str] = None
+    project_id: Optional[str] = None
+    app: Optional[str] = None
+    experiment_id: Optional[str] = None
+    created_at: Optional[pydantic.AwareDatetime] = None
     evaluator_id: str
     criteria: str
-    evaluated_model_system_prompt: Optional[str]
-    evaluated_model_retrieved_context: Optional[list[str]]
-    evaluated_model_input: Optional[str]
-    evaluated_model_output: Optional[str]
-    evaluated_model_gold_answer: Optional[str]
+    evaluated_model_system_prompt: Optional[str] = None
+    evaluated_model_retrieved_context: Optional[list[str]] = None
+    evaluated_model_input: Optional[str] = None
+    evaluated_model_output: Optional[str] = None
+    evaluated_model_gold_answer: Optional[str] = None
     pass_: Optional[bool] = pydantic.Field(default=None, alias="pass")
     score_raw: Optional[float] = None
     text_output: Optional[str] = None
