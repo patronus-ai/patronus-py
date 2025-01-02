@@ -397,7 +397,7 @@ class Experiment:
     ):
         self._client = client
         self.project_id = None
-        self.project_name = re.sub(r"[^a-zA-Z0-9\-_]", "-", project_name) or "default"
+        self.project_name = re.sub(r"[^a-zA-Z0-9\-_ ]", "-", project_name.strip()) or "default"
         self.experiment_id = experiment_id
         self.experiment_name = generate_experiment_name(experiment_name)
 
