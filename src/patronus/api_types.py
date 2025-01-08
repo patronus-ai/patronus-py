@@ -97,6 +97,8 @@ class EvaluateRequest(pydantic.BaseModel):
     dataset_id: Optional[str] = None
     dataset_sample_id: Optional[int] = None
     tags: Optional[dict[str, str]] = None
+    trace_id: Optional[str] = None
+    span_id: Optional[str] = None
 
 
 class EvaluationResultAdditionalInfo(pydantic.BaseModel):

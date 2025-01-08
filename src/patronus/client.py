@@ -14,6 +14,11 @@ from .evaluators import Evaluator
 from .evaluators_remote import RemoteEvaluator
 from .tasks import Task
 
+try:
+    from opentelemetry import trace as otel_trace
+except ImportError:
+    otel_trace = None
+
 log = logging.getLogger(__name__)
 
 
@@ -230,6 +235,9 @@ class Client:
         )
         ```
         """
+        trace_context = None
+        if otel_trace is not None:
+            trace_context = otel_trace.get_current_span().get_span_context()
         evaluation_fn = None
         if not criteria:
             evaluation_fn = self._local_evaluators.get(evaluator)
@@ -273,6 +281,8 @@ class Client:
                 dataset_id=dataset_id,
                 dataset_sample_id=dataset_sample_id,
                 capture=capture,
+                trace_id=trace_context and trace_context.trace_id,
+                span_id=trace_context and trace_context.span_id,
             )
         )
 
