@@ -2,7 +2,7 @@ import os
 import time
 
 from patronus import Client
-from patronus.tracing.trace import traced
+from patronus import traced
 
 """
 export PATRONUS_API_KEY='<your api key>'
