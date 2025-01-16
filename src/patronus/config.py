@@ -13,6 +13,8 @@ class Config(pydantic_settings.BaseSettings):
     api_url: str = pydantic.Field("https://api.patronus.ai")
     ui_url: str = pydantic.Field("https://app.patronus.ai")
 
+    project_name: str = pydantic.Field("Global")
+
     @classmethod
     def settings_customise_sources(
         cls,

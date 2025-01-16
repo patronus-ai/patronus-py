@@ -128,3 +128,19 @@ def case(n: int):
         4: lambda: my_workflow("WorkflowDemo1"),
     }
     case_func_map[n]()
+
+case(1)
+
+
+
+@traced()
+def this_is_my_func(sleep_time: int, *args, **kwargs):
+    """
+    Span(Group Evaluations)
+    --- Span (local eval)
+    ------ Log (evaluation log)
+    ------ Evaluation()
+    --- Span (extr eval)
+    ------- Log (evaluation log)
+    ------ Evaluation()
+    """

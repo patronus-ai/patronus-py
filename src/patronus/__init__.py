@@ -15,3 +15,5 @@ from .tasks import task as task
 from .types import EvalParent as EvalParent
 from .types import EvaluationResult as EvaluationResult
 from .types import TaskResult as TaskResult
+from .tracing import init
+from .tracing.decorators import traced
