@@ -10,14 +10,14 @@ from opentelemetry.sdk.trace.export import (
 DEFAULT_BASE_OTEL_ENDPOINT = 'https://otel.patronus.ai:4317'
 
 
-def init_tracer() -> trace.Tracer:
+def init_tracer(project_name: str) -> trace.Tracer:
     trace_provider = TracerProvider()
     trace_processor = BatchSpanProcessor(
         OTLPSpanExporter(
             endpoint=os.environ.get("BASE_OTEL_ENDPOINT", DEFAULT_BASE_OTEL_ENDPOINT),
             headers={
                 "x-api-key": os.environ.get("PATRONUS_API_KEY"),
-                # "pat-project-name": project_name  TODO: @MJ - Collector is not working with project name
+                "pat-project-name": project_name
             },
         )
     )

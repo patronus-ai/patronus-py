@@ -80,7 +80,7 @@ def init_logger(project_name: str):
             endpoint=os.getenv("BASE_OTEL_ENDPOINT", BASE_OTEL_ENDPOINT),
             headers={
                 "x-api-key": os.getenv("PATRONUS_API_KEY"),
-                # "pat-project-name": project_name  TODO: @MJ - Collector is not working with project name
+                "pat-project-name": project_name,
             },
             insecure=True
         )

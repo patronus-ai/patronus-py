@@ -6,12 +6,12 @@ from patronus.config import config
 _GLOBAL_LOGGER = None
 _GLOBAL_TRACER = None
 
-def get_tracer():
+def get_tracer(project_name: str | None = None):
     if _GLOBAL_TRACER:
         return _GLOBAL_TRACER
-    return init_tracer()
+    return init_tracer(project_name)
 
-def get_logger(project_name: str):
+def get_logger(project_name: str | None = None):
     if _GLOBAL_LOGGER:
         return _GLOBAL_LOGGER
     return init_logger(project_name)
@@ -30,7 +30,7 @@ def init(
     cfg = config()
     project_name = project_name or cfg.project_name
 
-    tracer = init_tracer()
+    tracer = init_tracer(project_name)
     _set_global_tracer(tracer)
 
     logger = init_logger(project_name)

@@ -10,8 +10,8 @@ export PATRONUS_API_KEY='<your api key>'
 
 # Initialize Patronus
 client = Client(api_key=os.getenv('PATRONUS_API_KEY'))
-init(project_name="Global")
-logger = get_logger("Global")
+init(project_name="New Project")
+logger = get_logger()
 
 
 # Traced function example
