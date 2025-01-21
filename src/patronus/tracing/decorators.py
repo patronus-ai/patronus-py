@@ -25,14 +25,13 @@ def traced(*args, **kwargs):
                         {
                             "input.args": f_args,
                             "input.kwargs": input_kwargs,
-                            "output": str(ret)
+                            "output": str(ret)  # TODO: @MJ - serialize it?
                         }
                     )
                 return ret
 
         async def wrapper_async(*f_args, **f_kwargs):
             with tracer.start_as_current_span(name) as span:
-                print('Tracing', span)
                 ret = await func(*f_args, **f_kwargs)
                 if io_logging:
                     argspec = inspect.getfullargspec(func)
@@ -46,7 +45,7 @@ def traced(*args, **kwargs):
                         {
                             "input.args": f_args,
                             "input.kwargs": input_kwargs,
-                            "output": str(ret)
+                            "output": str(ret)  # TODO: @MJ - serialize it?g
                         }
                     )
                 return ret

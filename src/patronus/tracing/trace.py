@@ -15,7 +15,10 @@ def init_tracer() -> trace.Tracer:
     trace_processor = BatchSpanProcessor(
         OTLPSpanExporter(
             endpoint=os.environ.get("BASE_OTEL_ENDPOINT", DEFAULT_BASE_OTEL_ENDPOINT),
-            headers={"x-api-key": os.environ.get("PATRONUS_API_KEY")},
+            headers={
+                "x-api-key": os.environ.get("PATRONUS_API_KEY"),
+                # "pat-project-name": project_name  TODO: @MJ - Collector is not working with project name
+            },
         )
     )
     trace_provider.add_span_processor(trace_processor)
