@@ -12,8 +12,7 @@ from .tasks import Task as Task
 from .tasks import nop_task as nop_task
 from .tasks import simple_task as simple_task
 from .tasks import task as task
+from .tracing.decorators import traced as traced
 from .types import EvalParent as EvalParent
 from .types import EvaluationResult as EvaluationResult
 from .types import TaskResult as TaskResult
-from .tracing import init
-from .tracing.decorators import traced

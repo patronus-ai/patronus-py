@@ -1,6 +1,7 @@
 import datetime
 import re
 import typing
+import uuid
 from typing import Optional, Union
 
 import pydantic
@@ -257,3 +258,89 @@ class DatasetDatum(pydantic.BaseModel):
 
 class ListDatasetData(pydantic.BaseModel):
     data: list[DatasetDatum]
+
+
+def sanitize_field(max_length: int, sub_pattern: str):
+    def wrapper(value: str) -> str:
+        if not value:
+            return value
+        value = value[:max_length]
+        return re.sub(sub_pattern, "_", value).strip()
+
+    return wrapper
+
+
+class Evaluation(pydantic.BaseModel):
+    id: int
+    log_id: str
+    created_at: Optional[datetime.datetime] = None
+
+    project_id: Optional[str] = None
+    app: Optional[str] = None
+    experiment_id: Optional[int] = None
+
+    evaluator_family: Optional[str] = None
+    evaluator_id: Optional[str] = None
+    criteria_id: Optional[str] = None
+    criteria: Optional[str] = None
+    explain_strategy: Optional[str] = None
+    pass_: Optional[bool] = pydantic.Field(default=None, alias="pass")
+
+    score: Optional[float] = None
+    text_output: Optional[str] = None
+    metadata: Optional[dict[str, typing.Any]] = None
+    explanation: Optional[str] = None
+    evaluation_duration: Optional[datetime.timedelta] = None
+    explanation_duration: Optional[datetime.timedelta] = None
+    usage: Optional[dict[str, typing.Any]] = None
+    metric_name: Optional[str] = None
+    metric_description: Optional[str] = None
+    annotation_criteria_id: Optional[str] = None
+    created_at: datetime.datetime
+    evaluation_type: Optional[str] = None
+    tags: Optional[dict[str, str]] = None
+    dataset_id: Optional[str] = None
+    dataset_sample_id: Optional[str] = None
+
+
+class ClientEvaluation(pydantic.BaseModel):
+    log_id: uuid.UUID
+    project_id: Optional[str] = None
+    project_name: Optional[str] = None
+    app: typing.Annotated[
+        Optional[str],
+        pydantic.BeforeValidator(sanitize_field(50, r"[^a-zA-Z0-9_./ -]")),
+    ]
+    experiment_id: Optional[str] = None
+    evaluator_id: str
+    criteria: Optional[str] = None
+    pass_: Optional[bool] = pydantic.Field(default=None, alias="pass")
+    score: Optional[float] = None
+    text_output: Optional[str] = None
+    metadata: Optional[dict[str, typing.Any]] = None
+    explanation: Optional[str] = None
+    evaluation_duration: Optional[datetime.timedelta] = None
+    explanation_duration: Optional[datetime.timedelta] = None
+    metric_name: Optional[str] = None
+    metric_description: Optional[str] = None
+    dataset_id: Optional[str] = None
+    dataset_sample_id: Optional[int] = None
+    created_at: Optional[datetime.datetime] = None
+    tags: Optional[dict[str, str]] = None
+    trace_id: Optional[str] = None
+    span_id: Optional[str] = None
+
+
+class GetEvaluationResponse(pydantic.BaseModel):
+    evaluation: Evaluation
+
+
+class BatchCreateEvaluationsRequest(pydantic.BaseModel):
+    evaluations: list[ClientEvaluation] = pydantic.Field(
+        min_length=1,
+        max_length=1000,
+    )
+
+
+class BatchCreateEvaluationsResponse(pydantic.BaseModel):
+    evaluations: list[Evaluation]

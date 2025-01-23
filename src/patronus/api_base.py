@@ -1,4 +1,5 @@
 import dataclasses
+import importlib.metadata
 import logging
 import platform
 import typing
@@ -70,10 +71,19 @@ class BaseAPIClient:
     base_url: str = None
     api_key: str = None
 
-    def __init__(self, *, version: str, http: httpx.AsyncClient, http_sync: httpx.Client):
-        self.version = version
+    def __init__(
+        self,
+        *,
+        http: httpx.AsyncClient,
+        http_sync: httpx.Client,
+        base_url: str,
+        api_key: str,
+    ):
+        self.version = importlib.metadata.version("patronus")
         self.http = http
         self.http_sync = http_sync
+        self.base_url = base_url.rstrip("/")
+        self.api_key = api_key
 
     def set_target(self, base_url: str, api_key: str):
         self.base_url = base_url.rstrip("/")

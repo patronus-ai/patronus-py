@@ -148,7 +148,14 @@ class Evaluator(abc.ABC):
 class SyncFunctionalEvaluator(Evaluator):
     fn: EvalF
 
-    def __init__(self, *, evaluator_name: str, criteria: Optional[str] = None, fn: EvalF, accepted_args: set[str]):
+    def __init__(
+        self,
+        *,
+        evaluator_name: str,
+        criteria: Optional[str] = None,
+        fn: EvalF,
+        accepted_args: set[str],
+    ):
         self.fn = fn
         super().__init__(accepted_args, evaluator_name=evaluator_name, criteria=criteria)
 
@@ -159,7 +166,14 @@ class SyncFunctionalEvaluator(Evaluator):
 class FunctionalEvaluator(Evaluator):
     fn: EvalF
 
-    def __init__(self, *, evaluator_name: str, criteria: Optional[str] = None, fn: EvalF, accepted_args: set[str]):
+    def __init__(
+        self,
+        *,
+        evaluator_name: str,
+        criteria: Optional[str] = None,
+        fn: EvalF,
+        accepted_args: set[str],
+    ):
         self.fn = fn
         super().__init__(accepted_args, evaluator_name=evaluator_name, criteria=criteria)
 

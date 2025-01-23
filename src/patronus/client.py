@@ -1,5 +1,4 @@
 import datetime
-import importlib.metadata
 import logging
 import time
 import typing
@@ -43,12 +42,12 @@ class Client:
             http_sync_client = httpx.Client(timeout=timeout)
 
             api_client = api.API(
-                version=importlib.metadata.version("patronus"),
                 http=http_client,
                 http_sync=http_sync_client,
+                base_url=base_url,
+                api_key=api_key,
             )
 
-        api_client.set_target(base_url, api_key)
         self.api = api_client
 
         self._local_evaluators: typing.Dict[str, types.LocalEvaluator] = {}
