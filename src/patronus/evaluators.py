@@ -130,7 +130,7 @@ class Evaluator(abc.ABC):
         if isinstance(result, (int, float)):
             result = types.EvaluationResult(pass_=None, score_raw=float(result))
         if isinstance(result, api_types.EvaluationResult):
-            elapsed = result.evaluation_duration and result.evaluation_duration.seconds
+            elapsed = result.evaluation_duration and result.evaluation_duration.seconds or 0
         if isinstance(result, types.EvaluationResult):
             if not result.evaluation_duration_s:
                 result.evaluation_duration_s = elapsed
