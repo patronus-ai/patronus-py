@@ -12,8 +12,6 @@ from ..config import config
 from ..context_utils import ContextObject
 from .attributes import Attributes, format_service_name
 
-DEFAULT_BASE_OTEL_ENDPOINT = "https://otel.patronus.ai:4317"
-
 
 class PatronusAttributesSpanProcessor(SpanProcessor):
     project_name: str
@@ -99,18 +97,3 @@ _CTX_TRACER = ContextObject[trace.Tracer]("pat.tracer")
 
 def get_tracer() -> trace.Tracer:
     return _CTX_TRACER.get()
-
-
-#
-# def init_tracer() -> trace.Tracer:
-#     trace_provider = TracerProvider()
-#     trace_processor = BatchSpanProcessor(
-#         OTLPSpanExporter(
-#             endpoint=os.environ.get("BASE_OTEL_ENDPOINT", DEFAULT_BASE_OTEL_ENDPOINT),
-#             headers={"x-api-key": os.environ.get("PATRONUS_API_KEY")},
-#         )
-#     )
-#     trace_provider.add_span_processor(trace_processor)
-#     trace.set_tracer_provider(trace_provider)
-#     otel_tracer = trace_provider.get_tracer("PatronusTracer")
-#     return otel_tracer

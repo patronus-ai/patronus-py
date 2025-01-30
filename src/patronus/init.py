@@ -10,8 +10,14 @@ from .tracing.trace import _CTX_TRACER, create_tracer
 
 
 def init(
-    project_name: str = "Global",
-    app: str = "default",
+    # Initialize SDK with project name.
+    # If value is not provided, then it's loaded from the configuration file.
+    # Defaults to "Global" if neither is provided.
+    project_name: Optional[str] = None,
+    # Initialize SDK with an app.
+    # If value is not provided, then it's loaded from the configuration file.
+    # Defaults to "default" if neither is provided.
+    app: Optional[str] = None,
     api_url: Optional[str] = None,
     otel_endpoint: Optional[str] = None,
     api_key: Optional[str] = None,

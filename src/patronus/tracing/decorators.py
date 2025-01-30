@@ -1,36 +1,69 @@
 import functools
 import inspect
+import typing
+from typing import Optional
 
-from .logger import get_patronus_logger
+from opentelemetry._logs import SeverityNumber
+
+from .attributes import LogTypes
+from .logger import Logger, get_patronus_logger
 from .trace import get_tracer
 
 
-def traced(*args, **kwargs):
-    io_logging = not kwargs.pop("io_logging", False)
-
+def traced(
+    # Give name for the traced span. Defaults to a function name if not provided.
+    span_name: Optional[str] = None,
+    *,
+    # Whether to log function arguments.
+    log_args: bool = True,
+    # Whether to log function output.
+    log_results: bool = True,
+    # Whether to log an exception if one was raised.
+    log_exceptions: bool = True,
+    # Whether to prevent a log message to be created.
+    disable_log: bool = False,
+    **kwargs,
+):
     def decorator(func):
-        name = kwargs.pop("name") or args[0] if len(args) > 0 else func.__name__
-        ignore_input = bool(kwargs.get("ignore_input", False))
-        ignore_output = bool(kwargs.get("ignore_output", False))
-
+        name = span_name or func.__qualname__
         sig = inspect.signature(func)
+
+        def log_call(logger: Logger, fn_args: typing.Any, fn_kwargs: typing.Any, ret: typing.Any, exc: Exception):
+            if disable_log:
+                return
+
+            severity = SeverityNumber.INFO
+            body = {"function.name": name}
+            if log_args:
+                bound_args = sig.bind(*fn_args, **fn_kwargs)
+                body["function.arguments"] = {**bound_args.arguments, **bound_args.arguments}
+            if log_results is not None and exc is None:
+                body["function.output"] = ret
+            if log_exceptions and exc is not None:
+                module = type(exc).__module__
+                qualname = type(exc).__qualname__
+                exception_type = f"{module}.{qualname}" if module and module != "builtins" else qualname
+                body["exception.type"] = exception_type
+                body["exception.message"] = str(exc)
+                severity = SeverityNumber.ERROR
+            logger.log(body, log_type=LogTypes.trace, severity=severity)
 
         @functools.wraps(func)
         def wrapper_sync(*f_args, **f_kwargs):
             logger = get_patronus_logger()
             tracer = get_tracer()
 
-            with tracer.start_as_current_span(name):
-                ret = func(*f_args, **f_kwargs)
-                if io_logging:
-                    log_data = {"name": name}
-                    if not ignore_input:
-                        bound_args = sig.bind(*f_args, **f_kwargs)
-                        log_data.update({"input.arguments": {**bound_args.arguments, **bound_args.kwargs}})
-                    if not ignore_output:
-                        log_data["output"] = str(ret)
-                    if log_data:
-                        logger.log(log_data)
+            exc = None
+            ret = None
+            with tracer.start_as_current_span(name, record_exception=not disable_log):
+                try:
+                    ret = func(*f_args, **f_kwargs)
+                except Exception as e:
+                    exc = e
+                    raise exc
+                finally:
+                    log_call(logger, f_args, f_kwargs, ret, exc)
+
                 return ret
 
         @functools.wraps(func)
@@ -38,17 +71,17 @@ def traced(*args, **kwargs):
             logger = get_patronus_logger()
             tracer = get_tracer()
 
-            with tracer.start_as_current_span(name):
-                ret = await func(*f_args, **f_kwargs)
-                if io_logging:
-                    log_data = {"name": name}
-                    if not ignore_input:
-                        bound_args = sig.bind(*f_args, **f_kwargs)
-                        log_data.update({"input.arguments": {**bound_args.arguments, **bound_args.kwargs}})
-                    if not ignore_output:
-                        log_data["output"] = str(ret)
-                    if log_data:
-                        logger.log(log_data)
+            exc = None
+            ret = None
+            with tracer.start_as_current_span(name, record_exception=not disable_log):
+                try:
+                    ret = await func(*f_args, **f_kwargs)
+                except Exception as e:
+                    exc = e
+                    raise exc
+                finally:
+                    log_call(logger, f_args, f_kwargs, ret, exc)
+
                 return ret
 
         if inspect.iscoroutinefunction(func):

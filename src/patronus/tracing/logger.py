@@ -1,8 +1,8 @@
+import dataclasses
 import functools
 import logging
 import typing
 import uuid
-from enum import Enum
 from time import time_ns
 from types import MappingProxyType
 from typing import Optional, Union
@@ -11,7 +11,8 @@ from opentelemetry._logs import SeverityNumber
 from opentelemetry.exporter.otlp.proto.grpc._log_exporter import OTLPLogExporter as OTLPLogExporterTCP
 from opentelemetry.sdk._logs import Logger as OTELLogger
 from opentelemetry.sdk._logs import LoggerProvider as OTELLoggerProvider
-from opentelemetry.sdk._logs import LoggingHandler, LogRecord
+from opentelemetry.sdk._logs import LoggingHandler as OTeLLoggingHandler
+from opentelemetry.sdk._logs import LogRecord
 from opentelemetry.sdk._logs._internal import ConcurrentMultiLogRecordProcessor, SynchronousMultiLogRecordProcessor
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.resources import Resource
@@ -21,12 +22,25 @@ from opentelemetry.util.types import Attributes as OTeLAttributes
 
 from patronus.config import config
 from patronus.context_utils import ContextObject, ResourceMutex
-from patronus.tracing.attributes import Attributes, format_service_name
+from patronus.tracing.attributes import Attributes, LogTypes, format_service_name
 
 
-class LogTypes(str, Enum):
-    evaluation_data = "evaluation_data"
-    unstructured_evaluation_data = "unstructured_evaluation_data"
+@dataclasses.dataclass
+class PatronusScope:
+    project_name: Optional[str]
+    app: Optional[str]
+    experiment_id: Optional[str]
+
+    @functools.cached_property
+    def as_attributes(self) -> dict[str, str]:
+        attrs = {}
+        if self.project_name:
+            attrs[Attributes.project_name.value] = self.project_name
+        if self.app:
+            attrs[Attributes.app.value] = self.app
+        if self.experiment_id:
+            attrs[Attributes.experiment_id.value] = self.experiment_id
+        return attrs
 
 
 class LoggerProvider(OTELLoggerProvider):
@@ -60,15 +74,13 @@ class LoggerProvider(OTELLoggerProvider):
         schema_url: Optional[str] = None,
         attributes: Optional[OTeLAttributes] = None,
     ) -> "Logger":
+        pat_scope = PatronusScope(
+            project_name=self.project_name,
+            app=self.app,
+            experiment_id=self.experiment_id,
+        )
         attributes = attributes or {}
-
-        if Attributes.project_name not in attributes:
-            attributes[Attributes.project_name] = self.project_name
-        if Attributes.app not in attributes:
-            attributes[Attributes.app] = self.app
-        if Attributes.experiment_id not in attributes and self.experiment_id:
-            attributes[Attributes.experiment_id] = self.experiment_id
-
+        attributes = {**attributes, **pat_scope.as_attributes}
         return Logger(
             self._resource,
             self._multi_log_record_processor,
@@ -78,10 +90,27 @@ class LoggerProvider(OTELLoggerProvider):
                 schema_url,
                 attributes,
             ),
+            pat_scope,
         )
 
     def get_logger(self, *args, **kwargs) -> "Logger":
         return super().get_logger(*args, **kwargs)
+
+
+class LoggingHandler(OTeLLoggingHandler):
+    def __init__(self, pat_scope: PatronusScope, level=logging.NOTSET, logger_provider=None) -> None:
+        super().__init__(level, logger_provider)
+        self.pat_scope = pat_scope
+
+    def emit(self, record: logging.LogRecord) -> None:
+        # Add patronus attributes to all outgoing logs.
+        # This handler transforms record into OTeL LogRecord.
+        for k, v in self.pat_scope.as_attributes.items():
+            # We use setattr since attributes may have dots in their names
+            # and record is an object, not a dict.
+            setattr(record, k, v)
+        setattr(record, Attributes.log_type, LogTypes.user.value)
+        super().emit(record)
 
 
 def encode_attrs(v):
@@ -127,17 +156,30 @@ class Logger(OTELLogger):
             ConcurrentMultiLogRecordProcessor,
         ],
         instrumentation_scope: InstrumentationScope,
+        pat_scope: PatronusScope,
     ):
         super().__init__(resource, multi_log_record_processor, instrumentation_scope)
+        self.pat_scope = pat_scope
 
     def log(
-        self, body: typing.Any, log_attrs: Optional[OTeLAttributes] = None, severity: Optional[SeverityNumber] = None
+        self,
+        body: typing.Any,
+        log_attrs: Optional[OTeLAttributes] = None,
+        severity: Optional[SeverityNumber] = None,
+        log_type: LogTypes = LogTypes.user,
     ) -> uuid.UUID:
         severity: SeverityNumber = severity or SeverityNumber.INFO
         span_context = get_current_span().get_span_context()
         log_id = uuid.uuid4()
         log_attrs = log_attrs or {}
-        log_attrs[Attributes.log_id] = str(log_id)
+        log_attrs.update(
+            {
+                Attributes.log_id.value: str(log_id),
+                Attributes.log_type.value: log_type.value,
+            }
+        )
+        log_attrs.update(self.pat_scope.as_attributes)
+
         body = cleanup_log(body)
         self.emit(
             LogRecord(
@@ -170,7 +212,7 @@ class Logger(OTELLogger):
         if isinstance(task_context, str):
             task_context = [task_context]
         log_attrs = log_attrs or {}
-        log_attrs[Attributes.log_type] = LogTypes.evaluation_data
+        log_attrs[Attributes.log_type] = LogTypes.eval
 
         return self.log(
             {
@@ -184,7 +226,6 @@ class Logger(OTELLogger):
         )
 
 
-@functools.lru_cache()
 def _create_exporter(endpoint: str, api_key: str) -> OTLPLogExporterTCP:
     return OTLPLogExporterTCP(endpoint=endpoint, headers={"x-api-key": api_key}, insecure=True)
 
@@ -253,8 +294,8 @@ def create_logger(
     else:
         suffix = f".{n}"
     logger = logging.getLogger(f"patronus.sdk{suffix}")
-    logger.addHandler(LoggingHandler(level=logging.NOTSET, logger_provider=provider))
-    logger.addHandler(logging.StreamHandler())
+    pat_scope = PatronusScope(project_name=project_name, app=app, experiment_id=experiment_id)
+    logger.addHandler(LoggingHandler(pat_scope=pat_scope, level=logging.NOTSET, logger_provider=provider))
     logger.setLevel(logging.DEBUG)
     return logger
 

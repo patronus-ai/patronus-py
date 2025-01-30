@@ -13,29 +13,29 @@ from opentelemetry.trace import get_current_span
 from patronus import api_types
 from patronus.evals.exporter import get_exporter
 from patronus.evals.types import EvaluationResult
-from patronus.tracing.attributes import Attributes
+from patronus.tracing.attributes import Attributes, LogTypes
 from patronus.tracing.decorators import traced
 from patronus.tracing.logger import get_logger, get_patronus_logger
 
 log = logging.getLogger("patronus.core")
 
 
-def create_field_sanitizer(pattern: str, max_len: int, replace_with: str):
+def _create_field_sanitizer(pattern: str, max_len: int, replace_with: str):
     def sanitize(value: str) -> str:
         return re.sub(pattern, replace_with, value[:max_len])
 
     return sanitize
 
 
-sanitize_project_name = create_field_sanitizer(r"[^a-zA-Z0-9_ -]", max_len=50, replace_with="_")
-sanitize_app = create_field_sanitizer(r"[^a-zA-Z0-9-_./ -]", max_len=50, replace_with="_")
+_sanitize_project_name = _create_field_sanitizer(r"[^a-zA-Z0-9_ -]", max_len=50, replace_with="_")
+_sanitize_app = _create_field_sanitizer(r"[^a-zA-Z0-9-_./ -]", max_len=50, replace_with="_")
 
 
 def handle_eval_output(
     *,
-    class_name: Optional[str],
     fn_name: str,
     evaluator_id: str,
+    criteria: Optional[str] = None,
     metric_name: str,
     metric_description: str,
     fn_sign: inspect.Signature,
@@ -47,30 +47,37 @@ def handle_eval_output(
     if ret_value is None:
         return
 
-    ev: EvaluationResult = coerce_eval_output_type(ret_value, class_name, fn_name)
+    ev: EvaluationResult = coerce_eval_output_type(ret_value, fn_name)
+
     pat_logger = get_patronus_logger()
+
     span_context = get_current_span().get_span_context()
+
     bound_args = fn_sign.bind(*args, **kwargs)
+    attrs = {Attributes.evaluator_id.value: evaluator_id}
+    if criteria:
+        attrs[Attributes.evaluator_criteria] = criteria
     log_id = pat_logger.log(
-        body={"evaluation_data": {**bound_args.arguments, **bound_args.kwargs}},
+        body={**bound_args.arguments, **bound_args.kwargs},
+        log_attrs=attrs,
+        log_type=LogTypes.eval,
     )
 
-    # TODO there should be a better way of extracting project name and an app from execution context
-    project_name = pat_logger._instrumentation_scope.attributes.get(Attributes.project_name)
+    project_name = pat_logger.pat_scope.project_name
     if project_name is not None:
-        project_name = sanitize_project_name(project_name)
-    app = pat_logger._instrumentation_scope.attributes.get(Attributes.app)
+        project_name = _sanitize_project_name(project_name)
+    app = pat_logger.pat_scope.app
     if app is not None:
-        app = sanitize_app(app)
+        app = _sanitize_app(app)
 
     try:
         eval_payload = api_types.ClientEvaluation(
             log_id=log_id,
             project_name=project_name,
             app=app,
-            experiment_id=pat_logger._instrumentation_scope.attributes.get(Attributes.experiment_id),
+            experiment_id=pat_logger.pat_scope.experiment_id,
             evaluator_id=evaluator_id,
-            criteria=None,  # TODO
+            criteria=criteria,
             pass_=ev.pass_,
             score=ev.score,
             text_output=ev.text_output,
@@ -96,7 +103,7 @@ def handle_eval_output(
     # get_logger().warning(f"Evaluation({', '.join(ev_data)})")
 
 
-def coerce_eval_output_type(ev_output: typing.Any, class_name: Optional[str], func_name: str) -> EvaluationResult:
+def coerce_eval_output_type(ev_output: typing.Any, func_name: str) -> EvaluationResult:
     if isinstance(ev_output, EvaluationResult):
         return ev_output
     if isinstance(ev_output, bool):
@@ -106,12 +113,8 @@ def coerce_eval_output_type(ev_output: typing.Any, class_name: Optional[str], fu
     if isinstance(ev_output, str):
         return EvaluationResult(text_output=ev_output)
 
-    e_name = func_name
-    if class_name:
-        e_name = f"{class_name}.{func_name}"
-
     raise TypeError(
-        f"Evaluator function '{e_name}' returned unexpected type {type(ev_output)!r}. "
+        f"Evaluator '{func_name}' returned unexpected type {type(ev_output)!r}. "
         f"Supported return types are EvaluationResult, int, float, bool, str. "
     )
 
@@ -120,19 +123,22 @@ def evaluator(
     *,
     # Name for the evaluator. Defaults to function name (or class name in case of class based evaluators).
     evaluator_id: Optional[str] = None,
+    # Name of the criteria used by the evaluator.
+    # The use of the criteria is only recommended in more complex evaluator setups
+    # where evaluation algorithm changes depending on a criteria (think strategy pattern).
+    criteria: Optional[str] = None,
     # Name for the evaluation metric. Defaults to evaluator_id value.
     metric_name: Optional[str] = None,
     **kwargs,
 ):
     def decorator(fn):
         fn_sign = inspect.signature(fn)
-        class_name: Optional[str] = kwargs.get("class_name")
-        fn_name: str = fn.__name__
+        fn_name: str = fn.__qualname__
         eval_id: str = evaluator_id or fn_name
         met_name: str = metric_name or eval_id
         met_description: str = inspect.getdoc(fn)
 
-        @traced(ignore_input=True, ignore_output=True)
+        @traced(disable_log=True)
         @functools.wraps(fn)
         async def wrapper_async(*fn_args, **fn_kwargs):
             start = time.perf_counter()
@@ -143,9 +149,9 @@ def evaluator(
                 raise e
             elapsed = time.perf_counter() - start
             handle_eval_output(
-                class_name=class_name,
                 fn_name=fn_name,
                 evaluator_id=eval_id,
+                criteria=criteria,
                 metric_name=met_name,
                 metric_description=met_description,
                 fn_sign=fn_sign,
@@ -156,7 +162,7 @@ def evaluator(
             )
             return ret
 
-        @traced(ignore_input=True, ignore_output=True)
+        @traced(disable_log=True)
         @functools.wraps(fn)
         def wrapper_sync(*fn_args, **fn_kwargs):
             start = time.perf_counter()
@@ -167,9 +173,9 @@ def evaluator(
                 raise e
             elapsed = time.perf_counter() - start
             handle_eval_output(
-                class_name=class_name,
                 fn_name=fn_name,
                 evaluator_id=eval_id,
+                criteria=criteria,
                 metric_name=met_name,
                 metric_description=met_description,
                 fn_sign=fn_sign,
@@ -204,7 +210,7 @@ class Evaluator(metaclass=_EvaluatorMeta):
     name = None
 
     @typing.overload
-    def evaluate(self) -> Optional[EvaluationResult]:
+    def evaluate(self, *args, **kwargs) -> Optional[EvaluationResult]:
         """
         Synchronous version of evaluate method.
         When inheriting directly from Evaluator class it's permitted to change parameters signature.
@@ -212,7 +218,7 @@ class Evaluator(metaclass=_EvaluatorMeta):
         """
 
     @abc.abstractmethod
-    async def evaluate(self) -> Optional[EvaluationResult]:
+    async def evaluate(self, *args, **kwargs) -> Optional[EvaluationResult]:
         """
         Asynchronous version of evaluate method.
         When inheriting directly from Evaluator class it's permitted to change parameters signature.

@@ -7,6 +7,7 @@ from .datasets import read_jsonl as read_jsonl
 from .evaluators import Evaluator as Evaluator
 from .evaluators import evaluator as evaluator
 from .evaluators import simple_evaluator as simple_evaluator
+from .init import init as init
 from .retry import retry as retry
 from .tasks import Task as Task
 from .tasks import nop_task as nop_task

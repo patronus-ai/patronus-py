@@ -3,11 +3,22 @@ from typing import Optional
 
 
 class Attributes(str, Enum):
-    log_type = "pat.log_type"
+    log_id = "pat.log.id"
+    log_type = "pat.log.type"
     project_name = "pat.project.name"
     app = "pat.app"
     experiment_id = "pat.experiment.id"
-    log_id = "pat.log_id"
+    evaluator_id = "pat.evaluator.id"
+    evaluator_criteria = "pat.evaluator.criteria"
+
+
+class LogTypes(str, Enum):
+    # Eval log type is emitted by evaluators, they contain evaluation data
+    eval = "eval"
+    # Trace log type is emitted by traced() decorator.
+    trace = "trace"
+    # User log type is emitted any time user uses the logger directly.
+    user = "user"
 
 
 def format_service_name(project_name: str, app: Optional[str] = None, experiment_id: Optional[str] = None) -> str:
