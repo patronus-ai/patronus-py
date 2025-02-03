@@ -238,8 +238,12 @@ class Client:
         span_id = None
         if otel_trace is not None:
             trace_context = otel_trace.get_current_span().get_span_context()
-            trace_id = trace_context.trace_id.to_bytes(length=16, byteorder="big", signed=False).hex()
-            span_id = trace_context.span_id.to_bytes(length=8, byteorder="big", signed=False).hex()
+            if trace_context.trace_id != 0:
+                trace_id = trace_context.trace_id.to_bytes(length=16, byteorder="big", signed=False).hex()
+            if trace_context.span_id != 0:
+                span_id = trace_context.span_id.to_bytes(length=8, byteorder="big", signed=False).hex()
+            print("trace_id", trace_id)
+            print("span_id", span_id)
 
         evaluation_fn = None
         if not criteria:
