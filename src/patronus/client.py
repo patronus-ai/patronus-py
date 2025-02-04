@@ -242,8 +242,6 @@ class Client:
                 trace_id = trace_context.trace_id.to_bytes(length=16, byteorder="big", signed=False).hex()
             if trace_context.span_id != 0:
                 span_id = trace_context.span_id.to_bytes(length=8, byteorder="big", signed=False).hex()
-            print("trace_id", trace_id)
-            print("span_id", span_id)
 
         evaluation_fn = None
         if not criteria:

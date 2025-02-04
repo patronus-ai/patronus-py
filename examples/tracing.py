@@ -1,7 +1,8 @@
 import os
 
+from patronus import init
 from patronus import Client
-from patronus.tracing import init, get_logger
+from patronus.tracing import get_logger
 from patronus.tracing.decorators import traced
 
 """
@@ -9,7 +10,10 @@ export PATRONUS_API_KEY='<your api key>'
 """
 
 # Initialize Patronus
-client = Client(api_key=os.getenv('PATRONUS_API_KEY'))
+client = Client(
+    # This is the default and can be omitted
+    api_key=os.getenv("PATRONUS_API_KEY")
+)
 init(project_name="New Project")
 logger = get_logger()
 
@@ -18,7 +22,7 @@ logger = get_logger()
 @traced()
 def evaluation_func(input: str, output: str, context: str):
     result = client.evaluate(
-        evaluator="hallucination",
+        evaluator="lynx",
         criteria="patronus:hallucination",
         evaluated_model_input=input,
         evaluated_model_output=output,
@@ -30,7 +34,12 @@ def evaluation_func(input: str, output: str, context: str):
 @traced()
 def demo_workflow(input: str, context: str):
     logger.debug("Starting my workflow.")
-    evaluation_func(input=input, output='A dinosaur.', context=context)
+    evaluation_func(input=input, output="A dinosaur.", context=context)
     logger.debug("Workflow done.")
 
-demo_workflow(input="What is the biggest animal in the world", context="The biggest animal in the world is the blue whale (Balaenoptera musculus).")
+
+if __name__ == "__main__":
+    demo_workflow(
+        input="What is the biggest animal in the world",
+        context="The biggest animal in the world is the blue whale (Balaenoptera musculus).",
+    )
