@@ -448,7 +448,11 @@ class Experiment:
             self.project_name = project.name
 
             ex = await self._client.api.create_experiment(
-                api_types.CreateExperimentRequest(project_id=self.project_id, name=self.experiment_name, tags=self.tags)
+                api_types.CreateExperimentRequest(
+                    project_id=self.project_id,
+                    name=self.experiment_name,
+                    tags=self.tags,
+                )
             )
             self.experiment_id = ex.id
         else:

@@ -1,10 +1,15 @@
-[tool.poetry]
+[project]
 name = "patronus"
-version = "0.0.17"
+version = "0.1.0-alpha0"
 description = "Patronus Python SDK"
-authors = ["Jędrzej Rosłaniec <jedrzej@patronus.ai>"]
+authors = [
+    {name = "Jędrzej Rosłaniec", email = "jedrzej@patronus.ai"},
+    {name = "Micheal Jaszczuk", email = "michael@patronus.ai"},
+]
 license = "MIT"
 readme = "README.md"
+
+[tool.poetry]
 packages = [{include = "patronus", from="src"}]
 
 [tool.poetry.group.dev.dependencies]
@@ -28,10 +33,11 @@ typing-extensions = "^4.12.2"
 opentelemetry-api = "^1.29.0"
 opentelemetry-sdk = "^1.29.0"
 opentelemetry-exporter-otlp = "^1.29.0"
+patronus-api = {git = "ssh://git@github.com/stainless-sdks/patronus-api-python.git"}
 
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=2.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.ruff]

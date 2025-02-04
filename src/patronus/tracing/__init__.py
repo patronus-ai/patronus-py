@@ -1,37 +1,4 @@
-from typing import Optional
-from patronus.tracing.trace import init_tracer
-from patronus.tracing.logger import init_logger
-from patronus.config import config
-
-_GLOBAL_LOGGER = None
-_GLOBAL_TRACER = None
-
-def get_tracer(project_name: str | None = None):
-    if _GLOBAL_TRACER:
-        return _GLOBAL_TRACER
-    return init_tracer(project_name)
-
-def get_logger(project_name: str | None = None):
-    if _GLOBAL_LOGGER:
-        return _GLOBAL_LOGGER
-    return init_logger(project_name)
-
-def _set_global_logger(_logger):
-    global _GLOBAL_LOGGER
-    _GLOBAL_LOGGER = _logger
-
-def _set_global_tracer(_tracer):
-    global _GLOBAL_TRACER
-    _GLOBAL_TRACER = _tracer
-
-def init(
-    project_name: Optional[str],
-):
-    cfg = config()
-    project_name = project_name or cfg.project_name
-
-    tracer = init_tracer(project_name)
-    _set_global_tracer(tracer)
-
-    logger = init_logger(project_name)
-    _set_global_logger(logger)
+from .decorators import traced as traced
+from .logger import get_logger as get_logger
+from .trace import create_tracer as create_tracer
+from .trace import get_tracer as get_tracer
