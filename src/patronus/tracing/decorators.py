@@ -50,7 +50,11 @@ def traced(
 
         @functools.wraps(func)
         def wrapper_sync(*f_args, **f_kwargs):
+            # TODO may return None for un"init"ed program
+            #      Make sure it's handled gracefully
             logger = get_patronus_logger()
+            # TODO may return None for un"init"ed program
+            #      Make sure it's handled gracefully
             tracer = get_tracer()
 
             exc = None
@@ -68,7 +72,11 @@ def traced(
 
         @functools.wraps(func)
         async def wrapper_async(*f_args, **f_kwargs):
+            # TODO may return None for un"init"ed program
+            #      Make sure it's handled gracefully
             logger = get_patronus_logger()
+            # TODO may return None for un"init"ed program
+            #      Make sure it's handled gracefully
             tracer = get_tracer()
 
             exc = None

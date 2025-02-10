@@ -31,7 +31,7 @@ class Once:
         Will block until ``func`` has been called by one thread.
 
         Returns:
-            Whether or not ``func`` was executed in this call
+            Whether ``func`` was executed in this call
         """
 
         # fast path, try to avoid locking
@@ -109,7 +109,7 @@ class BatchEvaluationExporter:
             os.register_at_fork(after_in_child=self._at_fork_reinit)  # pylint: disable=protected-access
         self._pid = os.getpid()
 
-        self.shutdown_on_exit = None
+        self._atexit_handler = None
         if shutdown_on_exit:
             self._atexit_handler = atexit.register(self.shutdown)
 

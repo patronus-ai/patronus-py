@@ -9,15 +9,15 @@ from typing import Optional, Union
 
 from opentelemetry._logs import SeverityNumber
 from opentelemetry.exporter.otlp.proto.grpc._log_exporter import OTLPLogExporter as OTLPLogExporterTCP
+from opentelemetry.sdk._logs import LogRecord
 from opentelemetry.sdk._logs import Logger as OTELLogger
 from opentelemetry.sdk._logs import LoggerProvider as OTELLoggerProvider
 from opentelemetry.sdk._logs import LoggingHandler as OTeLLoggingHandler
-from opentelemetry.sdk._logs import LogRecord
 from opentelemetry.sdk._logs._internal import ConcurrentMultiLogRecordProcessor, SynchronousMultiLogRecordProcessor
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
-from opentelemetry.trace import get_current_span
+from opentelemetry.trace import get_current_span, SpanContext
 from opentelemetry.util.types import Attributes as OTeLAttributes
 
 from patronus.config import config
@@ -164,13 +164,17 @@ class Logger(OTELLogger):
     def log(
         self,
         body: typing.Any,
+        *,
         log_attrs: Optional[OTeLAttributes] = None,
         severity: Optional[SeverityNumber] = None,
         log_type: LogTypes = LogTypes.user,
+        log_id: Optional[uuid.UUID] = None,
+        span_context: Optional[SpanContext] = None,
     ) -> uuid.UUID:
         severity: SeverityNumber = severity or SeverityNumber.INFO
-        span_context = get_current_span().get_span_context()
-        log_id = uuid.uuid4()
+        span_context = span_context or get_current_span().get_span_context()
+
+        log_id = log_id or uuid.uuid4()
         log_attrs = log_attrs or {}
         log_attrs.update(
             {

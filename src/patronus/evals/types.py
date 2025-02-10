@@ -1,8 +1,7 @@
 import datetime
+import pydantic
 import textwrap
 from typing import Any, Optional
-
-import pydantic
 
 
 class EvaluationResult(pydantic.BaseModel):
@@ -30,4 +29,4 @@ class EvaluationResult(pydantic.BaseModel):
     # In case value is not set, @evaluator decorator and Evaluator classes will set this value automatically.
     evaluation_duration: Optional[datetime.timedelta] = None
     # Duration of the evaluation explanation.
-    explanation_duration: Optional[datetime.time] = None
+    explanation_duration: Optional[datetime.timedelta] = None

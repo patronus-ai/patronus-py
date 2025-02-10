@@ -8,6 +8,8 @@ from .evaluators import Evaluator as Evaluator
 from .evaluators import evaluator as evaluator
 from .evaluators import simple_evaluator as simple_evaluator
 from .init import init as init
+from .pat_client import AsyncPatronus as AsyncPatronus
+from .pat_client import Patronus as Patronus
 from .retry import retry as retry
 from .tasks import Task as Task
 from .tasks import nop_task as nop_task

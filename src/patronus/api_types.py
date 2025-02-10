@@ -1,10 +1,9 @@
 import datetime
+import pydantic
 import re
 import typing
 import uuid
 from typing import Optional, Union
-
-import pydantic
 from typing_extensions import Annotated
 
 
@@ -92,6 +91,8 @@ class EvaluateRequest(pydantic.BaseModel):
     evaluated_model_output: Optional[str] = None
     evaluated_model_gold_answer: Optional[str] = None
     evaluated_model_attachments: Optional[list[EvaluatedModelAttachment]] = None
+    project_id: Optional[str] = None
+    project_name: Optional[str] = None
     app: Optional[str] = None
     experiment_id: Optional[str] = None
     capture: str = "all"
@@ -100,12 +101,7 @@ class EvaluateRequest(pydantic.BaseModel):
     tags: Optional[dict[str, str]] = None
     trace_id: Optional[str] = None
     span_id: Optional[str] = None
-
-
-class EvaluationResultAdditionalInfo(pydantic.BaseModel):
-    positions: Optional[list]
-    extra: Optional[dict]
-    confidence_interval: Optional[dict]
+    log_id: Optional[str] = None
 
 
 class EvaluationResult(pydantic.BaseModel):
@@ -124,7 +120,7 @@ class EvaluationResult(pydantic.BaseModel):
     pass_: Optional[bool] = pydantic.Field(default=None, alias="pass")
     score_raw: Optional[float] = None
     text_output: Optional[str] = None
-    additional_info: Optional[EvaluationResultAdditionalInfo] = None
+    additional_info: Optional[dict[str, typing.Any]] = None
     evaluation_metadata: Optional[dict] = None
     explanation: Optional[str] = None
     evaluation_duration: Optional[datetime.timedelta] = None
