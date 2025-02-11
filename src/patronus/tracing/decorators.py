@@ -72,7 +72,7 @@ def traced(
         async def wrapper_async(*f_args, **f_kwargs):
             ctx = context.get_current_context_or_none()
             if ctx is None:
-                return func(*f_args, **f_kwargs)
+                return await func(*f_args, **f_kwargs)
 
             exc = None
             ret = None

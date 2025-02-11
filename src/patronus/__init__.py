@@ -7,6 +7,7 @@ from .datasets import Row as Row
 from .datasets import read_csv as read_csv
 from .datasets import read_jsonl as read_jsonl
 from .evals import AsyncStructuredEvaluator as AsyncStructuredEvaluator
+from .evals import EvaluationResult as EvaluationResult
 from .evals import Evaluator as Evaluator
 from .evals import StructuredEvaluator as StructuredEvaluator
 from .evals import evaluator as evaluator
@@ -24,6 +25,6 @@ from .pat_client import Patronus as Patronus
 # from .tasks import simple_task as simple_task
 # from .tasks import task as task
 from .tracing.decorators import traced as traced
-from .types import EvalParent as EvalParent
-from .types import EvaluationResult as EvaluationResult
-from .types import TaskResult as TaskResult
+# from .types import EvalParent as EvalParent
+# from .types import EvaluationResult as EvaluationResult
+# from .types import TaskResult as TaskResult

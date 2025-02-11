@@ -15,6 +15,7 @@ from typing import Any, Optional, Union
 from patronus import api, context
 from patronus import api_types
 from patronus.evals.types import EvaluationResult
+from patronus.exceptions import UninitializedError
 from patronus.retry import retry
 from patronus.tracing.attributes import LogTypes
 from patronus.tracing.decorators import traced
@@ -107,16 +108,18 @@ class UniqueEvaluationDataSet:
 _ctx_evaluation_log_group: contextvars.ContextVar[UniqueEvaluationDataSet] = contextvars.ContextVar("_ctx_bundled_eval")
 
 
-def _current_evaluation_group() -> UniqueEvaluationDataSet:
-    return _ctx_evaluation_log_group.get()
-
-
-def get_current_log_id(bound_arguments: dict[str, Any]) -> LogID:
-    with _current_evaluation_group() as ctx:
-        log_id = ctx.find_log(bound_arguments)
-        if log_id is None:
-            raise ValueError("Log not found for provided arguments")
-        return log_id
+def get_current_log_id(bound_arguments: dict[str, Any]) -> Optional[LogID]:
+    """
+    Return log_id for given arguments in current context.
+    Returns None if there is no context - most likely SDK is not initialized.
+    """
+    eval_group = _ctx_evaluation_log_group.get(None)
+    if eval_group is None:
+        return None
+    log_id = eval_group.find_log(bound_arguments)
+    if log_id is None:
+        raise ValueError("Log not found for provided arguments")
+    return log_id
 
 
 @contextlib.contextmanager
@@ -297,7 +300,7 @@ def evaluator(
         async def wrapper_async(*fn_args, **fn_kwargs):
             ctx = context.get_current_context_or_none()
             if ctx is None:
-                return fn(*fn_args, **fn_kwargs)
+                return await fn(*fn_args, **fn_kwargs)
 
             prep = _prep(*fn_args, **fn_kwargs)
 
@@ -486,7 +489,13 @@ class RemoteEvaluatorMixin:
         return self.criteria
 
     def _get_api(self) -> api.API:
-        return self._api or context.get_api_client()
+        api_client = self._api or context.get_api_client_or_none()
+        if api_client is None:
+            raise UninitializedError(
+                "Failed to get API client. Either initialize the library by calling patronus.init() or "
+                "Apss the API client object to the RemoveEvaluator constructor."
+            )
+        return api_client
 
     @staticmethod
     def _translate_response(resp: api_types.EvaluationResult) -> EvaluationResult:
@@ -530,7 +539,7 @@ class RemoteEvaluator(RemoteEvaluatorMixin, StructuredEvaluator):
     def _evaluate(
         self,
         *,
-        log_id: LogID,
+        log_id: Optional[LogID] = None,
         system_prompt: Optional[str] = None,
         task_context: Union[list[str], str, None] = None,
         task_input: Optional[str] = None,
@@ -578,7 +587,7 @@ class RemoteEvaluator(RemoteEvaluatorMixin, StructuredEvaluator):
                 tags=None,
                 trace_id=hex(span_context.trace_id)[2:].zfill(32),
                 span_id=hex(span_context.span_id)[2:].zfill(16),
-                log_id=str(log_id),
+                log_id=log_id and str(log_id),
             )
         )
 
@@ -611,7 +620,7 @@ class AsyncRemoteEvaluator(RemoteEvaluatorMixin, AsyncStructuredEvaluator):
     async def _evaluate(
         self,
         *,
-        log_id: LogID,
+        log_id: Optional[LogID] = None,
         system_prompt: Optional[str] = None,
         task_context: Union[list[str], str, None] = None,
         task_input: Optional[str] = None,
@@ -659,6 +668,6 @@ class AsyncRemoteEvaluator(RemoteEvaluatorMixin, AsyncStructuredEvaluator):
                 tags=None,
                 trace_id=hex(span_context.trace_id)[2:].zfill(32),
                 span_id=hex(span_context.span_id)[2:].zfill(16),
-                log_id=str(log_id),
+                log_id=log_id and str(log_id),
             )
         )

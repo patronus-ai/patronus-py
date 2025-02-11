@@ -51,7 +51,7 @@ def retry(max_attempts=3, initial_delay=1, backoff_factor=2):
                         delay *= backoff_factor
                         attempts += 1
 
-                raise RetryError(attempts - 1, max_attempts, last_error, stack_trace)
+                raise RetryError(attempts - 1, max_attempts, last_error, stack_trace) from last_error
 
             return wrapper
         else:
@@ -93,7 +93,7 @@ def retry(max_attempts=3, initial_delay=1, backoff_factor=2):
                         delay *= backoff_factor
                         attempts += 1
 
-                raise RetryError(attempts - 1, max_attempts, last_error, stack_trace)
+                raise RetryError(attempts - 1, max_attempts, last_error, stack_trace) from last_error
 
             return wrapper
 
