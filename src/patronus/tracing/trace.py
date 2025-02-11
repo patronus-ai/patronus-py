@@ -8,8 +8,7 @@ from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import Span, SpanProcessor, TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
-from ..config import config
-from ..context_utils import ContextObject
+from .. import context
 from .attributes import Attributes, format_service_name
 
 
@@ -53,47 +52,32 @@ def _create_exporter(endpoint: str, api_key: str) -> OTLPSpanExporter:
 
 @functools.lru_cache()
 def create_tracer_provider(
-    exporter_endpoint: Optional[str] = None,
-    api_key: Optional[str] = None,
-    project_name: Optional[str] = None,
-    app: Optional[str] = None,
-    experiment_id: Optional[str] = None,
+    exporter_endpoint: str,
+    api_key: str,
+    scope: context.PatronusScope,
 ) -> TracerProvider:
-    exporter_endpoint = exporter_endpoint or config().otel_endpoint
-    api_key = api_key or config().api_key
-    project_name = project_name or config().project_name
-    if not experiment_id:
-        app = app or config().app
-
-    service_name = format_service_name(project_name, app, experiment_id)
+    service_name = format_service_name(scope.project_name, scope.app, scope.experiment_id)
     resource = Resource.create({"service.name": service_name})
     provider = TracerProvider(resource=resource)
     provider.add_span_processor(
-        PatronusAttributesSpanProcessor(project_name=project_name, app=app, experiment_id=experiment_id)
+        PatronusAttributesSpanProcessor(
+            project_name=scope.project_name,
+            app=scope.app,
+            experiment_id=scope.experiment_id,
+        )
     )
     provider.add_span_processor(BatchSpanProcessor(_create_exporter(endpoint=exporter_endpoint, api_key=api_key)))
     return provider
 
 
 def create_tracer(
-    project_name: Optional[str] = None,
-    app: Optional[str] = None,
-    experiment_id: Optional[str] = None,
-    exporter_endpoint: Optional[str] = None,
-    api_key: Optional[str] = None,
+    scope: context.PatronusScope,
+    exporter_endpoint: str,
+    api_key: str,
 ) -> trace.Tracer:
     provider = create_tracer_provider(
         exporter_endpoint=exporter_endpoint,
         api_key=api_key,
-        project_name=project_name,
-        app=app,
-        experiment_id=experiment_id,
+        scope=scope,
     )
     return provider.get_tracer("patronus.sdk")
-
-
-_CTX_TRACER = ContextObject[trace.Tracer]("pat.tracer")
-
-
-def get_tracer() -> trace.Tracer:
-    return _CTX_TRACER.get()

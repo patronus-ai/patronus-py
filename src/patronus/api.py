@@ -4,7 +4,6 @@ from typing import Optional
 
 from . import api_types
 from .api_base import APIError, BaseAPIClient, CallResponse, RPMLimitError, UnrecoverableAPIError
-from .context_utils import ContextObject
 
 log = logging.getLogger(__name__)
 
@@ -343,10 +342,3 @@ def try_int(v, default: int) -> int:
         return int(v)
     except ValueError:
         return default
-
-
-CTX_API = ContextObject("pat.api")
-
-
-def get_api() -> API:
-    return CTX_API.get()

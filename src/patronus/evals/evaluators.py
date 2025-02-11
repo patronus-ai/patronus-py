@@ -5,7 +5,6 @@ import datetime
 import functools
 import inspect
 import logging
-import re
 import threading
 import time
 import typing
@@ -13,28 +12,15 @@ import uuid
 from opentelemetry.trace import get_current_span, SpanContext
 from typing import Any, Optional, Union
 
-from patronus import api
+from patronus import api, context
 from patronus import api_types
-from patronus.evals.exporter import get_exporter
 from patronus.evals.types import EvaluationResult
 from patronus.retry import retry
-from patronus.tracing import get_tracer
 from patronus.tracing.attributes import LogTypes
 from patronus.tracing.decorators import traced
-from patronus.tracing.logger import get_logger, get_patronus_logger
+from patronus.tracing.logger import Logger
 
 log = logging.getLogger("patronus.core")
-
-
-def _create_field_sanitizer(pattern: str, max_len: int, replace_with: str):
-    def sanitize(value: str) -> str:
-        return re.sub(pattern, replace_with, value[:max_len])
-
-    return sanitize
-
-
-_sanitize_project_name = _create_field_sanitizer(r"[^a-zA-Z0-9_ -]", max_len=50, replace_with="_")
-_sanitize_app = _create_field_sanitizer(r"[^a-zA-Z0-9-_./ -]", max_len=50, replace_with="_")
 
 
 LogID = uuid.UUID
@@ -97,7 +83,9 @@ class UniqueEvaluationDataSet:
         self.logs = [*self.logs, eval_log]
         return eval_log
 
-    def log(self, *, is_method: bool, self_key_name: Optional[str], bound_arguments: dict[str, Any]):
+    def log(
+        self, *, logger: Logger, is_method: bool, self_key_name: Optional[str], bound_arguments: dict[str, Any]
+    ) -> LogID:
         if is_method:
             assert self_key_name is not None
             bound_arguments = {**bound_arguments}
@@ -107,7 +95,7 @@ class UniqueEvaluationDataSet:
             if log_id is not None:
                 return log_id
             record = self._add_log(bound_arguments)
-        get_patronus_logger().log(
+        logger.log(
             body=record.arguments,
             log_type=LogTypes.eval,
             log_id=record.log_id,
@@ -152,13 +140,19 @@ def _get_or_start_evaluation_log_group() -> typing.Iterator[UniqueEvaluationData
 
 @contextlib.contextmanager
 def bundled_eval(span_name: str = "Evaluation bundle"):
-    with get_tracer().start_as_current_span(span_name):
+    tracer = context.get_tracer_or_none()
+    if tracer is None:
+        yield
+        return
+
+    with tracer.start_as_current_span(span_name):
         with _start_evaluation_log_group():
             yield
 
 
 def handle_eval_output(
     *,
+    ctx: context.PatronusContext,
     log_id: LogID,
     evaluator_id: str,
     criteria: Optional[str] = None,
@@ -174,21 +168,13 @@ def handle_eval_output(
 
     ev: EvaluationResult = coerce_eval_output_type(ret_value, qualname)
 
-    pat_logger = get_patronus_logger()
-    project_name = pat_logger.pat_scope.project_name
-    if project_name is not None:
-        project_name = _sanitize_project_name(project_name)
-    app = pat_logger.pat_scope.app
-    if app is not None:
-        app = _sanitize_app(app)
-
     span_context = get_current_span().get_span_context()
     try:
         eval_payload = api_types.ClientEvaluation(
             log_id=log_id,
-            project_name=project_name,
-            app=app,
-            experiment_id=pat_logger.pat_scope.experiment_id,
+            project_name=ctx.scope.project_name,
+            app=ctx.scope.app,
+            experiment_id=ctx.scope.experiment_id,
             evaluator_id=evaluator_id,
             criteria=criteria,
             pass_=ev.pass_,
@@ -207,7 +193,7 @@ def handle_eval_output(
             trace_id=hex(span_context.trace_id)[2:].zfill(32),
             span_id=hex(span_context.span_id)[2:].zfill(16),
         )
-        get_exporter().submit(eval_payload)
+        ctx.exporter.submit(eval_payload)
     except Exception:
         log.exception("Failed to submit evaluation payload to the exported")
 
@@ -309,10 +295,15 @@ def evaluator(
 
         @functools.wraps(fn)
         async def wrapper_async(*fn_args, **fn_kwargs):
+            ctx = context.get_current_context_or_none()
+            if ctx is None:
+                return fn(*fn_args, **fn_kwargs)
+
             prep = _prep(*fn_args, **fn_kwargs)
 
             with _get_or_start_evaluation_log_group() as log_group:
                 log_id = log_group.log(
+                    logger=ctx.pat_logger,
                     is_method=is_method,
                     self_key_name=prep.self_key_name,
                     bound_arguments=prep.arguments,
@@ -322,12 +313,13 @@ def evaluator(
                 try:
                     ret = await traced(prep.display_name(), disable_log=True)(fn)(*fn_args, **fn_kwargs)
                 except Exception as e:
-                    get_logger().exception("Evaluation failed")
+                    ctx.logger.exception("Evaluation failed")
                     raise e
                 if prep.disable_export:
                     return ret
                 elapsed = time.perf_counter() - start
                 handle_eval_output(
+                    ctx=ctx,
                     log_id=log_id,
                     evaluator_id=prep.evaluator_id,
                     criteria=prep.criteria,
@@ -341,10 +333,15 @@ def evaluator(
 
         @functools.wraps(fn)
         def wrapper_sync(*fn_args, **fn_kwargs):
+            ctx = context.get_current_context_or_none()
+            if ctx is None:
+                return fn(*fn_args, **fn_kwargs)
+
             prep = _prep(*fn_args, **fn_kwargs)
 
             with _get_or_start_evaluation_log_group() as log_group:
                 log_id = log_group.log(
+                    logger=ctx.pat_logger,
                     is_method=is_method,
                     self_key_name=prep.self_key_name,
                     bound_arguments=prep.arguments,
@@ -354,12 +351,13 @@ def evaluator(
                 try:
                     ret = traced(prep.display_name(), disable_log=True)(fn)(*fn_args, **fn_kwargs)
                 except Exception as e:
-                    get_logger().exception("Evaluation failed")
+                    ctx.logger.exception("Evaluation failed")
                     raise e
                 if prep.disable_export:
                     return ret
                 elapsed = time.perf_counter() - start
                 handle_eval_output(
+                    ctx=ctx,
                     log_id=log_id,
                     evaluator_id=prep.evaluator_id,
                     criteria=prep.criteria,
@@ -488,7 +486,7 @@ class RemoteEvaluatorMixin:
         return self.criteria
 
     def _get_api(self) -> api.API:
-        return self._api or api.get_api()
+        return self._api or context.get_api_client()
 
     @staticmethod
     def _translate_response(resp: api_types.EvaluationResult) -> EvaluationResult:
@@ -541,11 +539,14 @@ class RemoteEvaluator(RemoteEvaluatorMixin, StructuredEvaluator):
         task_metadata: Optional[typing.Dict[str, typing.Any]] = None,
         **kwargs: Any,
     ) -> api_types.EvaluationResult:
-        # TODO use context vars to pull project/app/experiment.
-        logger = get_patronus_logger()
-        project_name = logger.pat_scope.project_name
-        app = logger.pat_scope.app
-        experiment_id = logger.pat_scope.experiment_id
+        project_name = None
+        app = None
+        experiment_id = None
+        ctx = context.get_current_context_or_none()
+        if ctx is not None:
+            project_name = ctx.scope.project_name
+            app = ctx.scope.app
+            experiment_id = ctx.scope.experiment_id
 
         span_context = get_current_span().get_span_context()
         return self._get_api().evaluate_one_sync(
@@ -619,11 +620,14 @@ class AsyncRemoteEvaluator(RemoteEvaluatorMixin, AsyncStructuredEvaluator):
         task_metadata: Optional[typing.Dict[str, typing.Any]] = None,
         **kwargs: Any,
     ) -> api_types.EvaluationResult:
-        # TODO use context vars to pull project/app/experiment.
-        logger = get_patronus_logger()
-        project_name = logger.pat_scope.project_name
-        app = logger.pat_scope.app
-        experiment_id = logger.pat_scope.experiment_id
+        project_name = None
+        app = None
+        experiment_id = None
+        ctx = context.get_current_context_or_none()
+        if ctx is not None:
+            project_name = ctx.scope.project_name
+            app = ctx.scope.app
+            experiment_id = ctx.scope.experiment_id
 
         span_context = get_current_span().get_span_context()
         return await self._get_api().evaluate_one(

@@ -6,8 +6,8 @@ from typing import Optional
 from opentelemetry._logs import SeverityNumber
 
 from .attributes import LogTypes
-from .logger import Logger, get_patronus_logger
-from .trace import get_tracer
+from .logger import Logger
+from .. import context
 
 
 def traced(
@@ -27,6 +27,7 @@ def traced(
     def decorator(func):
         name = span_name or func.__qualname__
         sig = inspect.signature(func)
+        record_exception = not disable_log and log_exceptions
 
         def log_call(logger: Logger, fn_args: typing.Any, fn_kwargs: typing.Any, ret: typing.Any, exc: Exception):
             if disable_log:
@@ -50,45 +51,39 @@ def traced(
 
         @functools.wraps(func)
         def wrapper_sync(*f_args, **f_kwargs):
-            # TODO may return None for un"init"ed program
-            #      Make sure it's handled gracefully
-            logger = get_patronus_logger()
-            # TODO may return None for un"init"ed program
-            #      Make sure it's handled gracefully
-            tracer = get_tracer()
+            ctx = context.get_current_context_or_none()
+            if ctx is None:
+                return func(*f_args, **f_kwargs)
 
             exc = None
             ret = None
-            with tracer.start_as_current_span(name, record_exception=not disable_log):
+            with ctx.tracer.start_as_current_span(name, record_exception=record_exception):
                 try:
                     ret = func(*f_args, **f_kwargs)
                 except Exception as e:
                     exc = e
                     raise exc
                 finally:
-                    log_call(logger, f_args, f_kwargs, ret, exc)
+                    log_call(ctx.pat_logger, f_args, f_kwargs, ret, exc)
 
                 return ret
 
         @functools.wraps(func)
         async def wrapper_async(*f_args, **f_kwargs):
-            # TODO may return None for un"init"ed program
-            #      Make sure it's handled gracefully
-            logger = get_patronus_logger()
-            # TODO may return None for un"init"ed program
-            #      Make sure it's handled gracefully
-            tracer = get_tracer()
+            ctx = context.get_current_context_or_none()
+            if ctx is None:
+                return func(*f_args, **f_kwargs)
 
             exc = None
             ret = None
-            with tracer.start_as_current_span(name, record_exception=not disable_log):
+            with ctx.tracer.start_as_current_span(name, record_exception=record_exception):
                 try:
                     ret = await func(*f_args, **f_kwargs)
                 except Exception as e:
                     exc = e
                     raise exc
                 finally:
-                    log_call(logger, f_args, f_kwargs, ret, exc)
+                    log_call(ctx.pat_logger, f_args, f_kwargs, ret, exc)
 
                 return ret
 

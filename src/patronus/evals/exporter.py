@@ -10,7 +10,6 @@ from threading import Lock
 from typing import Callable
 
 from patronus import api, api_types
-from patronus.context_utils import ContextObject
 
 logger = logging.getLogger("patronus.core")
 
@@ -279,10 +278,3 @@ class BatchEvaluationExporter:
         with self.condition:
             self.condition.notify_all()
         self.worker_thread.join()
-
-
-_CTX_EVAL_EXPORTER = ContextObject[BatchEvaluationExporter]("pat.evaluation-exporter")
-
-
-def get_exporter() -> BatchEvaluationExporter:
-    return _CTX_EVAL_EXPORTER.get()

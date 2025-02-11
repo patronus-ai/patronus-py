@@ -7,8 +7,10 @@ import inspect
 import typing
 from typing import Optional, Union, TypedDict, List
 
-from .. import evals, EvaluationResult
-from ..evals.evaluators import bundled_eval
+from patronus.evals import bundled_eval
+from patronus.evals import StructuredEvaluator
+from patronus.evals import AsyncStructuredEvaluator
+from .container import EvaluationContainer
 
 _EvaluatorID = str
 _Criteria = str
@@ -20,8 +22,8 @@ class EvaluatorDict(TypedDict, total=False):
 
 
 Evaluator = Union[
-    evals.StructuredEvaluator,
-    evals.AsyncStructuredEvaluator,
+    StructuredEvaluator,
+    AsyncStructuredEvaluator,
     # TODO add support later
     # EvaluatorDict,
     # Tuple[_EvaluatorID, _Criteria],
@@ -57,7 +59,7 @@ class AsyncPatronus:
         gold_answer: Optional[str] = None,
         task_metadata: Optional[dict] = None,
         return_exceptions: bool = False,
-    ):
+    ) -> EvaluationContainer:
         singular_eval = not isinstance(evaluators, list)
         if singular_eval:
             evaluators = [evaluators]
@@ -70,7 +72,7 @@ class AsyncPatronus:
             return with_semaphore(self._semaphore, coro)
 
         with bundled_eval():
-            return await asyncio.gather(
+            results = await asyncio.gather(
                 *(
                     into_coro(
                         ev.evaluate,
@@ -85,6 +87,7 @@ class AsyncPatronus:
                 ),
                 return_exceptions=return_exceptions,
             )
+        return EvaluationContainer(results)
 
     def evaluate_bg(
         self,
@@ -96,7 +99,7 @@ class AsyncPatronus:
         task_output: Optional[str] = None,
         gold_answer: Optional[str] = None,
         task_metadata: Optional[dict] = None,
-    ) -> Task[list[Union[EvaluationResult, Exception]]]:
+    ) -> Task[EvaluationContainer]:
         loop = asyncio.get_running_loop()
         task = loop.create_task(
             self.evaluate(
