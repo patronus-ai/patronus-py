@@ -1,6 +1,6 @@
 [project]
 name = "patronus"
-version = "0.1.0-alpha0"
+version = "0.1.0-rc1"
 description = "Patronus Python SDK"
 authors = [
     {name = "Jędrzej Rosłaniec", email = "jedrzej@patronus.ai"},
@@ -16,6 +16,11 @@ packages = [{include = "patronus", from="src"}]
 pytest = "^8.3.3"
 mypy = "^1.12.1"
 
+
+[tool.poetry.group.docs.dependencies]
+mkdocs-material = "^9.6.7"
+mkdocstrings = {extras = ["python"], version = "^0.28.2"}
+
 [project.urls]
 Homepage = "https://www.patronus.ai"
 Documentation = "https://docs.patronus.ai"
@@ -28,12 +33,20 @@ pydantic = "^2.8.2"
 tqdm = "^4.66.5"
 pydantic-settings = "^2.4.0"
 pyyaml = "^6.0.2"
-pandas = ">=2.0.0"
 typing-extensions = "^4.12.2"
 opentelemetry-api = "^1.29.0"
 opentelemetry-sdk = "^1.29.0"
 opentelemetry-exporter-otlp = "^1.29.0"
 
+[tool.poetry.group.experiments]
+optional = true
+
+[tool.poetry.group.experiments.dependencies]
+pandas = ">=2.0.0"
+
+[tool.poetry.extras]
+experiments = ["pandas"]
+all = ["pandas"]
 
 [build-system]
 requires = ["poetry-core>=2.0"]

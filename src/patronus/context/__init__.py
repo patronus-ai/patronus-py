@@ -5,12 +5,13 @@ from typing import Optional
 from typing import TYPE_CHECKING
 
 from patronus.context.context_utils import ContextObject
-from patronus.evaluators import EvaluatorError
+from patronus.exceptions import UninitializedError
 
 if TYPE_CHECKING:
     from patronus.evals.exporter import BatchEvaluationExporter
     from patronus.tracing.logger import Logger as PatLogger
     from patronus.api import API
+    from opentelemetry.sdk.trace import TracerProvider
 
 
 @dataclasses.dataclass(frozen=True)
@@ -25,6 +26,7 @@ class PatronusContext:
     scope: PatronusScope
     logger: logging.Logger
     pat_logger: "PatLogger"
+    tracer_provider: "TracerProvider"
     tracer: trace.Tracer
     api_client: "API"
     exporter: "BatchEvaluationExporter"
@@ -44,8 +46,8 @@ def get_current_context_or_none() -> Optional[PatronusContext]:
 def get_current_context() -> PatronusContext:
     ctx = get_current_context_or_none()
     if ctx is None:
-        raise EvaluatorError(
-            "No active Patronus context found. " "Please initialize the library by calling patronus.init()."
+        raise UninitializedError(
+            "No active Patronus context found. Please initialize the library by calling patronus.init()."
         )
     return ctx
 

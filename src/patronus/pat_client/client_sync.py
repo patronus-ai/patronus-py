@@ -6,10 +6,25 @@ from multiprocessing.pool import ThreadPool, AsyncResult, ApplyResult
 from typing import Union, Optional
 
 from .container import EvaluationContainer
-from ..evals import StructuredEvaluator, EvaluationResult
+from ..evals import StructuredEvaluator, EvaluationResult, RemoteEvaluator
 from ..evals.evaluators import bundled_eval
 
 T = typing.TypeVar("T")
+
+_EvaluatorID = str
+_Criteria = str
+
+
+class EvaluatorDict(typing.TypedDict, total=False):
+    evaluator_id: str
+    criteria: Optional[_Criteria]
+
+
+Evaluator = Union[
+    StructuredEvaluator,
+    EvaluatorDict,
+    tuple[_EvaluatorID, _Criteria],
+]
 
 
 # Type Hint for multiprocessing.AsyncResult
@@ -64,9 +79,19 @@ class Patronus:
 
         return [handle_result(res) for res in results]
 
+    def _map_evaluators(self, evs: list[Evaluator]):
+        def _into(ev: Evaluator):
+            if isinstance(ev, tuple):
+                return RemoteEvaluator(ev[0], ev[1])
+            if isinstance(ev, dict):
+                return RemoteEvaluator(ev["evaluator_id"], ev["criteria"])
+            return ev
+
+        return [_into(e) for e in evs]
+
     def evaluate(
         self,
-        evaluators: list[StructuredEvaluator],
+        evaluators: typing.Union[list[Evaluator], Evaluator],
         *,
         system_prompt: typing.Optional[str] = None,
         task_context: typing.Union[list[str], str, None] = None,
@@ -76,6 +101,10 @@ class Patronus:
         task_metadata: typing.Optional[dict[str, typing.Any]] = None,
         return_exceptions: bool = False,
     ) -> EvaluationContainer:
+        if not isinstance(evaluators, list):
+            evaluators = [evaluators]
+        evaluators = self._map_evaluators(evaluators)
+
         with bundled_eval():
             callables = [
                 _into_thread_run_fn(

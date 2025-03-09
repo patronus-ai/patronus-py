@@ -17,60 +17,7 @@ pip install patronus
 
 ## Quickstart
 
-### Evaluation
-
-For quick testing and exploration, you can use the synchronous evaluate() method:
-
-```python
-import os
-from patronus import Client
-
-client = Client(
-    # This is the default and can be omitted
-    api_key=os.environ.get("PATRONUS_API_KEY"),
-)
-result = client.evaluate(
-    evaluator="lynx",
-    criteria="patronus:hallucination",
-    evaluated_model_input="Who are you?",
-    evaluated_model_output="My name is Barry.",
-    evaluated_model_retrieved_context="My name is John.",
-)
-print(f"Pass: {result.pass_}")
-print(f"Explanation: {result.explanation}")
-```
-
-The Patronus Python SDK is designed to work primarily with async/await patterns,
-which is the recommended way to use the library. Here's a feature-rich example using async evaluation:
-
-```python
-import asyncio
-from patronus import Client
-
-client = Client()
-
-no_apologies = client.remote_evaluator(
-    "judge",
-    "patronus:no-apologies",
-    explain_strategy="always",
-    max_attempts=3,
-)
-
-
-async def evaluate():
-    result = await no_apologies.evaluate(
-        evaluated_model_input="How to kill a docker container?",
-        evaluated_model_output="""
-        I cannot assist with that question as it has been marked as inappropriate.
-        I must respectfully decline to provide an answer."
-        """,
-    )
-    print(f"Pass: {result.pass_}")
-    print(f"Explanation: {result.explanation}")
-
-
-asyncio.run(evaluate())
-```
+TBD
 
 ### Experiment
 
@@ -78,40 +25,4 @@ The Patronus Python SDK includes a powerful experimentation framework designed t
 Whether you're working with pre-trained models, fine-tuning your own, or experimenting with new architectures,
 this framework provides the tools you need to set up, execute, and analyze experiments efficiently.
 
-```python
-import os
-from patronus import Client, Row, TaskResult, evaluator, task
-
-client = Client(
-    # This is the default and can be omitted
-    api_key=os.environ.get("PATRONUS_API_KEY"),
-)
-
-
-@task
-def my_task(row: Row):
-    return f"{row.evaluated_model_input} World"
-
-
-@evaluator
-def exact_match(row: Row, task_result: TaskResult):
-    # exact_match is locally defined and run evaluator
-    return task_result.evaluated_model_output == row.evaluated_model_gold_answer
-
-
-# Reference remote Judge Patronus Evaluator with is-concise criteria.
-# This evaluator runs remotely on Patronus infrastructure.
-is_concise = client.remote_evaluator("judge", "patronus:is-concise")
-
-client.experiment(
-    "Tutorial Project",
-    dataset=[
-        {
-            "evaluated_model_input": "Hello",
-            "evaluated_model_gold_answer": "Hello World",
-        },
-    ],
-    task=my_task,
-    evaluators=[exact_match, is_concise],
-)
-```
+ TBD

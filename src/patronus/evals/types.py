@@ -25,6 +25,10 @@ class EvaluationResult(pydantic.BaseModel):
     explanation: Optional[str] = None
     # Key-value pair metadata
     tags: Optional[dict[str, str]] = None
+    # ID of the dataset associated with evaluated sample
+    dataset_id: Optional[str] = None
+    # ID of the sample in a dataset associated with evaluated sample
+    dataset_sample_id: Optional[str] = None
     # Duration of the evaluation.
     # In case value is not set, @evaluator decorator and Evaluator classes will set this value automatically.
     evaluation_duration: Optional[datetime.timedelta] = None

@@ -17,9 +17,10 @@ def _create_field_sanitizer(pattern: str, *, max_len: int, replace_with: str, st
     return pydantic.BeforeValidator(sanitize)
 
 
+project_name_sanitizer = (_create_field_sanitizer(r"[^a-zA-Z0-9_ -]", max_len=50, replace_with="_"),)
 SanitizedProjectName = typing.Annotated[
     str,
-    _create_field_sanitizer(r"[^a-zA-Z0-9_ -]", max_len=50, replace_with="_"),
+    project_name_sanitizer,
 ]
 SanitizedApp = typing.Annotated[str, _create_field_sanitizer(r"[^a-zA-Z0-9-_./ -]", max_len=50, replace_with="_")]
 SanitizedLocalEvaluatorID = typing.Annotated[
@@ -117,7 +118,7 @@ class EvaluateRequest(pydantic.BaseModel):
     experiment_id: Optional[str] = None
     capture: str = "all"
     dataset_id: Optional[str] = None
-    dataset_sample_id: Optional[int] = None
+    dataset_sample_id: Optional[str] = None
     tags: Optional[dict[str, str]] = None
     trace_id: Optional[str] = None
     span_id: Optional[str] = None
@@ -330,7 +331,7 @@ class ClientEvaluation(pydantic.BaseModel):
     metric_name: Optional[str] = None
     metric_description: Optional[str] = None
     dataset_id: Optional[str] = None
-    dataset_sample_id: Optional[int] = None
+    dataset_sample_id: Optional[str] = None
     created_at: Optional[datetime.datetime] = None
     tags: Optional[dict[str, str]] = None
     trace_id: Optional[str] = None

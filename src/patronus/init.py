@@ -4,10 +4,10 @@ import httpx
 
 from . import config
 from . import context
-from .api import API
+from .api.api_client import PatronusAPIClient
 from .evals.exporter import BatchEvaluationExporter
 from .tracing.logger import create_logger, create_patronus_logger
-from .tracing.trace import create_tracer
+from .tracing.tracer import create_tracer_provider
 
 
 def init(
@@ -23,7 +23,7 @@ def init(
     otel_endpoint: Optional[str] = None,
     api_key: Optional[str] = None,
 ):
-    if api_url != config._DEFAULT_API_URL and otel_endpoint == config._DEFAULT_OTEL_ENDPOINT:
+    if api_url != config.DEFAULT_API_URL and otel_endpoint == config.DEFAULT_OTEL_ENDPOINT:
         raise ValueError(
             "'api_url' is set to non-default value, "
             "but 'otel_endpoint' is a default. Change 'otel_endpoint' to point to the same environment as 'api_url'"
@@ -33,9 +33,11 @@ def init(
     ctx = build_context(
         project_name=project_name or cfg.project_name,
         app=app or cfg.app,
+        experiment_id=None,
         api_url=api_url or cfg.api_url,
         otel_endpoint=otel_endpoint or cfg.otel_endpoint,
         api_key=api_key or cfg.api_key,
+        timeout_s=cfg.timeout_s,
     )
     context.set_global_patronus_context(ctx)
 
@@ -43,18 +45,26 @@ def init(
 def build_context(
     project_name: str,
     app: Optional[str],
+    experiment_id: Optional[str],
     api_url: Optional[str],
     otel_endpoint: str,
     api_key: str,
+    client_http: Optional[httpx.Client] = None,
+    client_http_async: Optional[httpx.AsyncClient] = None,
+    timeout_s: int = 60,
 ) -> context.PatronusContext:
+    if client_http is None:
+        client_http = httpx.Client(timeout=timeout_s)
+    if client_http_async is None:
+        client_http_async = httpx.AsyncClient(timeout=timeout_s)
     scope = context.PatronusScope(
         project_name=project_name,
         app=app,
-        experiment_id=None,
+        experiment_id=experiment_id,
     )
-    api = API(
-        http=httpx.AsyncClient(),
-        http_sync=httpx.Client(),
+    api = PatronusAPIClient(
+        client_http_async=client_http_async,
+        client_http=client_http,
         base_url=api_url,
         api_key=api_key,
     )
@@ -68,16 +78,18 @@ def build_context(
         exporter_endpoint=otel_endpoint,
         api_key=api_key,
     )
-    tracer = create_tracer(
+    tracer_provider = create_tracer_provider(
         exporter_endpoint=otel_endpoint,
         api_key=api_key,
         scope=scope,
     )
+    tracer = tracer_provider.get_tracer("patronus.sdk")
     eval_exporter = BatchEvaluationExporter(client=api)
     return context.PatronusContext(
         scope=scope,
         logger=std_logger,
         pat_logger=eval_logger,
+        tracer_provider=tracer_provider,
         tracer=tracer,
         api_client=api,
         exporter=eval_exporter,

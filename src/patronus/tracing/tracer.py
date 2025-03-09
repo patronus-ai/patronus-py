@@ -8,8 +8,8 @@ from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import Span, SpanProcessor, TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
-from .. import context
-from .attributes import Attributes, format_service_name
+from patronus import context
+from patronus.tracing.attributes import Attributes, format_service_name
 
 
 class PatronusAttributesSpanProcessor(SpanProcessor):

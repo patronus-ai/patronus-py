@@ -1,3 +1,5 @@
+import logging
+
 import asyncio
 import datetime
 import functools
@@ -7,7 +9,9 @@ import time
 import traceback
 from typing import Optional
 
-from .api_base import RetryError, RPMLimitError, UnrecoverableAPIError, log
+from patronus.api.api_client_base import RetryError, RPMLimitError, UnrecoverableAPIError
+
+log = logging.getLogger("patronus.core")
 
 
 def retry(max_attempts=3, initial_delay=1, backoff_factor=2):

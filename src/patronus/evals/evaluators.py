@@ -12,14 +12,17 @@ import uuid
 from opentelemetry.trace import get_current_span, SpanContext
 from typing import Any, Optional, Union
 
-from patronus import api, context
-from patronus import api_types
+from patronus import context
+from patronus.api.api_client import PatronusAPIClient
+from patronus.evals.context import get_context_evaluation_attributes
+from patronus.api import api_types
 from patronus.evals.types import EvaluationResult
 from patronus.exceptions import UninitializedError
 from patronus.retry import retry
-from patronus.tracing.attributes import LogTypes
-from patronus.tracing.decorators import traced
+from patronus.tracing.attributes import LogTypes, GenAIAttributes, OperationNames
+from patronus.tracing.decorators import start_span
 from patronus.tracing.logger import Logger
+from patronus.utils import merge_tags
 
 log = logging.getLogger("patronus.core")
 
@@ -172,6 +175,8 @@ def handle_eval_output(
     ev: EvaluationResult = coerce_eval_output_type(ret_value, qualname)
 
     span_context = get_current_span().get_span_context()
+    evaluation_attrs = get_context_evaluation_attributes()
+    tags = merge_tags(evaluation_attrs["tags"], ev.tags, evaluation_attrs["experiment_tags"])
     try:
         eval_payload = api_types.ClientEvaluation(
             log_id=log_id,
@@ -189,10 +194,10 @@ def handle_eval_output(
             evaluation_duration=ev.evaluation_duration or duration,
             metric_name=metric_name,
             metric_description=metric_description,
-            dataset_id=None,  # TODO
-            dataset_sample_id=None,  # TODO
+            dataset_id=evaluation_attrs["dataset_id"],
+            dataset_sample_id=evaluation_attrs["dataset_sample_id"],
             created_at=datetime.datetime.now(datetime.timezone.utc),
-            tags=ev.tags,
+            tags=tags,
             trace_id=hex(span_context.trace_id)[2:].zfill(32),
             span_id=hex(span_context.span_id)[2:].zfill(16),
         )
@@ -232,8 +237,35 @@ class PrepEval(typing.NamedTuple):
 
     def display_name(self):
         if not self.criteria:
-            return self.criteria
+            return self.evaluator_id
         return f"{self.criteria} ({self.evaluator_id})"
+
+
+def _as_applied_argument(signature: inspect.Signature, bound_arguments: inspect.BoundArguments):
+    """
+    This function is very similar to inspect.BoundArguments.apply_default().
+
+    The difference is that it's not meant to be used for arguments bounding but for as a log record of evaluation data.
+    The purpose of it is to provide nicer display for arguments passed to evaluation functions.
+    This function will ignore empty varied positional arguments (*args) and varied keyword arguments (**kwargs)
+    if are empty (were not provided by the function called).
+    """
+    arguments = bound_arguments.arguments
+    new_arguments = []
+    for name, param in signature.parameters.items():
+        if param.kind == inspect.Parameter.VAR_KEYWORD:
+            for kwname, kwvalue in arguments.get(name, {}).items():
+                new_arguments.append((kwname, kwvalue))
+        else:
+            try:
+                new_arguments.append((name, arguments[name]))
+            except KeyError:
+                if param.default is not inspect.Parameter.empty:
+                    val = param.default
+                else:
+                    continue
+                new_arguments.append((name, val))
+    return dict(new_arguments)
 
 
 def evaluator(
@@ -261,8 +293,15 @@ def evaluator(
     def decorator(fn):
         fn_sign = inspect.signature(fn)
 
+        def _get_eval_id():
+            return (callable(evaluator_id) and evaluator_id()) or evaluator_id or fn.__qualname__
+
+        def _get_criteria():
+            return (callable(criteria) and criteria()) or criteria or None
+
         def _prep(*fn_args, **fn_kwargs):
             bound_args = fn_sign.bind(*fn_args, **fn_kwargs)
+            arguments_to_log = _as_applied_argument(fn_sign, bound_args)
             bound_args.apply_defaults()
             self_key_name = None
             instance = None
@@ -277,9 +316,9 @@ def evaluator(
                 eval_criteria = instance.get_criteria()
 
             if eval_id is None:
-                eval_id = (callable(evaluator_id) and evaluator_id()) or evaluator_id or fn.__qualname__
+                eval_id = _get_eval_id()
             if eval_criteria is None:
-                eval_criteria = (callable(criteria) and criteria()) or criteria or None
+                eval_criteria = _get_criteria()
 
             met_name = metric_name or eval_id
             met_description = metric_description or inspect.getdoc(fn) or None
@@ -292,7 +331,7 @@ def evaluator(
                 metric_name=met_name,
                 metric_description=met_description,
                 self_key_name=self_key_name,
-                arguments=bound_args.arguments,
+                arguments=arguments_to_log,
                 disable_export=disable_export,
             )
 
@@ -304,35 +343,35 @@ def evaluator(
 
             prep = _prep(*fn_args, **fn_kwargs)
 
-            with _get_or_start_evaluation_log_group() as log_group:
-                log_id = log_group.log(
-                    logger=ctx.pat_logger,
-                    is_method=is_method,
-                    self_key_name=prep.self_key_name,
-                    bound_arguments=prep.arguments,
-                )
-
-                start = time.perf_counter()
-                try:
-                    ret = await traced(prep.display_name(), disable_log=True)(fn)(*fn_args, **fn_kwargs)
-                except Exception as e:
-                    ctx.logger.exception("Evaluation failed")
-                    raise e
-                if prep.disable_export:
-                    return ret
-                elapsed = time.perf_counter() - start
-                handle_eval_output(
-                    ctx=ctx,
-                    log_id=log_id,
-                    evaluator_id=prep.evaluator_id,
-                    criteria=prep.criteria,
-                    metric_name=prep.metric_name,
-                    metric_description=prep.metric_description,
-                    ret_value=ret,
-                    duration=datetime.timedelta(seconds=elapsed),
-                    qualname=fn.__qualname__,
-                )
+            start = time.perf_counter()
+            try:
+                with start_span(prep.display_name(), attributes={GenAIAttributes.operation_name: OperationNames.eval}):
+                    with _get_or_start_evaluation_log_group() as log_group:
+                        log_id = log_group.log(
+                            logger=ctx.pat_logger,
+                            is_method=is_method,
+                            self_key_name=prep.self_key_name,
+                            bound_arguments=prep.arguments,
+                        )
+                        ret = await fn(*fn_args, **fn_kwargs)
+            except Exception as e:
+                ctx.logger.exception(f"Evaluator raised an exception: {e}")
+                raise e
+            if prep.disable_export:
                 return ret
+            elapsed = time.perf_counter() - start
+            handle_eval_output(
+                ctx=ctx,
+                log_id=log_id,
+                evaluator_id=prep.evaluator_id,
+                criteria=prep.criteria,
+                metric_name=prep.metric_name,
+                metric_description=prep.metric_description,
+                ret_value=ret,
+                duration=datetime.timedelta(seconds=elapsed),
+                qualname=fn.__qualname__,
+            )
+            return ret
 
         @functools.wraps(fn)
         def wrapper_sync(*fn_args, **fn_kwargs):
@@ -342,39 +381,51 @@ def evaluator(
 
             prep = _prep(*fn_args, **fn_kwargs)
 
-            with _get_or_start_evaluation_log_group() as log_group:
-                log_id = log_group.log(
-                    logger=ctx.pat_logger,
-                    is_method=is_method,
-                    self_key_name=prep.self_key_name,
-                    bound_arguments=prep.arguments,
-                )
-
-                start = time.perf_counter()
-                try:
-                    ret = traced(prep.display_name(), disable_log=True)(fn)(*fn_args, **fn_kwargs)
-                except Exception as e:
-                    ctx.logger.exception("Evaluation failed")
-                    raise e
-                if prep.disable_export:
-                    return ret
-                elapsed = time.perf_counter() - start
-                handle_eval_output(
-                    ctx=ctx,
-                    log_id=log_id,
-                    evaluator_id=prep.evaluator_id,
-                    criteria=prep.criteria,
-                    metric_name=prep.metric_name,
-                    metric_description=prep.metric_description,
-                    ret_value=ret,
-                    duration=datetime.timedelta(seconds=elapsed),
-                    qualname=fn.__qualname__,
-                )
+            start = time.perf_counter()
+            try:
+                with start_span(prep.display_name(), attributes={GenAIAttributes.operation_name: OperationNames.eval}):
+                    with _get_or_start_evaluation_log_group() as log_group:
+                        log_id = log_group.log(
+                            logger=ctx.pat_logger,
+                            is_method=is_method,
+                            self_key_name=prep.self_key_name,
+                            bound_arguments=prep.arguments,
+                        )
+                        ret = fn(*fn_args, **fn_kwargs)
+            except Exception as e:
+                ctx.logger.exception("Evaluation failed")
+                raise e
+            if prep.disable_export:
                 return ret
+            elapsed = time.perf_counter() - start
+            handle_eval_output(
+                ctx=ctx,
+                log_id=log_id,
+                evaluator_id=prep.evaluator_id,
+                criteria=prep.criteria,
+                metric_name=prep.metric_name,
+                metric_description=prep.metric_description,
+                ret_value=ret,
+                duration=datetime.timedelta(seconds=elapsed),
+                qualname=fn.__qualname__,
+            )
+            return ret
+
+        def _set_attrs(wrapper: Any):
+            wrapper._pat_evaluator = True
+
+            # _pat_evaluator_id and _pat_criteria_id may be a bit misleading since
+            # may not be correct since actually values for evaluator_id and criteria
+            # are dynamically dispatched for class-based evaluators.
+            # These values will be correct for function evaluators though.
+            wrapper._pat_evaluator_id = _get_eval_id()
+            wrapper._pat_criteria = _get_criteria()
 
         if inspect.iscoroutinefunction(fn):
+            _set_attrs(wrapper_async)
             return wrapper_async
         else:
+            _set_attrs(wrapper_sync)
             return wrapper_sync
 
     return decorator
@@ -408,7 +459,7 @@ class Evaluator(metaclass=_EvaluatorMeta):
     def get_evaluator_id(self) -> str:
         return self.evaluator_id or self.__class__.__qualname__
 
-    def get_criteria(self) -> str:
+    def get_criteria(self) -> Optional[str]:
         return self.criteria
 
     @abc.abstractmethod
@@ -437,6 +488,7 @@ class StructuredEvaluator(Evaluator):
         *,
         system_prompt: Optional[str] = None,
         task_context: Union[list[str], str, None] = None,
+        task_attachments: Union[list[Any], None] = None,
         task_input: Optional[str] = None,
         task_output: Optional[str] = None,
         gold_answer: Optional[str] = None,
@@ -452,6 +504,7 @@ class AsyncStructuredEvaluator(AsyncEvaluator):
         *,
         system_prompt: Optional[str] = None,
         task_context: Union[list[str], str, None] = None,
+        task_attachments: Union[list[Any], None] = None,
         task_input: Optional[str] = None,
         task_output: Optional[str] = None,
         gold_answer: Optional[str] = None,
@@ -468,14 +521,16 @@ class RemoteEvaluatorMixin:
         evaluator_id_or_alias: str,
         criteria: Optional[str] = None,
         *,
+        tags: Optional[dict[str, str]] = None,
         explain_strategy: typing.Literal["never", "on-fail", "on-success", "always"] = "always",
         criteria_config: Optional[dict[str, typing.Any]] = None,
         allow_update: bool = False,
         max_attempts: int = 3,
-        api_: Optional[api.API] = None,
+        api_: Optional[PatronusAPIClient] = None,
     ):
         self.evaluator_id_or_alias = evaluator_id_or_alias
         self.criteria = criteria
+        self.tags = tags or {}
         self.explain_strategy = explain_strategy
         self.criteria_config = criteria_config
         self.allow_update = allow_update
@@ -488,7 +543,7 @@ class RemoteEvaluatorMixin:
     def get_criteria(self) -> str:
         return self.criteria
 
-    def _get_api(self) -> api.API:
+    def _get_api(self) -> PatronusAPIClient:
         api_client = self._api or context.get_api_client_or_none()
         if api_client is None:
             raise UninitializedError(
@@ -517,6 +572,7 @@ class RemoteEvaluator(RemoteEvaluatorMixin, StructuredEvaluator):
         *,
         system_prompt: Optional[str] = None,
         task_context: Union[list[str], str, None] = None,
+        task_attachments: Union[list[Any], None] = None,
         task_input: Optional[str] = None,
         task_output: Optional[str] = None,
         gold_answer: Optional[str] = None,
@@ -526,13 +582,27 @@ class RemoteEvaluator(RemoteEvaluatorMixin, StructuredEvaluator):
         kws = {
             "system_prompt": system_prompt,
             "task_context": task_context,
+            "task_attachments": task_attachments,
             "task_input": task_input,
             "task_output": task_output,
             "gold_answer": gold_answer,
             "task_metadata": task_metadata,
-            "kwargs": kwargs,
+            **kwargs,
         }
         log_id = get_current_log_id(bound_arguments=kws)
+
+        attrs = get_context_evaluation_attributes()
+        tags = {**self.tags}
+        if t := attrs["tags"]:
+            tags.update(t)
+        tags = merge_tags(tags, kwargs.get("tags"), attrs["experiment_tags"])
+        if tags:
+            kws["tags"] = tags
+        if did := attrs["dataset_id"]:
+            kws["dataset_id"] = did
+        if sid := attrs["dataset_sample_id"]:
+            kws["dataset_sample_id"] = sid
+
         resp = retry()(self._evaluate)(log_id=log_id, **kws)
         return self._translate_response(resp)
 
@@ -542,6 +612,7 @@ class RemoteEvaluator(RemoteEvaluatorMixin, StructuredEvaluator):
         log_id: Optional[LogID] = None,
         system_prompt: Optional[str] = None,
         task_context: Union[list[str], str, None] = None,
+        task_attachments: Union[list[Any], None] = None,
         task_input: Optional[str] = None,
         task_output: Optional[str] = None,
         gold_answer: Optional[str] = None,
@@ -572,19 +643,15 @@ class RemoteEvaluator(RemoteEvaluatorMixin, StructuredEvaluator):
                 evaluated_model_input=task_input,
                 evaluated_model_output=task_output,
                 evaluated_model_gold_answer=gold_answer,
-                # TODO available via kwargs?
-                evaluated_model_attachments=None,
+                evaluated_model_attachments=task_attachments,
                 project_id=None,
                 project_name=project_name,
                 app=app,
                 experiment_id=experiment_id,
                 capture="all",
-                # TODO Via kwargs?
-                dataset_id=None,
-                # TODO Via kwargs
-                dataset_sample_id=None,
-                # TODO via self.tags? or kwargs
-                tags=None,
+                dataset_id=kwargs.get("dataset_id"),
+                dataset_sample_id=kwargs.get("dataset_sample_id"),
+                tags=kwargs.get("tags"),
                 trace_id=hex(span_context.trace_id)[2:].zfill(32),
                 span_id=hex(span_context.span_id)[2:].zfill(16),
                 log_id=log_id and str(log_id),
@@ -598,6 +665,7 @@ class AsyncRemoteEvaluator(RemoteEvaluatorMixin, AsyncStructuredEvaluator):
         *,
         system_prompt: Optional[str] = None,
         task_context: Union[list[str], str, None] = None,
+        task_attachments: Union[list[Any], None] = None,
         task_input: Optional[str] = None,
         task_output: Optional[str] = None,
         gold_answer: Optional[str] = None,
@@ -607,13 +675,27 @@ class AsyncRemoteEvaluator(RemoteEvaluatorMixin, AsyncStructuredEvaluator):
         kws = {
             "system_prompt": system_prompt,
             "task_context": task_context,
+            "task_attachments": task_attachments,
             "task_input": task_input,
             "task_output": task_output,
             "gold_answer": gold_answer,
             "task_metadata": task_metadata,
-            "kwargs": kwargs,
+            **kwargs,
         }
         log_id = get_current_log_id(bound_arguments=kws)
+
+        attrs = get_context_evaluation_attributes()
+        tags = {**self.tags}
+        if t := attrs["tags"]:
+            tags.update(t)
+        tags = merge_tags(tags, kwargs.get("tags"), attrs["experiment_tags"])
+        if tags:
+            kws["tags"] = tags
+        if did := attrs["dataset_id"]:
+            kws["dataset_id"] = did
+        if sid := attrs["dataset_sample_id"]:
+            kws["dataset_sample_id"] = sid
+
         resp = await retry()(self._evaluate)(log_id=log_id, **kws)
         return self._translate_response(resp)
 
@@ -623,6 +705,7 @@ class AsyncRemoteEvaluator(RemoteEvaluatorMixin, AsyncStructuredEvaluator):
         log_id: Optional[LogID] = None,
         system_prompt: Optional[str] = None,
         task_context: Union[list[str], str, None] = None,
+        task_attachments: Union[list[Any], None] = None,
         task_input: Optional[str] = None,
         task_output: Optional[str] = None,
         gold_answer: Optional[str] = None,
@@ -653,19 +736,15 @@ class AsyncRemoteEvaluator(RemoteEvaluatorMixin, AsyncStructuredEvaluator):
                 evaluated_model_input=task_input,
                 evaluated_model_output=task_output,
                 evaluated_model_gold_answer=gold_answer,
-                # TODO available via kwargs?
-                evaluated_model_attachments=None,
+                evaluated_model_attachments=task_attachments,
                 project_id=None,
                 project_name=project_name,
                 app=app,
                 experiment_id=experiment_id,
                 capture="all",
-                # TODO Via kwargs?
-                dataset_id=None,
-                # TODO Via kwargs
-                dataset_sample_id=None,
-                # TODO via self.tags? or kwargs
-                tags=None,
+                dataset_id=kwargs.get("dataset_id"),
+                dataset_sample_id=kwargs.get("dataset_sample_id"),
+                tags=kwargs.get("tags"),
                 trace_id=hex(span_context.trace_id)[2:].zfill(32),
                 span_id=hex(span_context.span_id)[2:].zfill(16),
                 log_id=log_id and str(log_id),

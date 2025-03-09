@@ -3,12 +3,12 @@ import logging
 from typing import Optional
 
 from . import api_types
-from .api_base import APIError, BaseAPIClient, CallResponse, RPMLimitError, UnrecoverableAPIError
+from .api_client_base import APIError, BaseAPIClient, CallResponse, RPMLimitError, UnrecoverableAPIError
 
-log = logging.getLogger(__name__)
+log = logging.getLogger("patronus.core")
 
 
-class API(BaseAPIClient):
+class PatronusAPIClient(BaseAPIClient):
     async def whoami(self) -> api_types.WhoAmIResponse:
         resp = await self.call("GET", "/v1/whoami", response_cls=api_types.WhoAmIResponse)
         resp.raise_for_status()
