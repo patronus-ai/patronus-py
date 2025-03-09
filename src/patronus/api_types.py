@@ -1,11 +1,30 @@
 import datetime
+import pydantic
 import re
 import typing
 import uuid
 from typing import Optional, Union
 
-import pydantic
-from typing_extensions import Annotated
+
+def _create_field_sanitizer(pattern: str, *, max_len: int, replace_with: str, strip: bool = True):
+    def sanitize(value: typing.Any, _: pydantic.ValidationInfo) -> str:
+        if not isinstance(value, str):
+            return value
+        if strip:
+            value = value.strip()
+        return re.sub(pattern, replace_with, value[:max_len])
+
+    return pydantic.BeforeValidator(sanitize)
+
+
+SanitizedProjectName = typing.Annotated[
+    str,
+    _create_field_sanitizer(r"[^a-zA-Z0-9_ -]", max_len=50, replace_with="_"),
+]
+SanitizedApp = typing.Annotated[str, _create_field_sanitizer(r"[^a-zA-Z0-9-_./ -]", max_len=50, replace_with="_")]
+SanitizedLocalEvaluatorID = typing.Annotated[
+    Optional[str], _create_field_sanitizer(r"[^a-zA-Z0-9\-_./]", max_len=50, replace_with="-")
+]
 
 
 class Account(pydantic.BaseModel):
@@ -43,7 +62,7 @@ class Project(pydantic.BaseModel):
 
 
 class CreateProjectRequest(pydantic.BaseModel):
-    name: str
+    name: SanitizedProjectName
 
 
 class GetProjectResponse(pydantic.BaseModel):
@@ -92,6 +111,8 @@ class EvaluateRequest(pydantic.BaseModel):
     evaluated_model_output: Optional[str] = None
     evaluated_model_gold_answer: Optional[str] = None
     evaluated_model_attachments: Optional[list[EvaluatedModelAttachment]] = None
+    project_id: Optional[str] = None
+    project_name: Optional[str] = None
     app: Optional[str] = None
     experiment_id: Optional[str] = None
     capture: str = "all"
@@ -100,12 +121,7 @@ class EvaluateRequest(pydantic.BaseModel):
     tags: Optional[dict[str, str]] = None
     trace_id: Optional[str] = None
     span_id: Optional[str] = None
-
-
-class EvaluationResultAdditionalInfo(pydantic.BaseModel):
-    positions: Optional[list]
-    extra: Optional[dict]
-    confidence_interval: Optional[dict]
+    log_id: Optional[str] = None
 
 
 class EvaluationResult(pydantic.BaseModel):
@@ -124,7 +140,7 @@ class EvaluationResult(pydantic.BaseModel):
     pass_: Optional[bool] = pydantic.Field(default=None, alias="pass")
     score_raw: Optional[float] = None
     text_output: Optional[str] = None
-    additional_info: Optional[EvaluationResultAdditionalInfo] = None
+    additional_info: Optional[dict[str, typing.Any]] = None
     evaluation_metadata: Optional[dict] = None
     explanation: Optional[str] = None
     evaluation_duration: Optional[datetime.timedelta] = None
@@ -148,17 +164,10 @@ class EvaluateResponse(pydantic.BaseModel):
     results: list[EvaluateResult]
 
 
-def sanitize_evaluator_id(v: typing.Any, info: pydantic.ValidationInfo):
-    if not isinstance(v, str):
-        return v
-    v = v.strip()
-    return re.sub(r"[^a-zA-Z0-9\-_./]", "-", v)
-
-
 class ExportEvaluationResult(pydantic.BaseModel):
     app: Optional[str] = None
     experiment_id: Optional[str] = None
-    evaluator_id: Annotated[str, pydantic.BeforeValidator(sanitize_evaluator_id)]
+    evaluator_id: SanitizedLocalEvaluatorID
     criteria: Optional[str] = None
     evaluated_model_system_prompt: Optional[str] = None
     evaluated_model_retrieved_context: Optional[list[str]] = None
@@ -306,13 +315,10 @@ class Evaluation(pydantic.BaseModel):
 class ClientEvaluation(pydantic.BaseModel):
     log_id: uuid.UUID
     project_id: Optional[str] = None
-    project_name: Optional[str] = None
-    app: typing.Annotated[
-        Optional[str],
-        pydantic.BeforeValidator(sanitize_field(50, r"[^a-zA-Z0-9_./ -]")),
-    ]
+    project_name: Optional[SanitizedProjectName] = None
+    app: Optional[SanitizedApp] = None
     experiment_id: Optional[str] = None
-    evaluator_id: str
+    evaluator_id: SanitizedLocalEvaluatorID
     criteria: Optional[str] = None
     pass_: Optional[bool] = pydantic.Field(default=None, alias="pass")
     score: Optional[float] = None

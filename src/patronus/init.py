@@ -3,10 +3,11 @@ from typing import Optional
 import httpx
 
 from . import config
-from .api import API, CTX_API
-from .evals.exporter import _CTX_EVAL_EXPORTER, BatchEvaluationExporter
-from .tracing.logger import _CTX_EVAL_LOGGER, _CTX_STD_LOGGER, create_logger, create_patronus_logger
-from .tracing.trace import _CTX_TRACER, create_tracer
+from . import context
+from .api import API
+from .evals.exporter import BatchEvaluationExporter
+from .tracing.logger import create_logger, create_patronus_logger
+from .tracing.trace import create_tracer
 
 
 def init(
@@ -29,46 +30,55 @@ def init(
         )
 
     cfg = config.config()
+    ctx = build_context(
+        project_name=project_name or cfg.project_name,
+        app=app or cfg.app,
+        api_url=api_url or cfg.api_url,
+        otel_endpoint=otel_endpoint or cfg.otel_endpoint,
+        api_key=api_key or cfg.api_key,
+    )
+    context.set_global_patronus_context(ctx)
 
-    project_name = project_name or cfg.project_name
-    app = app or cfg.app
-    api_url = api_url or cfg.api_url
-    otel_endpoint = otel_endpoint or cfg.otel_endpoint
-    api_key = api_key or cfg.api_key
 
+def build_context(
+    project_name: str,
+    app: Optional[str],
+    api_url: Optional[str],
+    otel_endpoint: str,
+    api_key: str,
+) -> context.PatronusContext:
+    scope = context.PatronusScope(
+        project_name=project_name,
+        app=app,
+        experiment_id=None,
+    )
     api = API(
         http=httpx.AsyncClient(),
         http_sync=httpx.Client(),
         base_url=api_url,
         api_key=api_key,
     )
-    CTX_API.set_global(api)
-
     std_logger = create_logger(
-        project_name=project_name,
-        app=app,
-        experiment_id=None,
+        scope=scope,
         exporter_endpoint=otel_endpoint,
         api_key=api_key,
     )
     eval_logger = create_patronus_logger(
-        project_name=project_name,
-        app=app,
-        experiment_id=None,
+        scope=scope,
         exporter_endpoint=otel_endpoint,
         api_key=api_key,
     )
-    _CTX_STD_LOGGER.set_global(std_logger)
-    _CTX_EVAL_LOGGER.set_global(eval_logger)
-
     tracer = create_tracer(
-        project_name=project_name,
-        app=app,
-        experiment_id=None,
         exporter_endpoint=otel_endpoint,
         api_key=api_key,
+        scope=scope,
     )
-    _CTX_TRACER.set_global(tracer)
-
     eval_exporter = BatchEvaluationExporter(client=api)
-    _CTX_EVAL_EXPORTER.set_global(eval_exporter)
+    return context.PatronusContext(
+        scope=scope,
+        logger=std_logger,
+        pat_logger=eval_logger,
+        tracer=tracer,
+        api_client=api,
+        exporter=eval_exporter,
+    )

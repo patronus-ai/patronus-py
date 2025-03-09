@@ -9,19 +9,19 @@ from typing import Optional, Union
 
 from opentelemetry._logs import SeverityNumber
 from opentelemetry.exporter.otlp.proto.grpc._log_exporter import OTLPLogExporter as OTLPLogExporterTCP
+from opentelemetry.sdk._logs import LogRecord
 from opentelemetry.sdk._logs import Logger as OTELLogger
 from opentelemetry.sdk._logs import LoggerProvider as OTELLoggerProvider
 from opentelemetry.sdk._logs import LoggingHandler as OTeLLoggingHandler
-from opentelemetry.sdk._logs import LogRecord
 from opentelemetry.sdk._logs._internal import ConcurrentMultiLogRecordProcessor, SynchronousMultiLogRecordProcessor
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
-from opentelemetry.trace import get_current_span
+from opentelemetry.trace import get_current_span, SpanContext
 from opentelemetry.util.types import Attributes as OTeLAttributes
 
-from patronus.config import config
-from patronus.context_utils import ContextObject, ResourceMutex
+from patronus import context
+from patronus.context.context_utils import ResourceMutex
 from patronus.tracing.attributes import Attributes, LogTypes, format_service_name
 
 
@@ -164,13 +164,17 @@ class Logger(OTELLogger):
     def log(
         self,
         body: typing.Any,
+        *,
         log_attrs: Optional[OTeLAttributes] = None,
         severity: Optional[SeverityNumber] = None,
         log_type: LogTypes = LogTypes.user,
+        log_id: Optional[uuid.UUID] = None,
+        span_context: Optional[SpanContext] = None,
     ) -> uuid.UUID:
         severity: SeverityNumber = severity or SeverityNumber.INFO
-        span_context = get_current_span().get_span_context()
-        log_id = uuid.uuid4()
+        span_context = span_context or get_current_span().get_span_context()
+
+        log_id = log_id or uuid.uuid4()
         log_attrs = log_attrs or {}
         log_attrs.update(
             {
@@ -231,39 +235,22 @@ def _create_exporter(endpoint: str, api_key: str) -> OTLPLogExporterTCP:
 
 
 @functools.lru_cache()
-def create_logger_provider(
-    exporter_endpoint: Optional[str] = None,
-    api_key: Optional[str] = None,
-    project_name: Optional[str] = None,
-    app: Optional[str] = None,
-    experiment_id: Optional[str] = None,
-) -> LoggerProvider:
-    exporter_endpoint = exporter_endpoint or config().otel_endpoint
-    api_key = api_key or config().api_key
-    project_name = project_name or config().project_name
-
-    if not experiment_id:
-        app = app or config().app
-
-    logger_provider = LoggerProvider(project_name=project_name, app=app, experiment_id=experiment_id)
+def create_logger_provider(exporter_endpoint: str, api_key: str, scope: context.PatronusScope) -> LoggerProvider:
+    logger_provider = LoggerProvider(project_name=scope.project_name, app=scope.app, experiment_id=scope.experiment_id)
     exporter = _create_exporter(exporter_endpoint, api_key)
     logger_provider.add_log_record_processor(BatchLogRecordProcessor(exporter))
     return logger_provider
 
 
 def create_patronus_logger(
-    project_name: Optional[str] = None,
-    app: Optional[str] = None,
-    experiment_id: Optional[str] = None,
-    exporter_endpoint: Optional[str] = None,
-    api_key: Optional[str] = None,
+    scope: context.PatronusScope,
+    exporter_endpoint: str,
+    api_key: str,
 ) -> Logger:
     provider = create_logger_provider(
         exporter_endpoint=exporter_endpoint,
         api_key=api_key,
-        project_name=project_name,
-        app=app,
-        experiment_id=experiment_id,
+        scope=scope,
     )
     return provider.get_logger("patronus.sdk")
 
@@ -273,18 +260,14 @@ __logger_count = ResourceMutex(0)
 
 @functools.lru_cache()
 def create_logger(
-    project_name: Optional[str] = None,
-    app: Optional[str] = None,
-    experiment_id: Optional[str] = None,
-    exporter_endpoint: Optional[str] = None,
-    api_key: Optional[str] = None,
+    scope: context.PatronusScope,
+    exporter_endpoint: str,
+    api_key: str,
 ) -> logging.Logger:
     provider = create_logger_provider(
         exporter_endpoint=exporter_endpoint,
         api_key=api_key,
-        project_name=project_name,
-        app=app,
-        experiment_id=experiment_id,
+        scope=scope,
     )
     with __logger_count as mu:
         n = mu.get()
@@ -294,19 +277,7 @@ def create_logger(
     else:
         suffix = f".{n}"
     logger = logging.getLogger(f"patronus.sdk{suffix}")
-    pat_scope = PatronusScope(project_name=project_name, app=app, experiment_id=experiment_id)
+    pat_scope = PatronusScope(project_name=scope.project_name, app=scope.app, experiment_id=scope.experiment_id)
     logger.addHandler(LoggingHandler(pat_scope=pat_scope, level=logging.NOTSET, logger_provider=provider))
     logger.setLevel(logging.DEBUG)
     return logger
-
-
-_CTX_STD_LOGGER = ContextObject[logging.Logger]("pat.std-logger")
-_CTX_EVAL_LOGGER = ContextObject[Logger]("pat.eval-logger")
-
-
-def get_logger() -> logging.Logger:
-    return _CTX_STD_LOGGER.get()
-
-
-def get_patronus_logger() -> Logger:
-    return _CTX_EVAL_LOGGER.get()

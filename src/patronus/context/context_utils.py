@@ -19,7 +19,7 @@ class ContextObject(Generic[T]):
     def set_global(self, v: T):
         self.global_v = v
 
-    def get(self) -> T:
+    def get(self) -> typing.Optional[T]:
         return self.ctx.get(self.global_v)
 
     @contextlib.contextmanager

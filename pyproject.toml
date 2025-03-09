@@ -33,7 +33,6 @@ typing-extensions = "^4.12.2"
 opentelemetry-api = "^1.29.0"
 opentelemetry-sdk = "^1.29.0"
 opentelemetry-exporter-otlp = "^1.29.0"
-patronus-api = {git = "ssh://git@github.com/stainless-sdks/patronus-api-python.git"}
 
 
 [build-system]
