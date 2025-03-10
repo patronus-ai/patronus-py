@@ -7,6 +7,7 @@ from .evals import EvaluationResult as EvaluationResult
 from .evals import Evaluator as Evaluator
 from .evals import StructuredEvaluator as StructuredEvaluator
 from .evals import evaluator as evaluator
+from .evals import RemoteEvaluator as RemoteEvaluator
 
 
 from .init import init as init
