@@ -45,12 +45,11 @@ from patronus import evaluator
 
 init()
 
-@evaluator
+@evaluator()
 def iexact_match(actual: str, expected: str) -> bool:
     return actual.lower().strip() == expected.lower().strip()
 
-def main():
-    iexact_match("bonne nuit", "Bonne nuit")
+iexact_match("bonne nuit", "Bonne nuit")
 ```
 
 ### Patronus evaluations
