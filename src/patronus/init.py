@@ -1,3 +1,5 @@
+import warnings
+
 from typing import Optional
 
 import httpx
@@ -22,6 +24,7 @@ def init(
     api_url: Optional[str] = None,
     otel_endpoint: Optional[str] = None,
     api_key: Optional[str] = None,
+    **kwargs,
 ):
     if api_url != config.DEFAULT_API_URL and otel_endpoint == config.DEFAULT_OTEL_ENDPOINT:
         raise ValueError(
@@ -38,6 +41,7 @@ def init(
         otel_endpoint=otel_endpoint or cfg.otel_endpoint,
         api_key=api_key or cfg.api_key,
         timeout_s=cfg.timeout_s,
+        **kwargs,
     )
     context.set_global_patronus_context(ctx)
 
@@ -52,6 +56,7 @@ def build_context(
     client_http: Optional[httpx.Client] = None,
     client_http_async: Optional[httpx.AsyncClient] = None,
     timeout_s: int = 60,
+    **kwargs,
 ) -> context.PatronusContext:
     if client_http is None:
         client_http = httpx.Client(timeout=timeout_s)
@@ -83,7 +88,24 @@ def build_context(
         api_key=api_key,
         scope=scope,
     )
+    if integrations := kwargs.get("integrations"):
+        if not isinstance(integrations, list):
+            integrations = [integrations]
+
+        try:
+            from opentelemetry.instrumentation.instrumentor import BaseInstrumentor
+
+            for integration in integrations:
+                if isinstance(integration, BaseInstrumentor):
+                    integration.instrument(tracer_provider=tracer_provider)
+                    print(f"Instrumentation {integration} ENABLED")
+                else:
+                    warnings.warn(f"Integration {integration} not recognized.")
+        except ImportError:
+            warnings.warn("Opentelemetry instrumentation is not installed. Ignoring integrations.")
+
     tracer = tracer_provider.get_tracer("patronus.sdk")
+
     eval_exporter = BatchEvaluationExporter(client=api)
     return context.PatronusContext(
         scope=scope,
