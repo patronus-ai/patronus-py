@@ -1,4 +1,5 @@
 import dataclasses
+import importlib.metadata
 import logging
 import platform
 import typing
@@ -8,7 +9,9 @@ from typing import Optional
 import httpx
 import pydantic
 
-log = logging.getLogger(__name__)
+from patronus.exceptions import WithStackTraceMixin
+
+log = logging.getLogger("patronus.core")
 
 
 class APIError(Exception):
@@ -41,9 +44,7 @@ class RPMLimitError(APIError):
         )
 
 
-class RetryError(Exception):
-    stack_trace: str
-
+class RetryError(WithStackTraceMixin, Exception):
     def __init__(self, attempt: int, out_of: int, origin: Exception, stack_trace: str):
         self.stack_trace = stack_trace
         super().__init__(f"RetryError: execution failed after {attempt}/{out_of} attempts: {origin}")
@@ -70,10 +71,19 @@ class BaseAPIClient:
     base_url: str = None
     api_key: str = None
 
-    def __init__(self, *, version: str, http: httpx.AsyncClient, http_sync: httpx.Client):
-        self.version = version
-        self.http = http
-        self.http_sync = http_sync
+    def __init__(
+        self,
+        *,
+        client_http_async: httpx.AsyncClient,
+        client_http: httpx.Client,
+        base_url: str,
+        api_key: str,
+    ):
+        self.version = importlib.metadata.version("patronus")
+        self.http = client_http_async
+        self.http_sync = client_http
+        self.base_url = base_url.rstrip("/")
+        self.api_key = api_key
 
     def set_target(self, base_url: str, api_key: str):
         self.base_url = base_url.rstrip("/")

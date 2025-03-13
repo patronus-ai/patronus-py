@@ -3,12 +3,12 @@ import logging
 from typing import Optional
 
 from . import api_types
-from .api_base import APIError, BaseAPIClient, CallResponse, RPMLimitError, UnrecoverableAPIError
+from .api_client_base import APIError, BaseAPIClient, CallResponse, RPMLimitError, UnrecoverableAPIError
 
-log = logging.getLogger(__name__)
+log = logging.getLogger("patronus.core")
 
 
-class API(BaseAPIClient):
+class PatronusAPIClient(BaseAPIClient):
     async def whoami(self) -> api_types.WhoAmIResponse:
         resp = await self.call("GET", "/v1/whoami", response_cls=api_types.WhoAmIResponse)
         resp.raise_for_status()
@@ -30,63 +30,111 @@ class API(BaseAPIClient):
         return resp.data
 
     async def get_project(self, project_id: str) -> api_types.Project:
-        resp = await self.call("GET", f"/v1/projects/{project_id}", response_cls=api_types.GetProjectResponse)
+        resp = await self.call(
+            "GET",
+            f"/v1/projects/{project_id}",
+            response_cls=api_types.GetProjectResponse,
+        )
         resp.raise_for_status()
         return resp.data.project
 
     def get_project_sync(self, project_id: str) -> api_types.Project:
-        resp = self.call_sync("GET", f"/v1/projects/{project_id}", response_cls=api_types.GetProjectResponse)
+        resp = self.call_sync(
+            "GET",
+            f"/v1/projects/{project_id}",
+            response_cls=api_types.GetProjectResponse,
+        )
         resp.raise_for_status()
         return resp.data.project
 
     async def create_experiment(self, request: api_types.CreateExperimentRequest) -> api_types.Experiment:
-        resp = await self.call("POST", "/v1/experiments", body=request, response_cls=api_types.CreateExperimentResponse)
+        resp = await self.call(
+            "POST",
+            "/v1/experiments",
+            body=request,
+            response_cls=api_types.CreateExperimentResponse,
+        )
         resp.raise_for_status()
         return resp.data.experiment
 
     def create_experiment_sync(self, request: api_types.CreateExperimentRequest) -> api_types.Experiment:
-        resp = self.call_sync("POST", "/v1/experiments", body=request, response_cls=api_types.CreateExperimentResponse)
+        resp = self.call_sync(
+            "POST",
+            "/v1/experiments",
+            body=request,
+            response_cls=api_types.CreateExperimentResponse,
+        )
         resp.raise_for_status()
         return resp.data.experiment
 
     async def get_experiment(self, experiment_id: str) -> Optional[api_types.Experiment]:
-        resp = await self.call("GET", f"/v1/experiments/{experiment_id}", response_cls=api_types.GetExperimentResponse)
+        resp = await self.call(
+            "GET",
+            f"/v1/experiments/{experiment_id}",
+            response_cls=api_types.GetExperimentResponse,
+        )
         if resp.response.status_code == 404:
             return None
         resp.raise_for_status()
         return resp.data.experiment
 
     def get_experiment_sync(self, experiment_id: str) -> Optional[api_types.Experiment]:
-        resp = self.call_sync("GET", f"/v1/experiments/{experiment_id}", response_cls=api_types.GetExperimentResponse)
+        resp = self.call_sync(
+            "GET",
+            f"/v1/experiments/{experiment_id}",
+            response_cls=api_types.GetExperimentResponse,
+        )
         if resp.response.status_code == 404:
             return None
         resp.raise_for_status()
         return resp.data.experiment
 
     async def evaluate(self, request: api_types.EvaluateRequest) -> api_types.EvaluateResponse:
-        resp = await self.call("POST", "/v1/evaluate", body=request, response_cls=api_types.EvaluateResponse)
+        resp = await self.call(
+            "POST",
+            "/v1/evaluate",
+            body=request,
+            response_cls=api_types.EvaluateResponse,
+        )
         resp.raise_for_status()
         return resp.data
 
     def evaluate_sync(self, request: api_types.EvaluateRequest) -> api_types.EvaluateResponse:
-        resp = self.call_sync("POST", "/v1/evaluate", body=request, response_cls=api_types.EvaluateResponse)
+        resp = self.call_sync(
+            "POST",
+            "/v1/evaluate",
+            body=request,
+            response_cls=api_types.EvaluateResponse,
+        )
         resp.raise_for_status()
         return resp.data
 
     async def evaluate_one(self, request: api_types.EvaluateRequest) -> api_types.EvaluationResult:
         if len(request.evaluators) > 1:
             raise ValueError("'evaluate_one()' cannot accept more than one evaluator in the request body")
-        resp = await self.call("POST", "/v1/evaluate", body=request, response_cls=api_types.EvaluateResponse)
+        resp = await self.call(
+            "POST",
+            "/v1/evaluate",
+            body=request,
+            response_cls=api_types.EvaluateResponse,
+        )
         return self._evaluate_one_process_resp(resp)
 
     def evaluate_one_sync(self, request: api_types.EvaluateRequest) -> api_types.EvaluationResult:
         if len(request.evaluators) > 1:
             raise ValueError("'evaluate_one_sync()' cannot accept more than one evaluator in the request body")
-        resp = self.call_sync("POST", "/v1/evaluate", body=request, response_cls=api_types.EvaluateResponse)
+        resp = self.call_sync(
+            "POST",
+            "/v1/evaluate",
+            body=request,
+            response_cls=api_types.EvaluateResponse,
+        )
         return self._evaluate_one_process_resp(resp)
 
     @staticmethod
-    def _evaluate_one_process_resp(resp: CallResponse[api_types.EvaluateResponse]) -> api_types.EvaluationResult:
+    def _evaluate_one_process_resp(
+        resp: CallResponse[api_types.EvaluateResponse],
+    ) -> api_types.EvaluationResult:
         # We set defaults in case ratelimits headers were not returned. It may happen in case of an error response,
         # or in rare cases like proxy stripping response headers.
         # The defaults are selected to proceed and fallback to standard retry mechanism.
@@ -258,6 +306,30 @@ class API(BaseAPIClient):
             "GET",
             f"/v1/datasets/{dataset_id}/data",
             response_cls=api_types.ListDatasetData,
+        )
+        resp.raise_for_status()
+        return resp.data
+
+    async def batch_create_evaluations(
+        self, request: api_types.BatchCreateEvaluationsRequest
+    ) -> api_types.BatchCreateEvaluationsResponse:
+        resp = await self.call(
+            "POST",
+            "/v1/evaluations/batch",
+            body=request,
+            response_cls=api_types.BatchCreateEvaluationsResponse,
+        )
+        resp.raise_for_status()
+        return resp.data
+
+    def batch_create_evaluations_sync(
+        self, request: api_types.BatchCreateEvaluationsRequest
+    ) -> api_types.BatchCreateEvaluationsResponse:
+        resp = self.call_sync(
+            "POST",
+            "/v1/evaluations/batch",
+            body=request,
+            response_cls=api_types.BatchCreateEvaluationsResponse,
         )
         resp.raise_for_status()
         return resp.data
