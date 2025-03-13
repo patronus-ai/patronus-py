@@ -12,6 +12,15 @@ class Attributes(str, Enum):
     evaluator_criteria = "pat.evaluator.criteria"
 
 
+class GenAIAttributes(str, Enum):
+    operation_name = "gen_ai.operation.name"
+
+
+class OperationNames(str, Enum):
+    eval = "eval"
+    task = "task"
+
+
 class LogTypes(str, Enum):
     # Eval log type is emitted by evaluators, they contain evaluation data
     eval = "eval"

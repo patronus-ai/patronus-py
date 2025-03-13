@@ -9,7 +9,8 @@ import typing
 from threading import Lock
 from typing import Callable
 
-from patronus import api, api_types
+from patronus.api import PatronusAPIClient, api_types
+
 
 logger = logging.getLogger("patronus.core")
 
@@ -67,7 +68,7 @@ def backoff(max_value: typing.Optional[int] = None):
 
 # BatchEvaluationExporter is based by otel sdk trace batch processor.
 class BatchEvaluationExporter:
-    _client: api.API
+    _client: PatronusAPIClient
     done: bool
     schedule_delay: float
     max_queue_size: int
@@ -81,7 +82,7 @@ class BatchEvaluationExporter:
 
     def __init__(
         self,
-        client: api.API,
+        client: PatronusAPIClient,
         *,
         schedule_delay: float = 5.0,
         max_export_batch_size: int = 100,
@@ -237,7 +238,7 @@ class BatchEvaluationExporter:
         flush_request = self.flush_request
         self.flush_request = None
         if flush_request is not None:
-            self.flush_request.num_evaluations = len(self.queue)
+            flush_request.num_evaluations = len(self.queue)
         return flush_request
 
     @staticmethod

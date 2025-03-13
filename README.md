@@ -3,8 +3,6 @@
 The Patronus Python SDK is a Python library for systematic evaluation of Large Language Models (LLMs).
 Build, test, and improve your LLM applications with customizable tasks, evaluators, and comprehensive experiment tracking.
 
-**Note:** This library is currently in **beta** and is not stable. The APIs may change in future releases.
-
 ## Documentation
 
 For detailed documentation, including API references and advanced usage, please visit our [documentation](https://docs.patronus.ai/docs/experimentation-framework).
@@ -17,101 +15,150 @@ pip install patronus
 
 ## Quickstart
 
-### Evaluation
-
-For quick testing and exploration, you can use the synchronous evaluate() method:
+### Initialization
 
 ```python
-import os
-from patronus import Client
+import patronus
 
-client = Client(
-    # This is the default and can be omitted
-    api_key=os.environ.get("PATRONUS_API_KEY"),
+# Initialize with your Patronus API key
+patronus.init(
+    project_name="My Agent",  # Optional, defaults to "Global"
+    api_key="your-api-key"      # Optional, can also be set via environment variable
 )
-result = client.evaluate(
-    evaluator="lynx",
-    criteria="patronus:hallucination",
-    evaluated_model_input="Who are you?",
-    evaluated_model_output="My name is Barry.",
-    evaluated_model_retrieved_context="My name is John.",
-)
-print(f"Pass: {result.pass_}")
-print(f"Explanation: {result.explanation}")
 ```
 
-The Patronus Python SDK is designed to work primarily with async/await patterns,
-which is the recommended way to use the library. Here's a feature-rich example using async evaluation:
+You can also use a configuration file (patronus.yaml) for initialization:
+
+```yaml
+# patronus.yaml
+api_key: "your-api-key"
+project_name: "My Agent"
+```
+
+With this configuration file in your working directory, you can simply call:
 
 ```python
-import asyncio
-from patronus import Client
+import patronus
+patronus.init()  # Automatically loads config from patronus.yaml
+```
 
-client = Client()
+### Tracing
 
-no_apologies = client.remote_evaluator(
-    "judge",
-    "patronus:no-apologies",
-    explain_strategy="always",
-    max_attempts=3,
+```python
+import patronus
+
+patronus.init()
+
+# Trace a function with the @traced decorator
+@patronus.traced()
+def process_input(user_query):
+    # Process the input
+    return "Processed: " + user_query
+
+# Use context manager for finer-grained tracing
+def complex_operation():
+    with patronus.start_span("Data preparation"):
+        # Prepare data
+        pass
+
+    with patronus.start_span("Model inference"):
+        # Run model
+        pass
+```
+
+### Patronus evaluations
+```python
+from patronus import init
+from patronus import RemoteEvaluator
+
+init()
+
+check_hallucinates = RemoteEvaluator("lynx", "patronus:hallucination")
+
+resp = check_hallucinates.evaluate(
+    task_input="What is the car insurance policy?",
+    task_context=(
+        """
+        To qualify for our car insurance policy, you need a way to show competence
+        in driving which can be accomplished through a valid driver's license.
+        You must have multiple years of experience and cannot be graduating from driving school before or on 2028.
+        """
+    ),
+    task_output="To even qualify for our car insurance policy, you need to have a valid driver's license that expires later than 2028."
 )
+print(f"""
+Hallucination evaluation:
+Passed: {resp.pass_}
+Score: {resp.score}
+Explanation: {resp.explanation}
+""")
+```
 
+### User-Defined Evaluators
 
-async def evaluate():
-    result = await no_apologies.evaluate(
-        evaluated_model_input="How to kill a docker container?",
-        evaluated_model_output="""
-        I cannot assist with that question as it has been marked as inappropriate.
-        I must respectfully decline to provide an answer."
-        """,
+```python
+from patronus import init, evaluator
+from patronus.evals import EvaluationResult
+
+init()
+
+# Simple evaluator function
+@evaluator()
+def exact_match(actual: str, expected: str) -> bool:
+    return actual.strip() == expected.strip()
+
+# More complex evaluator with detailed result
+@evaluator()
+def semantic_match(actual: str, expected: str) -> EvaluationResult:
+    similarity = calculate_similarity(actual, expected)  # Your similarity function
+    return EvaluationResult(
+        score=similarity,
+        pass_=similarity > 0.8,
+        text_output="High similarity" if similarity > 0.8 else "Low similarity",
+        explanation=f"Calculated similarity: {similarity}"
     )
-    print(f"Pass: {result.pass_}")
-    print(f"Explanation: {result.explanation}")
 
-
-asyncio.run(evaluate())
+# Use the evaluators
+result = exact_match("Hello world", "Hello world")
+print(f"Match: {result}")  # Output: Match: True
 ```
 
-### Experiment
+### Running Experiments
 
 The Patronus Python SDK includes a powerful experimentation framework designed to help you evaluate, compare, and improve your AI models.
 Whether you're working with pre-trained models, fine-tuning your own, or experimenting with new architectures,
 this framework provides the tools you need to set up, execute, and analyze experiments efficiently.
 
 ```python
-import os
-from patronus import Client, Row, TaskResult, evaluator, task
-
-client = Client(
-    # This is the default and can be omitted
-    api_key=os.environ.get("PATRONUS_API_KEY"),
-)
+from patronus.evals import evaluator, RemoteEvaluator
+from patronus.experiments import run_experiment, Row, TaskResult, FuncEvaluatorAdapter
 
 
-@task
-def my_task(row: Row):
-    return f"{row.evaluated_model_input} World"
-
-
-@evaluator
-def exact_match(row: Row, task_result: TaskResult):
-    # exact_match is locally defined and run evaluator
-    return task_result.evaluated_model_output == row.evaluated_model_gold_answer
+def my_task(row: Row, **kwargs):
+    return f"{row.task_input} World"
 
 
 # Reference remote Judge Patronus Evaluator with is-concise criteria.
 # This evaluator runs remotely on Patronus infrastructure.
-is_concise = client.remote_evaluator("judge", "patronus:is-concise")
+is_concise = RemoteEvaluator("judge", "patronus:is-concise")
 
-client.experiment(
-    "Tutorial Project",
+
+@evaluator()
+def exact_match(row: Row, task_result: TaskResult, **kwargs):
+    return task_result.output == row.task_output
+
+
+result = run_experiment(
+    project_name="Tutorial Project",
     dataset=[
         {
-            "evaluated_model_input": "Hello",
-            "evaluated_model_gold_answer": "Hello World",
+            "task_input": "Hello",
+            "gold_answer": "Hello World",
         },
     ],
     task=my_task,
-    evaluators=[exact_match, is_concise],
+    evaluators=[is_concise, FuncEvaluatorAdapter(exact_match)],
 )
+
+result.to_csv("./experiment.csv")
 ```

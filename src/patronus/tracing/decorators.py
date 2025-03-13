@@ -1,13 +1,29 @@
+import contextlib
 import functools
 import inspect
 import typing
 from typing import Optional
 
+from opentelemetry.util.types import Attributes
 from opentelemetry._logs import SeverityNumber
 
-from .attributes import LogTypes
-from .logger import Logger
-from .. import context
+from patronus.tracing.attributes import LogTypes
+from patronus.tracing.logger import Logger
+from patronus import context
+
+
+@contextlib.contextmanager
+def start_span(name: str, *, record_exception: bool = True, attributes: Optional[Attributes] = None):
+    ctx = context.get_current_context_or_none()
+    if ctx is None:
+        yield
+        return
+    with ctx.tracer.start_as_current_span(
+        name,
+        record_exception=record_exception,
+        attributes=attributes,
+    ) as span:
+        yield span
 
 
 def traced(
@@ -22,6 +38,7 @@ def traced(
     log_exceptions: bool = True,
     # Whether to prevent a log message to be created.
     disable_log: bool = False,
+    attributes: Attributes = None,
     **kwargs,
 ):
     def decorator(func):
@@ -57,7 +74,7 @@ def traced(
 
             exc = None
             ret = None
-            with ctx.tracer.start_as_current_span(name, record_exception=record_exception):
+            with ctx.tracer.start_as_current_span(name, record_exception=record_exception, attributes=attributes):
                 try:
                     ret = func(*f_args, **f_kwargs)
                 except Exception as e:
@@ -76,7 +93,7 @@ def traced(
 
             exc = None
             ret = None
-            with ctx.tracer.start_as_current_span(name, record_exception=record_exception):
+            with ctx.tracer.start_as_current_span(name, record_exception=record_exception, attributes=attributes):
                 try:
                     ret = await func(*f_args, **f_kwargs)
                 except Exception as e:
@@ -88,8 +105,10 @@ def traced(
                 return ret
 
         if inspect.iscoroutinefunction(func):
+            wrapper_async._pat_traced = True
             return wrapper_async
         else:
+            wrapper_async._pat_traced = True
             return wrapper_sync
 
     return decorator

@@ -10,6 +10,7 @@ from typing import Optional, Union, TypedDict, List
 from patronus.evals import bundled_eval
 from patronus.evals import StructuredEvaluator
 from patronus.evals import AsyncStructuredEvaluator
+from patronus.evals import AsyncRemoteEvaluator
 from .container import EvaluationContainer
 
 _EvaluatorID = str
@@ -24,10 +25,8 @@ class EvaluatorDict(TypedDict, total=False):
 Evaluator = Union[
     StructuredEvaluator,
     AsyncStructuredEvaluator,
-    # TODO add support later
-    # EvaluatorDict,
-    # Tuple[_EvaluatorID, _Criteria],
-    # _EvaluatorID
+    EvaluatorDict,
+    tuple[_EvaluatorID, _Criteria],
 ]
 
 
@@ -48,6 +47,16 @@ class AsyncPatronus:
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self.close()
 
+    def _map_evaluators(self, evs: list[Evaluator]):
+        def _into(ev: Evaluator):
+            if isinstance(ev, tuple):
+                return AsyncRemoteEvaluator(ev[0], ev[1])
+            if isinstance(ev, dict):
+                return AsyncRemoteEvaluator(ev["evaluator_id"], ev["criteria"])
+            return ev
+
+        return [_into(e) for e in evs]
+
     async def evaluate(
         self,
         evaluators: Union[List[Evaluator], Evaluator],
@@ -63,6 +72,7 @@ class AsyncPatronus:
         singular_eval = not isinstance(evaluators, list)
         if singular_eval:
             evaluators = [evaluators]
+        evaluators = self._map_evaluators(evaluators)
 
         def into_coro(fn, **kwargs):
             if inspect.iscoroutinefunction(fn):
