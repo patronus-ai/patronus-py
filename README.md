@@ -3,8 +3,6 @@
 The Patronus Python SDK is a Python library for systematic evaluation of Large Language Models (LLMs).
 Build, test, and improve your LLM applications with customizable tasks, evaluators, and comprehensive experiment tracking.
 
-**Note:** This library is currently in **beta** and is not stable. The APIs may change in future releases.
-
 ## Documentation
 
 For detailed documentation, including API references and advanced usage, please visit our [documentation](https://docs.patronus.ai/docs/experimentation-framework).
@@ -17,6 +15,33 @@ pip install patronus
 
 ## Quickstart
 
+### Initialization
+
+```python
+import patronus
+
+# Initialize with your Patronus API key
+patronus.init(
+    project_name="My Agent",  # Optional, defaults to "Global"
+    api_key="your-api-key"      # Optional, can also be set via environment variable
+)
+```
+
+You can also use a configuration file (patronus.yaml) for initialization:
+
+```yaml
+# patronus.yaml
+api_key: "your-api-key"
+project_name: "My Agent"
+```
+
+With this configuration file in your working directory, you can simply call:
+
+```python
+import patronus
+patronus.init()  # Automatically loads config from patronus.yaml
+```
+
 ### Tracing
 
 ```python
@@ -24,32 +49,21 @@ import patronus
 
 patronus.init()
 
-# Wrap function with @traced() decorator.
+# Trace a function with the @traced decorator
 @patronus.traced()
-def main():
-    perform()
+def process_input(user_query):
+    # Process the input
+    return "Processed: " + user_query
 
-def perform():
-    # Or use context start_span context manager.
-    with patronus.start_span("Performing action"):
-        # Do work
-        ...
+# Use context manager for finer-grained tracing
+def complex_operation():
+    with patronus.start_span("Data preparation"):
+        # Prepare data
+        pass
 
-```
-
-### Custom evaluations
-
-```python
-from patronus import init
-from patronus import evaluator
-
-init()
-
-@evaluator()
-def iexact_match(actual: str, expected: str) -> bool:
-    return actual.lower().strip() == expected.lower().strip()
-
-iexact_match("bonne nuit", "Bonne nuit")
+    with patronus.start_span("Model inference"):
+        # Run model
+        pass
 ```
 
 ### Patronus evaluations
@@ -72,10 +86,44 @@ resp = check_hallucinates.evaluate(
     ),
     task_output="To even qualify for our car insurance policy, you need to have a valid driver's license that expires later than 2028."
 )
-print(resp.model_dump_json(indent=4))
+print(f"""
+Hallucination evaluation:
+Passed: {resp.pass_}
+Score: {resp.score}
+Explanation: {resp.explanation}
+""")
 ```
 
-### Experiments
+### User-Defined Evaluators
+
+```python
+from patronus import init, evaluator
+from patronus.evals import EvaluationResult
+
+init()
+
+# Simple evaluator function
+@evaluator()
+def exact_match(actual: str, expected: str) -> bool:
+    return actual.strip() == expected.strip()
+
+# More complex evaluator with detailed result
+@evaluator()
+def semantic_match(actual: str, expected: str) -> EvaluationResult:
+    similarity = calculate_similarity(actual, expected)  # Your similarity function
+    return EvaluationResult(
+        score=similarity,
+        pass_=similarity > 0.8,
+        text_output="High similarity" if similarity > 0.8 else "Low similarity",
+        explanation=f"Calculated similarity: {similarity}"
+    )
+
+# Use the evaluators
+result = exact_match("Hello world", "Hello world")
+print(f"Match: {result}")  # Output: Match: True
+```
+
+### Running Experiments
 
 The Patronus Python SDK includes a powerful experimentation framework designed to help you evaluate, compare, and improve your AI models.
 Whether you're working with pre-trained models, fine-tuning your own, or experimenting with new architectures,
@@ -97,7 +145,6 @@ is_concise = RemoteEvaluator("judge", "patronus:is-concise")
 
 @evaluator()
 def exact_match(row: Row, task_result: TaskResult, **kwargs):
-    print(f"{task_result.output=}  :: {row.task_output=}")
     return task_result.output == row.task_output
 
 
