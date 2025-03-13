@@ -13,7 +13,7 @@ from patronus import context
 
 
 @contextlib.contextmanager
-def start_span(name: str, *, record_exception: bool = True, attributes: Attributes):
+def start_span(name: str, *, record_exception: bool = True, attributes: Optional[Attributes] = None):
     ctx = context.get_current_context_or_none()
     if ctx is None:
         yield
