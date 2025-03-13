@@ -98,7 +98,6 @@ def build_context(
             for integration in integrations:
                 if isinstance(integration, BaseInstrumentor):
                     integration.instrument(tracer_provider=tracer_provider)
-                    print(f"Instrumentation {integration} ENABLED")
                 else:
                     warnings.warn(f"Integration {integration} not recognized.")
         except ImportError:

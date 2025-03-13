@@ -193,6 +193,8 @@ class Experiment:
 
         self.reporter = Reporter()
 
+        self._integrations = kwargs.get("integrations")
+
     @classmethod
     async def create(
         cls,
@@ -291,6 +293,7 @@ class Experiment:
             api_key=self._api_key or cfg.api_key,
             client_http=client_http,
             client_http_async=client_http_async,
+            integrations=self._integrations,
         )
         self._prepared = True
         return ctx
