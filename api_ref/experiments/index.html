@@ -8,26 +8,28 @@
       
       
       
-        <link rel="canonical" href="https://docs.patronus.ai/patronus-py/api/">
+        <link rel="canonical" href="https://docs.patronus.ai/patronus-py/api_ref/experiments/">
       
       
-        <link rel="prev" href="../configuration/">
+        <link rel="prev" href="../evals/">
       
       
+        <link rel="next" href="../api_client/">
       
-      <link rel="icon" href="../assets/favicon-32x32.png">
+      
+      <link rel="icon" href="../../assets/favicon-32x32.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.7">
     
     
       
-        <title>API Reference - PatronusAI Python SDK</title>
+        <title>experiments - PatronusAI Python SDK</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.8608ea7d.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.8608ea7d.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -46,11 +48,11 @@
       
     
     
-      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="../stylesheets/extra.css">
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
     
-    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -76,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#api-reference" class="md-skip">
+        <a href="#experiments" class="md-skip">
           Skip to content
         </a>
       
@@ -92,9 +94,9 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="PatronusAI Python SDK" class="md-header__button md-logo" aria-label="PatronusAI Python SDK" data-md-component="logo">
+    <a href="../.." title="PatronusAI Python SDK" class="md-header__button md-logo" aria-label="PatronusAI Python SDK" data-md-component="logo">
       
-  <img src="../assets/boxwhite.svg" alt="logo">
+  <img src="../../assets/boxwhite.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -111,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              API Reference
+              experiments
             
           </span>
         </div>
@@ -224,9 +226,9 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="PatronusAI Python SDK" class="md-nav__button md-logo" aria-label="PatronusAI Python SDK" data-md-component="logo">
+    <a href="../.." title="PatronusAI Python SDK" class="md-nav__button md-logo" aria-label="PatronusAI Python SDK" data-md-component="logo">
       
-  <img src="../assets/boxwhite.svg" alt="logo">
+  <img src="../../assets/boxwhite.svg" alt="logo">
 
     </a>
     PatronusAI Python SDK
@@ -253,7 +255,7 @@
   
   
     <li class="md-nav__item">
-      <a href=".." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -310,7 +312,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting-started/installation/" class="md-nav__link">
+      <a href="../../getting-started/installation/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -332,7 +334,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting-started/initialization/" class="md-nav__link">
+      <a href="../../getting-started/initialization/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -354,7 +356,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting-started/quickstart/" class="md-nav__link">
+      <a href="../../getting-started/quickstart/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -419,7 +421,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../observability/tracing/" class="md-nav__link">
+      <a href="../../observability/tracing/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -441,7 +443,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../observability/logging/" class="md-nav__link">
+      <a href="../../observability/logging/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -506,7 +508,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../evaluations/evaluators/" class="md-nav__link">
+      <a href="../../evaluations/evaluators/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -528,7 +530,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../evaluations/patronus-evaluators/" class="md-nav__link">
+      <a href="../../evaluations/patronus-evaluators/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -550,7 +552,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../evaluations/batching/" class="md-nav__link">
+      <a href="../../evaluations/batching/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -579,7 +581,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../configuration/" class="md-nav__link">
+      <a href="../../configuration/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -601,6 +603,88 @@
   
   
   
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    API Reference
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            API Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tracing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    tracing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../evals/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    evals
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
     <li class="md-nav__item md-nav__item--active">
       
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
@@ -613,7 +697,7 @@
           
   
   <span class="md-ellipsis">
-    API Reference
+    experiments
     
   </span>
   
@@ -625,7 +709,7 @@
         
   
   <span class="md-ellipsis">
-    API Reference
+    experiments
     
   </span>
   
@@ -646,174 +730,6 @@
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#patronus" class="md-nav__link">
-    <span class="md-ellipsis">
-      patronus
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#patronus.evals" class="md-nav__link">
-    <span class="md-ellipsis">
-      evals
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="evals">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#patronus.evals.evaluators" class="md-nav__link">
-    <span class="md-ellipsis">
-      evaluators
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="evaluators">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#patronus.evals.evaluators.EvaluationDataRecord" class="md-nav__link">
-    <span class="md-ellipsis">
-      EvaluationDataRecord
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#patronus.evals.evaluators.UniqueEvaluationDataSet" class="md-nav__link">
-    <span class="md-ellipsis">
-      UniqueEvaluationDataSet
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="UniqueEvaluationDataSet">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#patronus.evals.evaluators.UniqueEvaluationDataSet.find_log" class="md-nav__link">
-    <span class="md-ellipsis">
-      find_log
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#patronus.evals.evaluators.Evaluator" class="md-nav__link">
-    <span class="md-ellipsis">
-      Evaluator
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Evaluator">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#patronus.evals.evaluators.Evaluator.evaluate" class="md-nav__link">
-    <span class="md-ellipsis">
-      evaluate
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#patronus.evals.evaluators.AsyncEvaluator" class="md-nav__link">
-    <span class="md-ellipsis">
-      AsyncEvaluator
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="AsyncEvaluator">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#patronus.evals.evaluators.AsyncEvaluator.evaluate" class="md-nav__link">
-    <span class="md-ellipsis">
-      evaluate
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#patronus.evals.evaluators.get_current_log_id" class="md-nav__link">
-    <span class="md-ellipsis">
-      get_current_log_id
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#patronus.evals.exporter" class="md-nav__link">
-    <span class="md-ellipsis">
-      exporter
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="exporter">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#patronus.evals.exporter.Once" class="md-nav__link">
-    <span class="md-ellipsis">
-      Once
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Once">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#patronus.evals.exporter.Once.do_once" class="md-nav__link">
-    <span class="md-ellipsis">
-      do_once
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
       
         <li class="md-nav__item">
   <a href="#patronus.experiments" class="md-nav__link">
@@ -953,6 +869,24 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#patronus.experiments.experiment.run_experiment--examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Examples
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#patronus.experiments.experiment.run_experiment--notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Notes
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -992,81 +926,61 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#patronus.pat_client" class="md-nav__link">
-    <span class="md-ellipsis">
-      pat_client
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="pat_client">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#patronus.pat_client.client_sync" class="md-nav__link">
-    <span class="md-ellipsis">
-      client_sync
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#patronus.pat_client.container" class="md-nav__link">
-    <span class="md-ellipsis">
-      container
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="container">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#patronus.pat_client.container.EvaluationContainer" class="md-nav__link">
-    <span class="md-ellipsis">
-      EvaluationContainer
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="EvaluationContainer">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#patronus.pat_client.container.EvaluationContainer.all_succeeded" class="md-nav__link">
-    <span class="md-ellipsis">
-      all_succeeded
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#patronus.pat_client.container.EvaluationContainer.any_failed" class="md-nav__link">
-    <span class="md-ellipsis">
-      any_failed
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
     </ul>
   
 </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api_client/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    api_client
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pat_client/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    pat_client
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
       
     </li>
   
@@ -1099,174 +1013,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#patronus" class="md-nav__link">
-    <span class="md-ellipsis">
-      patronus
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#patronus.evals" class="md-nav__link">
-    <span class="md-ellipsis">
-      evals
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="evals">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#patronus.evals.evaluators" class="md-nav__link">
-    <span class="md-ellipsis">
-      evaluators
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="evaluators">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#patronus.evals.evaluators.EvaluationDataRecord" class="md-nav__link">
-    <span class="md-ellipsis">
-      EvaluationDataRecord
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#patronus.evals.evaluators.UniqueEvaluationDataSet" class="md-nav__link">
-    <span class="md-ellipsis">
-      UniqueEvaluationDataSet
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="UniqueEvaluationDataSet">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#patronus.evals.evaluators.UniqueEvaluationDataSet.find_log" class="md-nav__link">
-    <span class="md-ellipsis">
-      find_log
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#patronus.evals.evaluators.Evaluator" class="md-nav__link">
-    <span class="md-ellipsis">
-      Evaluator
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Evaluator">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#patronus.evals.evaluators.Evaluator.evaluate" class="md-nav__link">
-    <span class="md-ellipsis">
-      evaluate
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#patronus.evals.evaluators.AsyncEvaluator" class="md-nav__link">
-    <span class="md-ellipsis">
-      AsyncEvaluator
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="AsyncEvaluator">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#patronus.evals.evaluators.AsyncEvaluator.evaluate" class="md-nav__link">
-    <span class="md-ellipsis">
-      evaluate
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#patronus.evals.evaluators.get_current_log_id" class="md-nav__link">
-    <span class="md-ellipsis">
-      get_current_log_id
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#patronus.evals.exporter" class="md-nav__link">
-    <span class="md-ellipsis">
-      exporter
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="exporter">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#patronus.evals.exporter.Once" class="md-nav__link">
-    <span class="md-ellipsis">
-      Once
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Once">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#patronus.evals.exporter.Once.do_once" class="md-nav__link">
-    <span class="md-ellipsis">
-      do_once
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#patronus.experiments" class="md-nav__link">
     <span class="md-ellipsis">
       experiments
@@ -1404,6 +1150,24 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#patronus.experiments.experiment.run_experiment--examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Examples
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#patronus.experiments.experiment.run_experiment--notes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Notes
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1443,78 +1207,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#patronus.pat_client" class="md-nav__link">
-    <span class="md-ellipsis">
-      pat_client
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="pat_client">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#patronus.pat_client.client_sync" class="md-nav__link">
-    <span class="md-ellipsis">
-      client_sync
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#patronus.pat_client.container" class="md-nav__link">
-    <span class="md-ellipsis">
-      container
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="container">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#patronus.pat_client.container.EvaluationContainer" class="md-nav__link">
-    <span class="md-ellipsis">
-      EvaluationContainer
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="EvaluationContainer">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#patronus.pat_client.container.EvaluationContainer.all_succeeded" class="md-nav__link">
-    <span class="md-ellipsis">
-      all_succeeded
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#patronus.pat_client.container.EvaluationContainer.any_failed" class="md-nav__link">
-    <span class="md-ellipsis">
-      any_failed
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -1534,642 +1226,21 @@
   
 
 
-<h1 id="api-reference">API Reference</h1>
+<h1 id="experiments">experiments</h1>
 
-
-<div class="doc doc-object doc-module">
-
-
-
-<a id="patronus"></a>
-    <div class="doc doc-contents first">
-
-
-
-
-
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-<div class="doc doc-object doc-module">
-
-
-
-<h2 id="patronus.evals" class="doc doc-heading">
-            <span class="doc doc-object-name doc-module-name">evals</span>
-
-
-</h2>
-
-    <div class="doc doc-contents ">
-
-
-
-
-
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-<div class="doc doc-object doc-module">
-
-
-
-<h3 id="patronus.evals.evaluators" class="doc doc-heading">
-            <span class="doc doc-object-name doc-module-name">evaluators</span>
-
-
-</h3>
-
-    <div class="doc doc-contents ">
-
-
-
-
-
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-<div class="doc doc-object doc-class">
-
-
-
-<h4 id="patronus.evals.evaluators.EvaluationDataRecord" class="doc doc-heading">
-            <span class="doc doc-object-name doc-class-name">EvaluationDataRecord</span>
-
-
-</h4>
-
-
-    <div class="doc doc-contents ">
-            <p class="doc doc-class-bases">
-              Bases: <code><span title="typing.NamedTuple">NamedTuple</span></code></p>
-
-
-        <p>EvaluationDataRecord holds evaluation log data and ID of the log.
-Log data consists of positional arguments (args) and keyword arguments (kwargs)
-that were passed to an evaluator.</p>
-
-
-
-
-
-
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-<h4 id="patronus.evals.evaluators.UniqueEvaluationDataSet" class="doc doc-heading">
-            <span class="doc doc-object-name doc-class-name">UniqueEvaluationDataSet</span>
-
-
-</h4>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">UniqueEvaluationDataSet</span><span class="p">(</span><span class="n">span_context</span><span class="p">:</span> <span class="n"><span title="opentelemetry.trace.SpanContext">SpanContext</span></span><span class="p">)</span>
-</span></code></pre></div>
-
-    <div class="doc doc-contents ">
-
-
-        <p>UniqueEvaluationDataSet holds unique list evaluation log data.
-This container is used to track and ensure that duplicated evaluation data logs are not emitted.</p>
-
-
-
-
-
-
-                  <details class="quote">
-                    <summary>Source code in <code>src/patronus/evals/evaluators.py</code></summary>
-                    <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-59">59</a></span>
-<span class="normal"><a href="#__codelineno-0-60">60</a></span>
-<span class="normal"><a href="#__codelineno-0-61">61</a></span>
-<span class="normal"><a href="#__codelineno-0-62">62</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-59"><a id="__codelineno-0-59" name="__codelineno-0-59"></a><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">span_context</span><span class="p">:</span> <span class="n">SpanContext</span><span class="p">):</span>
-</span><span id="__span-0-60"><a id="__codelineno-0-60" name="__codelineno-0-60"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">span_context</span> <span class="o">=</span> <span class="n">span_context</span>
-</span><span id="__span-0-61"><a id="__codelineno-0-61" name="__codelineno-0-61"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">logs</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="__span-0-62"><a id="__codelineno-0-62" name="__codelineno-0-62"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
-</span></code></pre></div></td></tr></table></div>
-                  </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-<div class="doc doc-object doc-function">
-
-
-<h5 id="patronus.evals.evaluators.UniqueEvaluationDataSet.find_log" class="doc doc-heading">
-            <span class="doc doc-object-name doc-function-name">find_log</span>
-
-
-</h5>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">find_log</span><span class="p">(</span><span class="n">bound_arguments</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="patronus.evals.evaluators.LogID">LogID</span></span><span class="p">]</span>
-</span></code></pre></div>
-
-    <div class="doc doc-contents ">
-
-        <p>Must be used with lock</p>
-
-            <details class="quote">
-              <summary>Source code in <code>src/patronus/evals/evaluators.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-74">74</a></span>
-<span class="normal"><a href="#__codelineno-0-75">75</a></span>
-<span class="normal"><a href="#__codelineno-0-76">76</a></span>
-<span class="normal"><a href="#__codelineno-0-77">77</a></span>
-<span class="normal"><a href="#__codelineno-0-78">78</a></span>
-<span class="normal"><a href="#__codelineno-0-79">79</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-74"><a id="__codelineno-0-74" name="__codelineno-0-74"></a><span class="k">def</span><span class="w"> </span><span class="nf">find_log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bound_arguments</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LogID</span><span class="p">]:</span>
-</span><span id="__span-0-75"><a id="__codelineno-0-75" name="__codelineno-0-75"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Must be used with lock&quot;&quot;&quot;</span>
-</span><span id="__span-0-76"><a id="__codelineno-0-76" name="__codelineno-0-76"></a>    <span class="k">for</span> <span class="n">lg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">logs</span><span class="p">:</span>
-</span><span id="__span-0-77"><a id="__codelineno-0-77" name="__codelineno-0-77"></a>        <span class="k">if</span> <span class="n">bound_arguments</span> <span class="o">==</span> <span class="n">lg</span><span class="o">.</span><span class="n">arguments</span><span class="p">:</span>
-</span><span id="__span-0-78"><a id="__codelineno-0-78" name="__codelineno-0-78"></a>            <span class="k">return</span> <span class="n">lg</span><span class="o">.</span><span class="n">log_id</span>
-</span><span id="__span-0-79"><a id="__codelineno-0-79" name="__codelineno-0-79"></a>    <span class="k">return</span> <span class="kc">None</span>
-</span></code></pre></div></td></tr></table></div>
-            </details>
-    </div>
-
-</div>
-
-
-
-  </div>
-
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-<h4 id="patronus.evals.evaluators.Evaluator" class="doc doc-heading">
-            <span class="doc doc-object-name doc-class-name">Evaluator</span>
-
-
-</h4>
-
-
-    <div class="doc doc-contents ">
-
-
-
-
-
-
-
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-<div class="doc doc-object doc-function">
-
-
-<h5 id="patronus.evals.evaluators.Evaluator.evaluate" class="doc doc-heading">
-            <span class="doc doc-object-name doc-function-name">evaluate</span>
-
-
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
-  </span>
-
-</h5>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">evaluate</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="patronus.evals.types.EvaluationResult">EvaluationResult</span></span><span class="p">]</span>
-</span></code></pre></div>
-
-    <div class="doc doc-contents ">
-
-        <p>Synchronous version of evaluate method.
-When inheriting directly from Evaluator class it's permitted to change parameters signature.
-Return type should stay unchanged.</p>
-
-            <details class="quote">
-              <summary>Source code in <code>src/patronus/evals/evaluators.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-465">465</a></span>
-<span class="normal"><a href="#__codelineno-0-466">466</a></span>
-<span class="normal"><a href="#__codelineno-0-467">467</a></span>
-<span class="normal"><a href="#__codelineno-0-468">468</a></span>
-<span class="normal"><a href="#__codelineno-0-469">469</a></span>
-<span class="normal"><a href="#__codelineno-0-470">470</a></span>
-<span class="normal"><a href="#__codelineno-0-471">471</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-465"><a id="__codelineno-0-465" name="__codelineno-0-465"></a><span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-</span><span id="__span-0-466"><a id="__codelineno-0-466" name="__codelineno-0-466"></a><span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">EvaluationResult</span><span class="p">]:</span>
-</span><span id="__span-0-467"><a id="__codelineno-0-467" name="__codelineno-0-467"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="__span-0-468"><a id="__codelineno-0-468" name="__codelineno-0-468"></a><span class="sd">    Synchronous version of evaluate method.</span>
-</span><span id="__span-0-469"><a id="__codelineno-0-469" name="__codelineno-0-469"></a><span class="sd">    When inheriting directly from Evaluator class it&#39;s permitted to change parameters signature.</span>
-</span><span id="__span-0-470"><a id="__codelineno-0-470" name="__codelineno-0-470"></a><span class="sd">    Return type should stay unchanged.</span>
-</span><span id="__span-0-471"><a id="__codelineno-0-471" name="__codelineno-0-471"></a><span class="sd">    &quot;&quot;&quot;</span>
-</span></code></pre></div></td></tr></table></div>
-            </details>
-    </div>
-
-</div>
-
-
-
-  </div>
-
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-class">
-
-
-
-<h4 id="patronus.evals.evaluators.AsyncEvaluator" class="doc doc-heading">
-            <span class="doc doc-object-name doc-class-name">AsyncEvaluator</span>
-
-
-</h4>
-
-
-    <div class="doc doc-contents ">
-            <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="patronus.evals.evaluators.Evaluator" href="#patronus.evals.evaluators.Evaluator">Evaluator</a></code></p>
-
-
-
-
-
-
-
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-<div class="doc doc-object doc-function">
-
-
-<h5 id="patronus.evals.evaluators.AsyncEvaluator.evaluate" class="doc doc-heading">
-            <span class="doc doc-object-name doc-function-name">evaluate</span>
-
-
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
-      <small class="doc doc-label doc-label-async"><code>async</code></small>
-  </span>
-
-</h5>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">evaluate</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="patronus.evals.types.EvaluationResult">EvaluationResult</span></span><span class="p">]</span>
-</span></code></pre></div>
-
-    <div class="doc doc-contents ">
-
-        <p>Asynchronous version of evaluate method.
-When inheriting directly from Evaluator class it's permitted to change parameters signature.
-Return type should stay unchanged.</p>
-
-            <details class="quote">
-              <summary>Source code in <code>src/patronus/evals/evaluators.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-475">475</a></span>
-<span class="normal"><a href="#__codelineno-0-476">476</a></span>
-<span class="normal"><a href="#__codelineno-0-477">477</a></span>
-<span class="normal"><a href="#__codelineno-0-478">478</a></span>
-<span class="normal"><a href="#__codelineno-0-479">479</a></span>
-<span class="normal"><a href="#__codelineno-0-480">480</a></span>
-<span class="normal"><a href="#__codelineno-0-481">481</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-475"><a id="__codelineno-0-475" name="__codelineno-0-475"></a><span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-</span><span id="__span-0-476"><a id="__codelineno-0-476" name="__codelineno-0-476"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">EvaluationResult</span><span class="p">]:</span>
-</span><span id="__span-0-477"><a id="__codelineno-0-477" name="__codelineno-0-477"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="__span-0-478"><a id="__codelineno-0-478" name="__codelineno-0-478"></a><span class="sd">    Asynchronous version of evaluate method.</span>
-</span><span id="__span-0-479"><a id="__codelineno-0-479" name="__codelineno-0-479"></a><span class="sd">    When inheriting directly from Evaluator class it&#39;s permitted to change parameters signature.</span>
-</span><span id="__span-0-480"><a id="__codelineno-0-480" name="__codelineno-0-480"></a><span class="sd">    Return type should stay unchanged.</span>
-</span><span id="__span-0-481"><a id="__codelineno-0-481" name="__codelineno-0-481"></a><span class="sd">    &quot;&quot;&quot;</span>
-</span></code></pre></div></td></tr></table></div>
-            </details>
-    </div>
-
-</div>
-
-
-
-  </div>
-
-    </div>
-
-</div>
-
-
-<div class="doc doc-object doc-function">
-
-
-<h4 id="patronus.evals.evaluators.get_current_log_id" class="doc doc-heading">
-            <span class="doc doc-object-name doc-function-name">get_current_log_id</span>
-
-
-</h4>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_current_log_id</span><span class="p">(</span><span class="n">bound_arguments</span><span class="p">:</span> <span class="n"><span title="dict">dict</span></span><span class="p">[</span><span class="n"><span title="str">str</span></span><span class="p">,</span> <span class="n"><span title="typing.Any">Any</span></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n"><span title="typing.Optional">Optional</span></span><span class="p">[</span><span class="n"><span title="patronus.evals.evaluators.LogID">LogID</span></span><span class="p">]</span>
-</span></code></pre></div>
-
-    <div class="doc doc-contents ">
-
-        <p>Return log_id for given arguments in current context.
-Returns None if there is no context - most likely SDK is not initialized.</p>
-
-            <details class="quote">
-              <summary>Source code in <code>src/patronus/evals/evaluators.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-114">114</a></span>
-<span class="normal"><a href="#__codelineno-0-115">115</a></span>
-<span class="normal"><a href="#__codelineno-0-116">116</a></span>
-<span class="normal"><a href="#__codelineno-0-117">117</a></span>
-<span class="normal"><a href="#__codelineno-0-118">118</a></span>
-<span class="normal"><a href="#__codelineno-0-119">119</a></span>
-<span class="normal"><a href="#__codelineno-0-120">120</a></span>
-<span class="normal"><a href="#__codelineno-0-121">121</a></span>
-<span class="normal"><a href="#__codelineno-0-122">122</a></span>
-<span class="normal"><a href="#__codelineno-0-123">123</a></span>
-<span class="normal"><a href="#__codelineno-0-124">124</a></span>
-<span class="normal"><a href="#__codelineno-0-125">125</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-114"><a id="__codelineno-0-114" name="__codelineno-0-114"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_current_log_id</span><span class="p">(</span><span class="n">bound_arguments</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LogID</span><span class="p">]:</span>
-</span><span id="__span-0-115"><a id="__codelineno-0-115" name="__codelineno-0-115"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="__span-0-116"><a id="__codelineno-0-116" name="__codelineno-0-116"></a><span class="sd">    Return log_id for given arguments in current context.</span>
-</span><span id="__span-0-117"><a id="__codelineno-0-117" name="__codelineno-0-117"></a><span class="sd">    Returns None if there is no context - most likely SDK is not initialized.</span>
-</span><span id="__span-0-118"><a id="__codelineno-0-118" name="__codelineno-0-118"></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="__span-0-119"><a id="__codelineno-0-119" name="__codelineno-0-119"></a>    <span class="n">eval_group</span> <span class="o">=</span> <span class="n">_ctx_evaluation_log_group</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
-</span><span id="__span-0-120"><a id="__codelineno-0-120" name="__codelineno-0-120"></a>    <span class="k">if</span> <span class="n">eval_group</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="__span-0-121"><a id="__codelineno-0-121" name="__codelineno-0-121"></a>        <span class="k">return</span> <span class="kc">None</span>
-</span><span id="__span-0-122"><a id="__codelineno-0-122" name="__codelineno-0-122"></a>    <span class="n">log_id</span> <span class="o">=</span> <span class="n">eval_group</span><span class="o">.</span><span class="n">find_log</span><span class="p">(</span><span class="n">bound_arguments</span><span class="p">)</span>
-</span><span id="__span-0-123"><a id="__codelineno-0-123" name="__codelineno-0-123"></a>    <span class="k">if</span> <span class="n">log_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="__span-0-124"><a id="__codelineno-0-124" name="__codelineno-0-124"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Log not found for provided arguments&quot;</span><span class="p">)</span>
-</span><span id="__span-0-125"><a id="__codelineno-0-125" name="__codelineno-0-125"></a>    <span class="k">return</span> <span class="n">log_id</span>
-</span></code></pre></div></td></tr></table></div>
-            </details>
-    </div>
-
-</div>
-
-
-
-  </div>
-
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-module">
-
-
-
-<h3 id="patronus.evals.exporter" class="doc doc-heading">
-            <span class="doc doc-object-name doc-module-name">exporter</span>
-
-
-</h3>
-
-    <div class="doc doc-contents ">
-
-
-
-
-
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-<div class="doc doc-object doc-class">
-
-
-
-<h4 id="patronus.evals.exporter.Once" class="doc doc-heading">
-            <span class="doc doc-object-name doc-class-name">Once</span>
-
-
-</h4>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">Once</span><span class="p">()</span>
-</span></code></pre></div>
-
-    <div class="doc doc-contents ">
-
-
-        <p>Execute a function exactly once and block all callers until the function returns</p>
-<p>Same as golang's <code>sync.Once &lt;https://pkg.go.dev/sync#Once&gt;</code>_</p>
-
-
-
-
-
-
-                  <details class="quote">
-                    <summary>Source code in <code>src/patronus/evals/exporter.py</code></summary>
-                    <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-24">24</a></span>
-<span class="normal"><a href="#__codelineno-0-25">25</a></span>
-<span class="normal"><a href="#__codelineno-0-26">26</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24"></a><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span> <span class="o">=</span> <span class="n">Lock</span><span class="p">()</span>
-</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">_done</span> <span class="o">=</span> <span class="kc">False</span>
-</span></code></pre></div></td></tr></table></div>
-                  </details>
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-<div class="doc doc-object doc-function">
-
-
-<h5 id="patronus.evals.exporter.Once.do_once" class="doc doc-heading">
-            <span class="doc doc-object-name doc-function-name">do_once</span>
-
-
-</h5>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">do_once</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n"><span title="typing.Callable">Callable</span></span><span class="p">[[],</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n"><span title="bool">bool</span></span>
-</span></code></pre></div>
-
-    <div class="doc doc-contents ">
-
-        <p>Execute <code>func</code> if it hasn't been executed or return.</p>
-<p>Will block until <code>func</code> has been called by one thread.</p>
-
-
-    <p><span class="doc-section-title">Returns:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                  <code><span title="bool">bool</span></code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Whether <code>func</code> was executed in this call</p>
-              </div>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-            <details class="quote">
-              <summary>Source code in <code>src/patronus/evals/exporter.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-28">28</a></span>
-<span class="normal"><a href="#__codelineno-0-29">29</a></span>
-<span class="normal"><a href="#__codelineno-0-30">30</a></span>
-<span class="normal"><a href="#__codelineno-0-31">31</a></span>
-<span class="normal"><a href="#__codelineno-0-32">32</a></span>
-<span class="normal"><a href="#__codelineno-0-33">33</a></span>
-<span class="normal"><a href="#__codelineno-0-34">34</a></span>
-<span class="normal"><a href="#__codelineno-0-35">35</a></span>
-<span class="normal"><a href="#__codelineno-0-36">36</a></span>
-<span class="normal"><a href="#__codelineno-0-37">37</a></span>
-<span class="normal"><a href="#__codelineno-0-38">38</a></span>
-<span class="normal"><a href="#__codelineno-0-39">39</a></span>
-<span class="normal"><a href="#__codelineno-0-40">40</a></span>
-<span class="normal"><a href="#__codelineno-0-41">41</a></span>
-<span class="normal"><a href="#__codelineno-0-42">42</a></span>
-<span class="normal"><a href="#__codelineno-0-43">43</a></span>
-<span class="normal"><a href="#__codelineno-0-44">44</a></span>
-<span class="normal"><a href="#__codelineno-0-45">45</a></span>
-<span class="normal"><a href="#__codelineno-0-46">46</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28"></a><span class="k">def</span><span class="w"> </span><span class="nf">do_once</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Execute ``func`` if it hasn&#39;t been executed or return.</span>
-</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30"></a>
-</span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="sd">    Will block until ``func`` has been called by one thread.</span>
-</span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32"></a>
-</span><span id="__span-0-33"><a id="__codelineno-0-33" name="__codelineno-0-33"></a><span class="sd">    Returns:</span>
-</span><span id="__span-0-34"><a id="__codelineno-0-34" name="__codelineno-0-34"></a><span class="sd">        Whether ``func`` was executed in this call</span>
-</span><span id="__span-0-35"><a id="__codelineno-0-35" name="__codelineno-0-35"></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="__span-0-36"><a id="__codelineno-0-36" name="__codelineno-0-36"></a>
-</span><span id="__span-0-37"><a id="__codelineno-0-37" name="__codelineno-0-37"></a>    <span class="c1"># fast path, try to avoid locking</span>
-</span><span id="__span-0-38"><a id="__codelineno-0-38" name="__codelineno-0-38"></a>    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_done</span><span class="p">:</span>
-</span><span id="__span-0-39"><a id="__codelineno-0-39" name="__codelineno-0-39"></a>        <span class="k">return</span> <span class="kc">False</span>
-</span><span id="__span-0-40"><a id="__codelineno-0-40" name="__codelineno-0-40"></a>
-</span><span id="__span-0-41"><a id="__codelineno-0-41" name="__codelineno-0-41"></a>    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
-</span><span id="__span-0-42"><a id="__codelineno-0-42" name="__codelineno-0-42"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_done</span><span class="p">:</span>
-</span><span id="__span-0-43"><a id="__codelineno-0-43" name="__codelineno-0-43"></a>            <span class="n">func</span><span class="p">()</span>
-</span><span id="__span-0-44"><a id="__codelineno-0-44" name="__codelineno-0-44"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_done</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="__span-0-45"><a id="__codelineno-0-45" name="__codelineno-0-45"></a>            <span class="k">return</span> <span class="kc">True</span>
-</span><span id="__span-0-46"><a id="__codelineno-0-46" name="__codelineno-0-46"></a>    <span class="k">return</span> <span class="kc">False</span>
-</span></code></pre></div></td></tr></table></div>
-            </details>
-    </div>
-
-</div>
-
-
-
-  </div>
-
-    </div>
-
-</div>
-
-
-
-
-  </div>
-
-    </div>
-
-</div>
-
-
-  </div>
-
-    </div>
-
-</div>
 
 <div class="doc doc-object doc-module">
 
 
 
 <h2 id="patronus.experiments" class="doc doc-heading">
-            <span class="doc doc-object-name doc-module-name">experiments</span>
+            <span class="doc doc-object-name doc-module-name">patronus.experiments</span>
 
 
 </h2>
 
-    <div class="doc doc-contents ">
+    <div class="doc doc-contents first">
+
 
 
 
@@ -2200,6 +1271,7 @@ Returns None if there is no context - most likely SDK is not initialized.</p>
 </h3>
 
     <div class="doc doc-contents ">
+
 
 
 
@@ -2247,6 +1319,7 @@ the required abstract methods.</p>
 
 
 
+
   <div class="doc doc-children">
 
 
@@ -2274,12 +1347,12 @@ the required abstract methods.</p>
 
 
 </h4>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">EvaluatorAdapter</span><span class="p">(</span><span class="n">evaluator</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="patronus.evals.Evaluator" href="#patronus.evals.evaluators.Evaluator">Evaluator</a></span><span class="p">)</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">EvaluatorAdapter</span><span class="p">(</span><span class="n">evaluator</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="Evaluator (patronus.evals.Evaluator)" href="../evals/#patronus.evals.evaluators.Evaluator">Evaluator</a></span><span class="p">)</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="patronus.experiments.adapters.BaseEvaluatorAdapter" href="#patronus.experiments.adapters.BaseEvaluatorAdapter">BaseEvaluatorAdapter</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="BaseEvaluatorAdapter (patronus.experiments.adapters.BaseEvaluatorAdapter)" href="#patronus.experiments.adapters.BaseEvaluatorAdapter">BaseEvaluatorAdapter</a></code></p>
 
 
         <p>Adapter for class-based evaluators conforming to the Evaluator or AsyncEvaluator protocol.</p>
@@ -2300,7 +1373,7 @@ or AsyncEvaluator interface within the experiment framework.</p>
           <tr class="doc-section-item">
             <td><code><span title="patronus.experiments.adapters.EvaluatorAdapter.evaluator">evaluator</span></code></td>
             <td>
-                  <code><span title="typing.Union">Union</span>[<a class="autorefs autorefs-internal" title="patronus.evals.Evaluator" href="#patronus.evals.evaluators.Evaluator">Evaluator</a>, <a class="autorefs autorefs-internal" title="patronus.evals.AsyncEvaluator" href="#patronus.evals.evaluators.AsyncEvaluator">AsyncEvaluator</a>]</code>
+                  <code><span title="typing.Union">Union</span>[<a class="autorefs autorefs-internal" title="Evaluator (patronus.evals.Evaluator)" href="../evals/#patronus.evals.evaluators.Evaluator">Evaluator</a>, <a class="autorefs autorefs-internal" title="AsyncEvaluator (patronus.evals.AsyncEvaluator)" href="../evals/#patronus.evals.evaluators.AsyncEvaluator">AsyncEvaluator</a>]</code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -2361,6 +1434,7 @@ run_experiment(
 )
 ```
 </code></pre></div>
+
 
 
 
@@ -2508,6 +1582,7 @@ run_experiment(
           </tr>
       </tbody>
     </table>
+
 
             <details class="quote">
               <summary>Source code in <code>src/patronus/experiments/adapters.py</code></summary>
@@ -2675,6 +1750,7 @@ run_experiment(
       </tbody>
     </table>
 
+
             <details class="quote">
               <summary>Source code in <code>src/patronus/experiments/adapters.py</code></summary>
               <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-150">150</a></span>
@@ -2737,15 +1813,16 @@ run_experiment(
 
 
 </h4>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">StructuredEvaluatorAdapter</span><span class="p">(</span><span class="n">evaluator</span><span class="p">:</span> <span class="n"><span title="patronus.evals.AsyncStructuredEvaluator">AsyncStructuredEvaluator</span></span><span class="p">)</span>
+<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">StructuredEvaluatorAdapter</span><span class="p">(</span><span class="n">evaluator</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-internal" title="AsyncStructuredEvaluator (patronus.evals.AsyncStructuredEvaluator)" href="../evals/#patronus.evals.evaluators.AsyncStructuredEvaluator">AsyncStructuredEvaluator</a></span><span class="p">)</span>
 </span></code></pre></div>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="patronus.experiments.adapters.EvaluatorAdapter" href="#patronus.experiments.adapters.EvaluatorAdapter">EvaluatorAdapter</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="EvaluatorAdapter (patronus.experiments.adapters.EvaluatorAdapter)" href="#patronus.experiments.adapters.EvaluatorAdapter">EvaluatorAdapter</a></code></p>
 
 
         <p>Adapter for structured evaluators.</p>
+
 
 
 
@@ -2804,7 +1881,7 @@ run_experiment(
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="patronus.experiments.adapters.BaseEvaluatorAdapter" href="#patronus.experiments.adapters.BaseEvaluatorAdapter">BaseEvaluatorAdapter</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="BaseEvaluatorAdapter (patronus.experiments.adapters.BaseEvaluatorAdapter)" href="#patronus.experiments.adapters.BaseEvaluatorAdapter">BaseEvaluatorAdapter</a></code></p>
 
 
         <p>Adapter class that allows using function-based evaluators with the experiment framework.</p>
@@ -2907,6 +1984,7 @@ run_experiment(
 )
 ```
 </code></pre></div>
+
 
 
 
@@ -3060,6 +2138,7 @@ run_experiment(
           </tr>
       </tbody>
     </table>
+
 
             <details class="quote">
               <summary>Source code in <code>src/patronus/experiments/adapters.py</code></summary>
@@ -3227,6 +2306,7 @@ run_experiment(
       </tbody>
     </table>
 
+
             <details class="quote">
               <summary>Source code in <code>src/patronus/experiments/adapters.py</code></summary>
               <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-334">334</a></span>
@@ -3308,6 +2388,7 @@ run_experiment(
 
 
 
+
   <div class="doc doc-children">
 
 
@@ -3341,26 +2422,27 @@ The execution handling is context-aware:</p>
   experiment completes and returns the Experiment object.</li>
 </ul>
 <h6 id="patronus.experiments.experiment.run_experiment--returns">Returns</h6>
-<p>Union[Experiment, Awaitable[Experiment]]
-    In a synchronous context: the completed Experiment object.
-    In an asynchronous context: an awaitable that resolves to the Experiment object.</p>
+<p><code>Union[Experiment, Awaitable[Experiment]]</code></p>
+<ul>
+<li>In a synchronous context: the completed Experiment object.</li>
+<li>In an asynchronous context: an awaitable that resolves to the Experiment object.</li>
+</ul>
+<h6 id="patronus.experiments.experiment.run_experiment--examples">Examples</h6>
+<p>Synchronous execution:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">experiment</span> <span class="o">=</span> <span class="n">run_experiment</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="n">some_task</span><span class="p">)</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="c1"># Blocks until the experiment finishes.</span>
+</span></code></pre></div>
+<p>Asynchronous execution (e.g., in a Jupyter Notebook):</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">experiment</span> <span class="o">=</span> <span class="k">await</span> <span class="n">run_experiment</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="n">some_task</span><span class="p">)</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># Must be awaited within an async function or event loop.</span>
+</span></code></pre></div>
+<h6 id="patronus.experiments.experiment.run_experiment--notes">Notes</h6>
+<p>For manual control of the event loop, you can create and run the experiment as follows:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">experiment</span> <span class="o">=</span> <span class="k">await</span> <span class="n">Experiment</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">await</span> <span class="n">experiment</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</span></code></pre></div>
 
 
-<p><span class="doc-section-title">Examples:</span></p>
-    <p>Synchronous execution:
-    experiment = run_experiment(dataset, task=some_task)
-    # Blocks until the experiment finishes.</p>
-<p>Asynchronous execution (e.g., in a Jupyter Notebook):
-    experiment = await run_experiment(dataset, task=some_task)
-    # Must be awaited within an async function or event loop.</p>
-
-
-<details class="notes" open>
-  <summary>Notes</summary>
-  <p>For manual control of the event loop, you can create and run the experiment as follows:
-    experiment = await Experiment.create(...)
-    await experiment.run()</p>
-</details>
             <details class="quote">
               <summary>Source code in <code>src/patronus/experiments/experiment.py</code></summary>
               <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-66"> 66</a></span>
@@ -3424,7 +2506,20 @@ The execution handling is context-aware:</p>
 <span class="normal"><a href="#__codelineno-0-124">124</a></span>
 <span class="normal"><a href="#__codelineno-0-125">125</a></span>
 <span class="normal"><a href="#__codelineno-0-126">126</a></span>
-<span class="normal"><a href="#__codelineno-0-127">127</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-66"><a id="__codelineno-0-66" name="__codelineno-0-66"></a><span class="k">def</span><span class="w"> </span><span class="nf">run_experiment</span><span class="p">(</span>
+<span class="normal"><a href="#__codelineno-0-127">127</a></span>
+<span class="normal"><a href="#__codelineno-0-128">128</a></span>
+<span class="normal"><a href="#__codelineno-0-129">129</a></span>
+<span class="normal"><a href="#__codelineno-0-130">130</a></span>
+<span class="normal"><a href="#__codelineno-0-131">131</a></span>
+<span class="normal"><a href="#__codelineno-0-132">132</a></span>
+<span class="normal"><a href="#__codelineno-0-133">133</a></span>
+<span class="normal"><a href="#__codelineno-0-134">134</a></span>
+<span class="normal"><a href="#__codelineno-0-135">135</a></span>
+<span class="normal"><a href="#__codelineno-0-136">136</a></span>
+<span class="normal"><a href="#__codelineno-0-137">137</a></span>
+<span class="normal"><a href="#__codelineno-0-138">138</a></span>
+<span class="normal"><a href="#__codelineno-0-139">139</a></span>
+<span class="normal"><a href="#__codelineno-0-140">140</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-66"><a id="__codelineno-0-66" name="__codelineno-0-66"></a><span class="k">def</span><span class="w"> </span><span class="nf">run_experiment</span><span class="p">(</span>
 </span><span id="__span-0-67"><a id="__codelineno-0-67" name="__codelineno-0-67"></a>    <span class="n">dataset</span><span class="p">:</span> <span class="n">ExperimentDataset</span><span class="p">,</span>
 </span><span id="__span-0-68"><a id="__codelineno-0-68" name="__codelineno-0-68"></a>    <span class="n">task</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Task</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 </span><span id="__span-0-69"><a id="__codelineno-0-69" name="__codelineno-0-69"></a>    <span class="n">evaluators</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">AdaptableEvaluators</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -3450,42 +2545,55 @@ The execution handling is context-aware:</p>
 </span><span id="__span-0-89"><a id="__codelineno-0-89" name="__codelineno-0-89"></a>
 </span><span id="__span-0-90"><a id="__codelineno-0-90" name="__codelineno-0-90"></a><span class="sd">    Returns</span>
 </span><span id="__span-0-91"><a id="__codelineno-0-91" name="__codelineno-0-91"></a><span class="sd">    -------</span>
-</span><span id="__span-0-92"><a id="__codelineno-0-92" name="__codelineno-0-92"></a><span class="sd">    Union[Experiment, Awaitable[Experiment]]</span>
-</span><span id="__span-0-93"><a id="__codelineno-0-93" name="__codelineno-0-93"></a><span class="sd">        In a synchronous context: the completed Experiment object.</span>
-</span><span id="__span-0-94"><a id="__codelineno-0-94" name="__codelineno-0-94"></a><span class="sd">        In an asynchronous context: an awaitable that resolves to the Experiment object.</span>
-</span><span id="__span-0-95"><a id="__codelineno-0-95" name="__codelineno-0-95"></a>
-</span><span id="__span-0-96"><a id="__codelineno-0-96" name="__codelineno-0-96"></a><span class="sd">    Examples:</span>
-</span><span id="__span-0-97"><a id="__codelineno-0-97" name="__codelineno-0-97"></a><span class="sd">        Synchronous execution:</span>
-</span><span id="__span-0-98"><a id="__codelineno-0-98" name="__codelineno-0-98"></a><span class="sd">            experiment = run_experiment(dataset, task=some_task)</span>
-</span><span id="__span-0-99"><a id="__codelineno-0-99" name="__codelineno-0-99"></a><span class="sd">            # Blocks until the experiment finishes.</span>
-</span><span id="__span-0-100"><a id="__codelineno-0-100" name="__codelineno-0-100"></a>
-</span><span id="__span-0-101"><a id="__codelineno-0-101" name="__codelineno-0-101"></a><span class="sd">        Asynchronous execution (e.g., in a Jupyter Notebook):</span>
-</span><span id="__span-0-102"><a id="__codelineno-0-102" name="__codelineno-0-102"></a><span class="sd">            experiment = await run_experiment(dataset, task=some_task)</span>
-</span><span id="__span-0-103"><a id="__codelineno-0-103" name="__codelineno-0-103"></a><span class="sd">            # Must be awaited within an async function or event loop.</span>
-</span><span id="__span-0-104"><a id="__codelineno-0-104" name="__codelineno-0-104"></a>
-</span><span id="__span-0-105"><a id="__codelineno-0-105" name="__codelineno-0-105"></a><span class="sd">    Notes:</span>
-</span><span id="__span-0-106"><a id="__codelineno-0-106" name="__codelineno-0-106"></a><span class="sd">        For manual control of the event loop, you can create and run the experiment as follows:</span>
-</span><span id="__span-0-107"><a id="__codelineno-0-107" name="__codelineno-0-107"></a><span class="sd">            experiment = await Experiment.create(...)</span>
-</span><span id="__span-0-108"><a id="__codelineno-0-108" name="__codelineno-0-108"></a><span class="sd">            await experiment.run()</span>
-</span><span id="__span-0-109"><a id="__codelineno-0-109" name="__codelineno-0-109"></a>
-</span><span id="__span-0-110"><a id="__codelineno-0-110" name="__codelineno-0-110"></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="__span-0-111"><a id="__codelineno-0-111" name="__codelineno-0-111"></a>
-</span><span id="__span-0-112"><a id="__codelineno-0-112" name="__codelineno-0-112"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_run_experiment</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Experiment</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Awaitable</span><span class="p">[</span><span class="n">Experiment</span><span class="p">]]:</span>
-</span><span id="__span-0-113"><a id="__codelineno-0-113" name="__codelineno-0-113"></a>        <span class="n">ex</span> <span class="o">=</span> <span class="k">await</span> <span class="n">Experiment</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
-</span><span id="__span-0-114"><a id="__codelineno-0-114" name="__codelineno-0-114"></a>            <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
-</span><span id="__span-0-115"><a id="__codelineno-0-115" name="__codelineno-0-115"></a>            <span class="n">task</span><span class="o">=</span><span class="n">task</span><span class="p">,</span>
-</span><span id="__span-0-116"><a id="__codelineno-0-116" name="__codelineno-0-116"></a>            <span class="n">evaluators</span><span class="o">=</span><span class="n">evaluators</span><span class="p">,</span>
-</span><span id="__span-0-117"><a id="__codelineno-0-117" name="__codelineno-0-117"></a>            <span class="n">chain</span><span class="o">=</span><span class="n">chain</span><span class="p">,</span>
-</span><span id="__span-0-118"><a id="__codelineno-0-118" name="__codelineno-0-118"></a>            <span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">,</span>
-</span><span id="__span-0-119"><a id="__codelineno-0-119" name="__codelineno-0-119"></a>            <span class="n">max_concurrency</span><span class="o">=</span><span class="n">max_concurrency</span><span class="p">,</span>
-</span><span id="__span-0-120"><a id="__codelineno-0-120" name="__codelineno-0-120"></a>            <span class="n">project_name</span><span class="o">=</span><span class="n">project_name</span><span class="p">,</span>
-</span><span id="__span-0-121"><a id="__codelineno-0-121" name="__codelineno-0-121"></a>            <span class="n">experiment_name</span><span class="o">=</span><span class="n">experiment_name</span><span class="p">,</span>
-</span><span id="__span-0-122"><a id="__codelineno-0-122" name="__codelineno-0-122"></a>            <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span>
-</span><span id="__span-0-123"><a id="__codelineno-0-123" name="__codelineno-0-123"></a>            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-</span><span id="__span-0-124"><a id="__codelineno-0-124" name="__codelineno-0-124"></a>        <span class="p">)</span>
-</span><span id="__span-0-125"><a id="__codelineno-0-125" name="__codelineno-0-125"></a>        <span class="k">return</span> <span class="k">await</span> <span class="n">ex</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-</span><span id="__span-0-126"><a id="__codelineno-0-126" name="__codelineno-0-126"></a>
-</span><span id="__span-0-127"><a id="__codelineno-0-127" name="__codelineno-0-127"></a>    <span class="k">return</span> <span class="n">run_until_complete</span><span class="p">(</span><span class="n">_run_experiment</span><span class="p">())</span>
+</span><span id="__span-0-92"><a id="__codelineno-0-92" name="__codelineno-0-92"></a><span class="sd">    `Union[Experiment, Awaitable[Experiment]]`</span>
+</span><span id="__span-0-93"><a id="__codelineno-0-93" name="__codelineno-0-93"></a>
+</span><span id="__span-0-94"><a id="__codelineno-0-94" name="__codelineno-0-94"></a><span class="sd">    - In a synchronous context: the completed Experiment object.</span>
+</span><span id="__span-0-95"><a id="__codelineno-0-95" name="__codelineno-0-95"></a><span class="sd">    - In an asynchronous context: an awaitable that resolves to the Experiment object.</span>
+</span><span id="__span-0-96"><a id="__codelineno-0-96" name="__codelineno-0-96"></a>
+</span><span id="__span-0-97"><a id="__codelineno-0-97" name="__codelineno-0-97"></a><span class="sd">    Examples</span>
+</span><span id="__span-0-98"><a id="__codelineno-0-98" name="__codelineno-0-98"></a><span class="sd">    ---------</span>
+</span><span id="__span-0-99"><a id="__codelineno-0-99" name="__codelineno-0-99"></a>
+</span><span id="__span-0-100"><a id="__codelineno-0-100" name="__codelineno-0-100"></a><span class="sd">    Synchronous execution:</span>
+</span><span id="__span-0-101"><a id="__codelineno-0-101" name="__codelineno-0-101"></a>
+</span><span id="__span-0-102"><a id="__codelineno-0-102" name="__codelineno-0-102"></a><span class="sd">    ```python</span>
+</span><span id="__span-0-103"><a id="__codelineno-0-103" name="__codelineno-0-103"></a><span class="sd">    experiment = run_experiment(dataset, task=some_task)</span>
+</span><span id="__span-0-104"><a id="__codelineno-0-104" name="__codelineno-0-104"></a><span class="sd">    # Blocks until the experiment finishes.</span>
+</span><span id="__span-0-105"><a id="__codelineno-0-105" name="__codelineno-0-105"></a><span class="sd">    ```</span>
+</span><span id="__span-0-106"><a id="__codelineno-0-106" name="__codelineno-0-106"></a>
+</span><span id="__span-0-107"><a id="__codelineno-0-107" name="__codelineno-0-107"></a><span class="sd">    Asynchronous execution (e.g., in a Jupyter Notebook):</span>
+</span><span id="__span-0-108"><a id="__codelineno-0-108" name="__codelineno-0-108"></a>
+</span><span id="__span-0-109"><a id="__codelineno-0-109" name="__codelineno-0-109"></a><span class="sd">    ```python</span>
+</span><span id="__span-0-110"><a id="__codelineno-0-110" name="__codelineno-0-110"></a><span class="sd">    experiment = await run_experiment(dataset, task=some_task)</span>
+</span><span id="__span-0-111"><a id="__codelineno-0-111" name="__codelineno-0-111"></a><span class="sd">    # Must be awaited within an async function or event loop.</span>
+</span><span id="__span-0-112"><a id="__codelineno-0-112" name="__codelineno-0-112"></a><span class="sd">    ```</span>
+</span><span id="__span-0-113"><a id="__codelineno-0-113" name="__codelineno-0-113"></a>
+</span><span id="__span-0-114"><a id="__codelineno-0-114" name="__codelineno-0-114"></a><span class="sd">    Notes</span>
+</span><span id="__span-0-115"><a id="__codelineno-0-115" name="__codelineno-0-115"></a><span class="sd">    ------</span>
+</span><span id="__span-0-116"><a id="__codelineno-0-116" name="__codelineno-0-116"></a>
+</span><span id="__span-0-117"><a id="__codelineno-0-117" name="__codelineno-0-117"></a><span class="sd">    For manual control of the event loop, you can create and run the experiment as follows:</span>
+</span><span id="__span-0-118"><a id="__codelineno-0-118" name="__codelineno-0-118"></a>
+</span><span id="__span-0-119"><a id="__codelineno-0-119" name="__codelineno-0-119"></a><span class="sd">    ```python</span>
+</span><span id="__span-0-120"><a id="__codelineno-0-120" name="__codelineno-0-120"></a><span class="sd">    experiment = await Experiment.create(...)</span>
+</span><span id="__span-0-121"><a id="__codelineno-0-121" name="__codelineno-0-121"></a><span class="sd">    await experiment.run()</span>
+</span><span id="__span-0-122"><a id="__codelineno-0-122" name="__codelineno-0-122"></a><span class="sd">    ```</span>
+</span><span id="__span-0-123"><a id="__codelineno-0-123" name="__codelineno-0-123"></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="__span-0-124"><a id="__codelineno-0-124" name="__codelineno-0-124"></a>
+</span><span id="__span-0-125"><a id="__codelineno-0-125" name="__codelineno-0-125"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_run_experiment</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Experiment</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Awaitable</span><span class="p">[</span><span class="n">Experiment</span><span class="p">]]:</span>
+</span><span id="__span-0-126"><a id="__codelineno-0-126" name="__codelineno-0-126"></a>        <span class="n">ex</span> <span class="o">=</span> <span class="k">await</span> <span class="n">Experiment</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+</span><span id="__span-0-127"><a id="__codelineno-0-127" name="__codelineno-0-127"></a>            <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+</span><span id="__span-0-128"><a id="__codelineno-0-128" name="__codelineno-0-128"></a>            <span class="n">task</span><span class="o">=</span><span class="n">task</span><span class="p">,</span>
+</span><span id="__span-0-129"><a id="__codelineno-0-129" name="__codelineno-0-129"></a>            <span class="n">evaluators</span><span class="o">=</span><span class="n">evaluators</span><span class="p">,</span>
+</span><span id="__span-0-130"><a id="__codelineno-0-130" name="__codelineno-0-130"></a>            <span class="n">chain</span><span class="o">=</span><span class="n">chain</span><span class="p">,</span>
+</span><span id="__span-0-131"><a id="__codelineno-0-131" name="__codelineno-0-131"></a>            <span class="n">tags</span><span class="o">=</span><span class="n">tags</span><span class="p">,</span>
+</span><span id="__span-0-132"><a id="__codelineno-0-132" name="__codelineno-0-132"></a>            <span class="n">max_concurrency</span><span class="o">=</span><span class="n">max_concurrency</span><span class="p">,</span>
+</span><span id="__span-0-133"><a id="__codelineno-0-133" name="__codelineno-0-133"></a>            <span class="n">project_name</span><span class="o">=</span><span class="n">project_name</span><span class="p">,</span>
+</span><span id="__span-0-134"><a id="__codelineno-0-134" name="__codelineno-0-134"></a>            <span class="n">experiment_name</span><span class="o">=</span><span class="n">experiment_name</span><span class="p">,</span>
+</span><span id="__span-0-135"><a id="__codelineno-0-135" name="__codelineno-0-135"></a>            <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span>
+</span><span id="__span-0-136"><a id="__codelineno-0-136" name="__codelineno-0-136"></a>            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+</span><span id="__span-0-137"><a id="__codelineno-0-137" name="__codelineno-0-137"></a>        <span class="p">)</span>
+</span><span id="__span-0-138"><a id="__codelineno-0-138" name="__codelineno-0-138"></a>        <span class="k">return</span> <span class="k">await</span> <span class="n">ex</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</span><span id="__span-0-139"><a id="__codelineno-0-139" name="__codelineno-0-139"></a>
+</span><span id="__span-0-140"><a id="__codelineno-0-140" name="__codelineno-0-140"></a>    <span class="k">return</span> <span class="n">run_until_complete</span><span class="p">(</span><span class="n">_run_experiment</span><span class="p">())</span>
 </span></code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -3511,6 +2619,7 @@ The execution handling is context-aware:</p>
 </h3>
 
     <div class="doc doc-contents ">
+
 
 
 
@@ -3564,88 +2673,6 @@ methods.</p>
 
 
 
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-
-  </div>
-
-    </div>
-
-</div>
-
-
-
-
-  </div>
-
-    </div>
-
-</div>
-
-
-  </div>
-
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-module">
-
-
-
-<h2 id="patronus.pat_client" class="doc doc-heading">
-            <span class="doc doc-object-name doc-module-name">pat_client</span>
-
-
-</h2>
-
-    <div class="doc doc-contents ">
-
-
-
-
-
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-
-<div class="doc doc-object doc-module">
-
-
-
-<h3 id="patronus.pat_client.client_sync" class="doc doc-heading">
-            <span class="doc doc-object-name doc-module-name">client_sync</span>
-
-
-</h3>
-
-    <div class="doc doc-contents ">
-
-
-
-
-
-
-
 
   <div class="doc doc-children">
 
@@ -3665,209 +2692,7 @@ methods.</p>
 
 </div>
 
-<div class="doc doc-object doc-module">
 
-
-
-<h3 id="patronus.pat_client.container" class="doc doc-heading">
-            <span class="doc doc-object-name doc-module-name">container</span>
-
-
-</h3>
-
-    <div class="doc doc-contents ">
-
-
-
-
-
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-<div class="doc doc-object doc-class">
-
-
-
-<h4 id="patronus.pat_client.container.EvaluationContainer" class="doc doc-heading">
-            <span class="doc doc-object-name doc-class-name">EvaluationContainer</span>
-
-
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-dataclass"><code>dataclass</code></small>
-  </span>
-
-</h4>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">EvaluationContainer</span><span class="p">(</span><span class="n">results</span><span class="p">:</span> <span class="n"><span title="list">list</span></span><span class="p">[</span><span class="n"><span title="typing.Union">Union</span></span><span class="p">[</span><span class="n"><span title="patronus.evals.EvaluationResult">EvaluationResult</span></span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n"><span title="Exception">Exception</span></span><span class="p">]])</span>
-</span></code></pre></div>
-
-    <div class="doc doc-contents ">
-
-
-
-
-
-
-
-
-
-
-  <div class="doc doc-children">
-
-
-
-
-
-
-
-
-
-<div class="doc doc-object doc-function">
-
-
-<h5 id="patronus.pat_client.container.EvaluationContainer.all_succeeded" class="doc doc-heading">
-            <span class="doc doc-object-name doc-function-name">all_succeeded</span>
-
-
-</h5>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">all_succeeded</span><span class="p">(</span><span class="n">ignore_exceptions</span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="bool">bool</span></span>
-</span></code></pre></div>
-
-    <div class="doc doc-contents ">
-
-        <p>Check if all evaluations that were actually evaluated passed.</p>
-<p>Evaluations are only considered if they:
-- Have a non-None pass_ flag set
-- Are not None (skipped)
-- Are not exceptions (unless ignore_exceptions=True)</p>
-<p>Note: Returns True if no evaluations met the above criteria (empty case).</p>
-
-            <details class="quote">
-              <summary>Source code in <code>src/patronus/pat_client/container.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-23">23</a></span>
-<span class="normal"><a href="#__codelineno-0-24">24</a></span>
-<span class="normal"><a href="#__codelineno-0-25">25</a></span>
-<span class="normal"><a href="#__codelineno-0-26">26</a></span>
-<span class="normal"><a href="#__codelineno-0-27">27</a></span>
-<span class="normal"><a href="#__codelineno-0-28">28</a></span>
-<span class="normal"><a href="#__codelineno-0-29">29</a></span>
-<span class="normal"><a href="#__codelineno-0-30">30</a></span>
-<span class="normal"><a href="#__codelineno-0-31">31</a></span>
-<span class="normal"><a href="#__codelineno-0-32">32</a></span>
-<span class="normal"><a href="#__codelineno-0-33">33</a></span>
-<span class="normal"><a href="#__codelineno-0-34">34</a></span>
-<span class="normal"><a href="#__codelineno-0-35">35</a></span>
-<span class="normal"><a href="#__codelineno-0-36">36</a></span>
-<span class="normal"><a href="#__codelineno-0-37">37</a></span>
-<span class="normal"><a href="#__codelineno-0-38">38</a></span>
-<span class="normal"><a href="#__codelineno-0-39">39</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="k">def</span><span class="w"> </span><span class="nf">all_succeeded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ignore_exceptions</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25"></a><span class="sd">    Check if all evaluations that were actually evaluated passed.</span>
-</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26"></a>
-</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="sd">    Evaluations are only considered if they:</span>
-</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28"></a><span class="sd">    - Have a non-None pass_ flag set</span>
-</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29"></a><span class="sd">    - Are not None (skipped)</span>
-</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="sd">    - Are not exceptions (unless ignore_exceptions=True)</span>
-</span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31"></a>
-</span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32"></a><span class="sd">    Note: Returns True if no evaluations met the above criteria (empty case).</span>
-</span><span id="__span-0-33"><a id="__codelineno-0-33" name="__codelineno-0-33"></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="__span-0-34"><a id="__codelineno-0-34" name="__codelineno-0-34"></a>    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">:</span>
-</span><span id="__span-0-35"><a id="__codelineno-0-35" name="__codelineno-0-35"></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">ignore_exceptions</span><span class="p">:</span>
-</span><span id="__span-0-36"><a id="__codelineno-0-36" name="__codelineno-0-36"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">raise_on_exception</span><span class="p">()</span>
-</span><span id="__span-0-37"><a id="__codelineno-0-37" name="__codelineno-0-37"></a>        <span class="k">if</span> <span class="n">r</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">pass_</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
-</span><span id="__span-0-38"><a id="__codelineno-0-38" name="__codelineno-0-38"></a>            <span class="k">return</span> <span class="kc">False</span>
-</span><span id="__span-0-39"><a id="__codelineno-0-39" name="__codelineno-0-39"></a>    <span class="k">return</span> <span class="kc">True</span>
-</span></code></pre></div></td></tr></table></div>
-            </details>
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-<h5 id="patronus.pat_client.container.EvaluationContainer.any_failed" class="doc doc-heading">
-            <span class="doc doc-object-name doc-function-name">any_failed</span>
-
-
-</h5>
-<div class="language-python doc-signature highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">any_failed</span><span class="p">(</span><span class="n">ignore_exceptions</span><span class="p">:</span> <span class="n"><span title="bool">bool</span></span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="bool">bool</span></span>
-</span></code></pre></div>
-
-    <div class="doc doc-contents ">
-
-        <p>Check if any evaluation that was actually evaluated failed.</p>
-<p>Evaluations are only considered if they:
-- Have a non-None pass_ flag set
-- Are not None (skipped)
-- Are not exceptions (unless ignore_exceptions=True)</p>
-<p>Note: Returns False if no evaluations met the above criteria (empty case).</p>
-
-            <details class="quote">
-              <summary>Source code in <code>src/patronus/pat_client/container.py</code></summary>
-              <div class="language-python highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-41">41</a></span>
-<span class="normal"><a href="#__codelineno-0-42">42</a></span>
-<span class="normal"><a href="#__codelineno-0-43">43</a></span>
-<span class="normal"><a href="#__codelineno-0-44">44</a></span>
-<span class="normal"><a href="#__codelineno-0-45">45</a></span>
-<span class="normal"><a href="#__codelineno-0-46">46</a></span>
-<span class="normal"><a href="#__codelineno-0-47">47</a></span>
-<span class="normal"><a href="#__codelineno-0-48">48</a></span>
-<span class="normal"><a href="#__codelineno-0-49">49</a></span>
-<span class="normal"><a href="#__codelineno-0-50">50</a></span>
-<span class="normal"><a href="#__codelineno-0-51">51</a></span>
-<span class="normal"><a href="#__codelineno-0-52">52</a></span>
-<span class="normal"><a href="#__codelineno-0-53">53</a></span>
-<span class="normal"><a href="#__codelineno-0-54">54</a></span>
-<span class="normal"><a href="#__codelineno-0-55">55</a></span>
-<span class="normal"><a href="#__codelineno-0-56">56</a></span>
-<span class="normal"><a href="#__codelineno-0-57">57</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-41"><a id="__codelineno-0-41" name="__codelineno-0-41"></a><span class="k">def</span><span class="w"> </span><span class="nf">any_failed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ignore_exceptions</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="__span-0-42"><a id="__codelineno-0-42" name="__codelineno-0-42"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="__span-0-43"><a id="__codelineno-0-43" name="__codelineno-0-43"></a><span class="sd">    Check if any evaluation that was actually evaluated failed.</span>
-</span><span id="__span-0-44"><a id="__codelineno-0-44" name="__codelineno-0-44"></a>
-</span><span id="__span-0-45"><a id="__codelineno-0-45" name="__codelineno-0-45"></a><span class="sd">    Evaluations are only considered if they:</span>
-</span><span id="__span-0-46"><a id="__codelineno-0-46" name="__codelineno-0-46"></a><span class="sd">    - Have a non-None pass_ flag set</span>
-</span><span id="__span-0-47"><a id="__codelineno-0-47" name="__codelineno-0-47"></a><span class="sd">    - Are not None (skipped)</span>
-</span><span id="__span-0-48"><a id="__codelineno-0-48" name="__codelineno-0-48"></a><span class="sd">    - Are not exceptions (unless ignore_exceptions=True)</span>
-</span><span id="__span-0-49"><a id="__codelineno-0-49" name="__codelineno-0-49"></a>
-</span><span id="__span-0-50"><a id="__codelineno-0-50" name="__codelineno-0-50"></a><span class="sd">    Note: Returns False if no evaluations met the above criteria (empty case).</span>
-</span><span id="__span-0-51"><a id="__codelineno-0-51" name="__codelineno-0-51"></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="__span-0-52"><a id="__codelineno-0-52" name="__codelineno-0-52"></a>    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">:</span>
-</span><span id="__span-0-53"><a id="__codelineno-0-53" name="__codelineno-0-53"></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="ne">Exception</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">ignore_exceptions</span><span class="p">:</span>
-</span><span id="__span-0-54"><a id="__codelineno-0-54" name="__codelineno-0-54"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">raise_on_exception</span><span class="p">()</span>
-</span><span id="__span-0-55"><a id="__codelineno-0-55" name="__codelineno-0-55"></a>        <span class="k">if</span> <span class="n">r</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">r</span><span class="o">.</span><span class="n">pass_</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
-</span><span id="__span-0-56"><a id="__codelineno-0-56" name="__codelineno-0-56"></a>            <span class="k">return</span> <span class="kc">True</span>
-</span><span id="__span-0-57"><a id="__codelineno-0-57" name="__codelineno-0-57"></a>    <span class="k">return</span> <span class="kc">False</span>
-</span></code></pre></div></td></tr></table></div>
-            </details>
-    </div>
-
-</div>
-
-
-
-  </div>
-
-    </div>
-
-</div>
-
-
-
-
-  </div>
-
-    </div>
-
-</div>
 
 
   </div>
@@ -3928,10 +2753,10 @@ methods.</p>
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": ["content.code.copy"], "search": "../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy"], "search": "../../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.c8b220af.min.js"></script>
+      <script src="../../assets/javascripts/bundle.c8b220af.min.js"></script>
       
     
   </body>

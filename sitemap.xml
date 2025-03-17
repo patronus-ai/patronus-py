@@ -5,11 +5,27 @@
          <lastmod>2025-03-17</lastmod>
     </url>
     <url>
-         <loc>https://docs.patronus.ai/patronus-py/api/</loc>
+         <loc>https://docs.patronus.ai/patronus-py/configuration/</loc>
          <lastmod>2025-03-17</lastmod>
     </url>
     <url>
-         <loc>https://docs.patronus.ai/patronus-py/configuration/</loc>
+         <loc>https://docs.patronus.ai/patronus-py/api_ref/api_client/</loc>
+         <lastmod>2025-03-17</lastmod>
+    </url>
+    <url>
+         <loc>https://docs.patronus.ai/patronus-py/api_ref/evals/</loc>
+         <lastmod>2025-03-17</lastmod>
+    </url>
+    <url>
+         <loc>https://docs.patronus.ai/patronus-py/api_ref/experiments/</loc>
+         <lastmod>2025-03-17</lastmod>
+    </url>
+    <url>
+         <loc>https://docs.patronus.ai/patronus-py/api_ref/pat_client/</loc>
+         <lastmod>2025-03-17</lastmod>
+    </url>
+    <url>
+         <loc>https://docs.patronus.ai/patronus-py/api_ref/tracing/</loc>
          <lastmod>2025-03-17</lastmod>
     </url>
     <url>

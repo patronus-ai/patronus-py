@@ -710,9 +710,19 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="../../api/" class="md-nav__link">
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
         
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
   
   <span class="md-ellipsis">
     API Reference
@@ -720,7 +730,129 @@
   </span>
   
 
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            API Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api_ref/tracing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    tracing
+    
+  </span>
+  
+
       </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api_ref/evals/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    evals
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api_ref/experiments/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    experiments
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api_ref/api_client/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    api_client
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api_ref/pat_client/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    pat_client
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -873,7 +1005,7 @@ This page covers how to set up and use tracing in your code.</p>
 </span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="k">def</span><span class="w"> </span><span class="nf">my_function</span><span class="p">():</span>
 </span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>    <span class="k">pass</span>
 </span></code></pre></div>
-<p>See the <a href="../../api/#traced">API Reference</a> for complete details.</p>
+<p>See the <a href="../api.md#traced">API Reference</a> for complete details.</p>
 <h2 id="using-the-start_span-context-manager">Using the <code>start_span()</code> Context Manager</h2>
 <p>For more granular control, use the <code>start_span()</code> context manager to trace specific blocks of code:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">patronus</span>
@@ -907,7 +1039,7 @@ This page covers how to set up and use tracing in your code.</p>
 </span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    <span class="c1"># You can also add attributes during execution:</span>
 </span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    <span class="n">span</span><span class="o">.</span><span class="n">set_attribute</span><span class="p">(</span><span class="s2">&quot;dynamic_value&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="p">)</span>
 </span></code></pre></div>
-<p>See the <a href="../../api/#start_span">API Reference</a> for complete details.</p>
+<p>See the <a href="../api.md#start_span">API Reference</a> for complete details.</p>
 <h2 id="custom-attributes">Custom Attributes</h2>
 <p>Both tracing methods allow you to add custom attributes that provide additional context for your traces:</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nd">@traced</span><span class="p">(</span><span class="n">attributes</span><span class="o">=</span><span class="p">{</span>
