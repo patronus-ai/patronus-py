@@ -10,7 +10,7 @@ from patronus.exceptions import UninitializedError
 if TYPE_CHECKING:
     from patronus.evals.exporter import BatchEvaluationExporter
     from patronus.tracing.logger import Logger as PatLogger
-    from patronus.api import API
+    from patronus.api import PatronusAPIClient
     from opentelemetry.sdk.trace import TracerProvider
 
 
@@ -28,7 +28,7 @@ class PatronusContext:
     pat_logger: "PatLogger"
     tracer_provider: "TracerProvider"
     tracer: trace.Tracer
-    api_client: "API"
+    api_client: "PatronusAPIClient"
     exporter: "BatchEvaluationExporter"
 
 
@@ -72,11 +72,11 @@ def get_tracer_or_none() -> Optional[trace.Tracer]:
     return (ctx := get_current_context_or_none()) and ctx.tracer
 
 
-def get_api_client() -> "API":
+def get_api_client() -> "PatronusAPIClient":
     return get_current_context().api_client
 
 
-def get_api_client_or_none() -> Optional["API"]:
+def get_api_client_or_none() -> Optional["PatronusAPIClient"]:
     return (ctx := get_current_context_or_none()) and ctx.api_client
 
 

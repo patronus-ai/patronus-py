@@ -334,6 +334,172 @@ class PatronusAPIClient(BaseAPIClient):
         resp.raise_for_status()
         return resp.data
 
+    def search_evaluations_sync(
+        self, request: api_types.SearchEvaluationsRequest
+    ) -> api_types.SearchEvaluationsResponse:
+        resp = self.call_sync(
+            "POST",
+            "/v1/evaluations/search",
+            body=request,
+            response_cls=api_types.SearchEvaluationsResponse,
+        )
+        resp.raise_for_status()
+        return resp.data
+
+    async def search_evaluations(
+        self, request: api_types.SearchEvaluationsRequest
+    ) -> api_types.SearchEvaluationsResponse:
+        resp = await self.call(
+            "POST",
+            "/v1/evaluations/search",
+            body=request,
+            response_cls=api_types.SearchEvaluationsResponse,
+        )
+        resp.raise_for_status()
+        return resp.data
+
+    async def annotate(self, request: api_types.AnnotateRequest) -> api_types.AnnotateResponse:
+        resp = await self.call(
+            "POST",
+            "/v1/annotate",
+            body=request,
+            response_cls=api_types.AnnotateResponse,
+        )
+        resp.raise_for_status()
+        return resp.data
+
+    def annotate_sync(self, request: api_types.AnnotateRequest) -> api_types.AnnotateResponse:
+        resp = self.call_sync(
+            "POST",
+            "/v1/annotate",
+            body=request,
+            response_cls=api_types.AnnotateResponse,
+        )
+        resp.raise_for_status()
+        return resp.data
+
+    async def list_annotation_criteria(
+        self, *, project_id: Optional[str] = None, limit: Optional[int] = None, offset: Optional[int] = None
+    ) -> api_types.ListAnnotationCriteriaResponse:
+        params = {}
+        if project_id is not None:
+            params["project_id"] = project_id
+        if limit is not None:
+            params["limit"] = limit
+        if offset is not None:
+            params["offset"] = offset
+        resp = await self.call(
+            "GET",
+            "/v1/annotation-criteria",
+            params=params,
+            response_cls=api_types.ListAnnotationCriteriaResponse,
+        )
+        resp.raise_for_status()
+        return resp.data
+
+    def list_annotation_criteria_sync(
+        self, *, project_id: Optional[str] = None, limit: Optional[int] = None, offset: Optional[int] = None
+    ) -> api_types.ListAnnotationCriteriaResponse:
+        params = {}
+        if project_id is not None:
+            params["project_id"] = project_id
+        if limit is not None:
+            params["limit"] = limit
+        if offset is not None:
+            params["offset"] = offset
+        resp = self.call_sync(
+            "GET",
+            "/v1/annotation-criteria",
+            params=params,
+            response_cls=api_types.ListAnnotationCriteriaResponse,
+        )
+        resp.raise_for_status()
+        return resp.data
+
+    async def create_annotation_criteria(
+        self, request: api_types.CreateAnnotationCriteriaRequest
+    ) -> api_types.CreateAnnotationCriteriaResponse:
+        resp = await self.call(
+            "POST",
+            "/v1/annotation-criteria",
+            body=request,
+            response_cls=api_types.CreateAnnotationCriteriaResponse,
+        )
+        resp.raise_for_status()
+        return resp.data
+
+    def create_annotation_criteria_sync(
+        self, request: api_types.CreateAnnotationCriteriaRequest
+    ) -> api_types.CreateAnnotationCriteriaResponse:
+        resp = self.call_sync(
+            "POST",
+            "/v1/annotation-criteria",
+            body=request,
+            response_cls=api_types.CreateAnnotationCriteriaResponse,
+        )
+        resp.raise_for_status()
+        return resp.data
+
+    async def update_annotation_criteria(
+        self, criteria_id: str, request: api_types.UpdateAnnotationCriteriaRequest
+    ) -> api_types.UpdateAnnotationCriteriaResponse:
+        resp = await self.call(
+            "PUT",
+            f"/v1/annotation-criteria/{criteria_id}",
+            body=request,
+            response_cls=api_types.UpdateAnnotationCriteriaResponse,
+        )
+        resp.raise_for_status()
+        return resp.data
+
+    def update_annotation_criteria_sync(
+        self, criteria_id: str, request: api_types.UpdateAnnotationCriteriaRequest
+    ) -> api_types.UpdateAnnotationCriteriaResponse:
+        resp = self.call_sync(
+            "PUT",
+            f"/v1/annotation-criteria/{criteria_id}",
+            body=request,
+            response_cls=api_types.UpdateAnnotationCriteriaResponse,
+        )
+        resp.raise_for_status()
+        return resp.data
+
+    async def delete_annotation_criteria(self, criteria_id: str) -> None:
+        resp = await self.call(
+            "DELETE",
+            f"/v1/annotation-criteria/{criteria_id}",
+            response_cls=None,
+        )
+        resp.raise_for_status()
+
+    def delete_annotation_criteria_sync(self, criteria_id: str) -> None:
+        resp = self.call_sync(
+            "DELETE",
+            f"/v1/annotation-criteria/{criteria_id}",
+            response_cls=None,
+        )
+        resp.raise_for_status()
+
+    async def search_logs(self, request: api_types.SearchLogsRequest) -> api_types.SearchLogsResponse:
+        resp = await self.call(
+            "POST",
+            "/v1/otel/logs/search",
+            body=request,
+            response_cls=api_types.SearchLogsResponse,
+        )
+        resp.raise_for_status()
+        return resp.data
+
+    def search_logs_sync(self, request: api_types.SearchLogsRequest) -> api_types.SearchLogsResponse:
+        resp = self.call_sync(
+            "POST",
+            "/v1/otel/logs/search",
+            body=request,
+            response_cls=api_types.SearchLogsResponse,
+        )
+        resp.raise_for_status()
+        return resp.data
+
 
 def try_int(v, default: int) -> int:
     if not v:
