@@ -1,0 +1,70 @@
+site_name: Patronus Python SDK Documentation
+site_url: https://docs.patronus.ai/patronus-py
+repo_name: patronus-ai/patronus-py
+repo_url: https://github.com/patronus-ai/patronus-py
+theme:
+  name: material
+  features:
+    - content.code.copy
+  icon:
+    repo: fontawesome/brands/github
+
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+extra_css:
+  - stylesheets/extra.css
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.superfences:
+
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Installation: getting-started/installation.md
+      - Initialization: getting-started/initialization.md
+      - Quickstart: getting-started/quickstart.md
+  - Observability:
+      - Tracing: observability/tracing.md
+      - Logging: observability/logging.md
+  - Evaluations:
+      - Evaluators: evaluations/evaluators.md
+      - Patronus Evaluators: evaluations/patronus-evaluators.md
+      - Batching Evaluations: evaluations/batching.md
+#  - Experiments:
+#      - Running: ...
+#      - Datasets: experiments/datasets.md
+  - Configuration: configuration.md
+  - API Reference: api.md
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            members_order: source
+            separate_signature: true
+            filters: ["!^_"]
+            docstring_options:
+              ignore_init_summary: true
+            merge_init_into_class: true
+            show_signature_annotations: true
+            signature_crossrefs: true
+#          import:
+#            - url: https://docs.python.org/3/objects.inv
+#              domains: [py, std]
