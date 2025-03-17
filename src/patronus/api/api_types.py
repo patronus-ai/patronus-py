@@ -1,3 +1,5 @@
+import enum
+
 import datetime
 import pydantic
 import re
@@ -284,6 +286,8 @@ class Evaluation(pydantic.BaseModel):
     id: int
     log_id: str
     created_at: Optional[datetime.datetime] = None
+    trace_id: Optional[str] = None
+    span_id: Optional[str] = None
 
     project_id: Optional[str] = None
     app: Optional[str] = None
@@ -351,3 +355,123 @@ class BatchCreateEvaluationsRequest(pydantic.BaseModel):
 
 class BatchCreateEvaluationsResponse(pydantic.BaseModel):
     evaluations: list[Evaluation]
+
+
+class SearchEvaluationsFilter(pydantic.BaseModel):
+    field: Optional[str] = None
+    operation: Optional[str] = None
+    value: Optional[typing.Any] = None
+    or_: Optional[list["SearchEvaluationsFilter"]] = None
+    and_: Optional[list["SearchEvaluationsFilter"]] = None
+
+
+class SearchEvaluationsRequest(pydantic.BaseModel):
+    filters: Optional[list[SearchEvaluationsFilter]] = None
+
+
+class SearchEvaluationsResponse(pydantic.BaseModel):
+    evaluations: list[Evaluation]
+
+
+class AnnotationType(str, enum.Enum):
+    binary = "binary"
+    continuous = "continuous"
+    discrete = "discrete"
+    categorical = "categorical"
+    text_annotation = "text_annotation"
+
+
+class AnnotationCategory(pydantic.BaseModel):
+    label: Optional[str] = None
+    score: Optional[float] = None
+
+
+class AnnotateRequest(pydantic.BaseModel):
+    annotation_criteria_id: str
+    log_id: str
+    value_pass: Optional[bool] = None
+    value_score: Optional[float] = None
+    value_text: Optional[str] = None
+    explanation: Optional[str] = None
+
+
+class AnnotateResponse(pydantic.BaseModel):
+    evaluation: Evaluation
+
+
+class AnnotationCriteria(pydantic.BaseModel):
+    id: str
+    project_id: str
+    name: str
+    description: Optional[str] = None
+    annotation_type: AnnotationType
+    categories: Optional[list[AnnotationCategory]] = None
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
+
+
+class CreateAnnotationCriteriaRequest(pydantic.BaseModel):
+    project_id: str
+    name: str = pydantic.Field(min_length=1, max_length=100)
+    description: Optional[str] = None
+    annotation_type: AnnotationType
+    categories: Optional[list[AnnotationCategory]] = None
+
+
+class CreateAnnotationCriteriaResponse(pydantic.BaseModel):
+    annotation_criteria: AnnotationCriteria
+
+
+class UpdateAnnotationCriteriaRequest(pydantic.BaseModel):
+    name: str = pydantic.Field(min_length=1, max_length=100)
+    description: Optional[str] = None
+    annotation_type: AnnotationType
+    categories: Optional[list[AnnotationCategory]] = None
+
+
+class UpdateAnnotationCriteriaResponse(pydantic.BaseModel):
+    annotation_criteria: AnnotationCriteria
+
+
+class ListAnnotationCriteriaResponse(pydantic.BaseModel):
+    annotation_criteria: list[AnnotationCriteria]
+
+
+class GetAnnotationCriteriaResponse(pydantic.BaseModel):
+    annotation_criteria: AnnotationCriteria
+
+
+class SearchLogsFilter(pydantic.BaseModel):
+    field: Optional[str] = None
+    op: Optional[str] = None
+    value: Optional[typing.Any] = None
+    or_: Optional[list["SearchLogsFilter"]] = None
+    and_: Optional[list["SearchLogsFilter"]] = None
+
+
+class SearchLogsRequest(pydantic.BaseModel):
+    filters: Optional[list[SearchLogsFilter]] = None
+    order: str = "timestamp desc"
+    limit: int = 1000
+
+
+class Log(pydantic.BaseModel):
+    timestamp: Optional[datetime.datetime] = None
+    trace_id: Optional[str] = None
+    span_id: Optional[str] = None
+    trace_flags: Optional[int] = None
+    severity_test: Optional[str] = None
+    severity_number: Optional[int] = None
+    service_name: Optional[str] = None
+    body: typing.Any = None
+    resource_schema_url: Optional[str] = None
+    resource_attributes: Optional[dict[str, str]] = None
+    scope_schema_url: Optional[str] = None
+    scope_name: Optional[str] = None
+    scope_version: Optional[str] = None
+    scope_attributes: Optional[dict[str, str]] = None
+    log_attributes: Optional[dict[str, str]] = None
+
+
+class SearchLogsResponse(pydantic.BaseModel):
+    logs: list[Log]
