@@ -1,3 +1,7 @@
+"""
+This module provides the implementation for tracing support using the OpenTelemetry SDK.
+"""
+
 import functools
 from typing import Optional
 
@@ -13,6 +17,14 @@ from patronus.tracing.attributes import Attributes, format_service_name
 
 
 class PatronusAttributesSpanProcessor(SpanProcessor):
+    """
+    Processor that adds Patronus-specific attributes to all spans.
+
+    This processor ensures that each span includes the mandatory attributes:
+    `project_name`, and optionally adds `app` or `experiment_id` attributes
+    if they are provided during initialization.
+    """
+
     project_name: str
     app: Optional[str]
     experiment_id: Optional[str]
@@ -56,6 +68,12 @@ def create_tracer_provider(
     api_key: str,
     scope: context.PatronusScope,
 ) -> TracerProvider:
+    """
+    Creates and returns a cached TracerProvider configured with the specified exporter.
+
+    The function utilizes an OpenTelemetry BatchSpanProcessor and an
+    OTLPSpanExporter to initialize the tracer. The configuration is cached for reuse.
+    """
     service_name = format_service_name(scope.project_name, scope.app, scope.experiment_id)
     resource = Resource.create({"service.name": service_name})
     provider = TracerProvider(resource=resource)
@@ -75,6 +93,9 @@ def create_tracer(
     exporter_endpoint: str,
     api_key: str,
 ) -> trace.Tracer:
+    """
+    Creates an OpenTelemetry (OTeL) tracer tied to the specified scope.
+    """
     provider = create_tracer_provider(
         exporter_endpoint=exporter_endpoint,
         api_key=api_key,

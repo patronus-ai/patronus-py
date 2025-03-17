@@ -2,7 +2,7 @@ import contextlib
 import functools
 import inspect
 import typing
-from typing import Optional
+from typing import Optional, Iterator
 
 from opentelemetry.util.types import Attributes
 from opentelemetry._logs import SeverityNumber
@@ -13,7 +13,36 @@ from patronus import context
 
 
 @contextlib.contextmanager
-def start_span(name: str, *, record_exception: bool = True, attributes: Optional[Attributes] = None):
+def start_span(
+    name: str, *, record_exception: bool = True, attributes: Optional[Attributes] = None
+) -> Iterator[Optional[typing.Any]]:
+    """
+    Context manager for creating and managing a trace span.
+
+    This function is used to create a span within the current context using the tracer,
+    allowing you to track execution timing or events within a specific block of code.
+    The context is set by `patronus.init()` function. If SDK was not initialized, yielded value will be None.
+
+    Example:
+
+    ```python
+    import patronus
+
+    patronus.init()
+
+    # Use context manager for finer-grained tracing
+    def complex_operation():
+        with patronus.start_span("Data preparation"):
+            # Prepare data
+            pass
+    ```
+
+
+    Args:
+        name (str): The name of the span.
+        record_exception (bool): Whether to record exceptions that occur within the span. Default is True.
+        attributes (Optional[Attributes]): Attributes to associate with the span, providing additional metadata.
+    """
     ctx = context.get_current_context_or_none()
     if ctx is None:
         yield
@@ -41,6 +70,32 @@ def traced(
     attributes: Attributes = None,
     **kwargs,
 ):
+    """
+    A decorator to trace function execution by recording a span for the traced function.
+
+    Example:
+
+    ```python
+    import patronus
+
+    patronus.init()
+
+    # Trace a function with the @traced decorator
+    @patronus.traced()
+    def process_input(user_query):
+        # Process the input
+    ```
+
+    Args:
+        span_name (Optional[str]): The name of the traced span. Defaults to the function name if not provided.
+        log_args (bool): Whether to log the arguments passed to the function. Default is True.
+        log_results (bool): Whether to log the function's return value. Default is True.
+        log_exceptions (bool): Whether to log any exceptions raised while executing the function. Default is True.
+        disable_log (bool): Whether to disable logging the trace information. Default is False.
+        attributes (Attributes): Attributes to attach to the traced span. Default is None.
+        **kwargs: Additional arguments for the decorator.
+    """
+
     def decorator(func):
         name = span_name or func.__qualname__
         sig = inspect.signature(func)

@@ -30,13 +30,10 @@ log = logging.getLogger("patronus.core")
 LogID = uuid.UUID
 
 
+# EvaluationDataRecord holds evaluation log data and ID of the log.
+# Log data consists of positional arguments (args) and keyword arguments (kwargs)
+# that were passed to an evaluator.
 class EvaluationDataRecord(typing.NamedTuple):
-    """
-    EvaluationDataRecord holds evaluation log data and ID of the log.
-    Log data consists of positional arguments (args) and keyword arguments (kwargs)
-    that were passed to an evaluator.
-    """
-
     log_id: LogID
     arguments: dict
 
@@ -44,12 +41,9 @@ class EvaluationDataRecord(typing.NamedTuple):
         return str({"log_id": self.log_id, "arguments": self.arguments})
 
 
+# UniqueEvaluationDataSet holds unique list evaluation log data.
+# This container is used to track and ensure that duplicated evaluation data logs are not emitted.
 class UniqueEvaluationDataSet:
-    """
-    UniqueEvaluationDataSet holds unique list evaluation log data.
-    This container is used to track and ensure that duplicated evaluation data logs are not emitted.
-    """
-
     span_context: SpanContext
     logs: typing.List[EvaluationDataRecord]
     lock: threading.Lock
@@ -72,14 +66,14 @@ class UniqueEvaluationDataSet:
         self.lock.release()
 
     def find_log(self, bound_arguments) -> Optional[LogID]:
-        """Must be used with lock"""
+        # Must be used with lock
         for lg in self.logs:
             if bound_arguments == lg.arguments:
                 return lg.log_id
         return None
 
     def _add_log(self, arguments: dict[str, Any]) -> EvaluationDataRecord:
-        """Must be used with lock"""
+        # Must be used with lock
         eval_log = EvaluationDataRecord(
             log_id=uuid.uuid4(),
             arguments=arguments,
@@ -146,6 +140,24 @@ def _get_or_start_evaluation_log_group() -> typing.Iterator[UniqueEvaluationData
 
 @contextlib.contextmanager
 def bundled_eval(span_name: str = "Evaluation bundle"):
+    """
+    Start a span that would automatically bundle evaluations.
+
+    Evaluations are passed by arguments passed to the evaluators called inside the context manager.
+
+    The following example would create two bundles:
+
+    - fist with arguments `x=10, y=20`
+    - second with arguments `spam="abc123"`
+
+    ```python
+    with bundled_eval():
+        foo_evaluator(x=10, y=20)
+        bar_evaluator(x=10, y=20)
+        tar_evaluator(spam="abc123")
+    ```
+
+    """
     tracer = context.get_tracer_or_none()
     if tracer is None:
         yield
@@ -242,14 +254,12 @@ class PrepEval(typing.NamedTuple):
 
 
 def _as_applied_argument(signature: inspect.Signature, bound_arguments: inspect.BoundArguments):
-    """
-    This function is very similar to inspect.BoundArguments.apply_default().
+    # This function is very similar to inspect.BoundArguments.apply_default().
 
-    The difference is that it's not meant to be used for arguments bounding but for as a log record of evaluation data.
-    The purpose of it is to provide nicer display for arguments passed to evaluation functions.
-    This function will ignore empty varied positional arguments (*args) and varied keyword arguments (**kwargs)
-    if are empty (were not provided by the function called).
-    """
+    # The difference is that it's not meant to be used for arguments bounding but for as a log record of evaluation data.
+    # The purpose of it is to provide nicer display for arguments passed to evaluation functions.
+    # This function will ignore empty varied positional arguments (*args) and varied keyword arguments (**kwargs)
+    # if are empty (were not provided by the function called).
     arguments = bound_arguments.arguments
     new_arguments = []
     for name, param in signature.parameters.items():
@@ -290,6 +300,10 @@ def evaluator(
     is_method: bool = False,
     **kwargs,
 ):
+    """
+    Mark function as an evaluator.
+    """
+
     def decorator(fn):
         fn_sign = inspect.signature(fn)
 
@@ -453,6 +467,8 @@ class _EvaluatorMeta(abc.ABCMeta):
 
 
 class Evaluator(metaclass=_EvaluatorMeta):
+    """Base Evaluator Class"""
+
     evaluator_id: Optional[str] = None
     criteria: Optional[str] = None
 
@@ -482,6 +498,8 @@ class AsyncEvaluator(Evaluator):
 
 
 class StructuredEvaluator(Evaluator):
+    """Base for structured evaluators"""
+
     @abc.abstractmethod
     def evaluate(
         self,
@@ -498,6 +516,8 @@ class StructuredEvaluator(Evaluator):
 
 
 class AsyncStructuredEvaluator(AsyncEvaluator):
+    """Base for async structured evaluators"""
+
     @abc.abstractmethod
     async def evaluate(
         self,
@@ -567,6 +587,8 @@ class RemoteEvaluatorMixin:
 
 
 class RemoteEvaluator(RemoteEvaluatorMixin, StructuredEvaluator):
+    """Synchronous remote evaluator"""
+
     def evaluate(
         self,
         *,
@@ -579,6 +601,7 @@ class RemoteEvaluator(RemoteEvaluatorMixin, StructuredEvaluator):
         task_metadata: Optional[typing.Dict[str, typing.Any]] = None,
         **kwargs: Any,
     ) -> EvaluationResult:
+        """Evaluates data using remote Patronus Evaluator"""
         kws = {
             "system_prompt": system_prompt,
             "task_context": task_context,
@@ -660,6 +683,8 @@ class RemoteEvaluator(RemoteEvaluatorMixin, StructuredEvaluator):
 
 
 class AsyncRemoteEvaluator(RemoteEvaluatorMixin, AsyncStructuredEvaluator):
+    """Asynchronous remote evaluator"""
+
     async def evaluate(
         self,
         *,
@@ -672,6 +697,7 @@ class AsyncRemoteEvaluator(RemoteEvaluatorMixin, AsyncStructuredEvaluator):
         task_metadata: Optional[typing.Dict[str, typing.Any]] = None,
         **kwargs: Any,
     ) -> EvaluationResult:
+        """Evaluates data using remote Patronus Evaluator"""
         kws = {
             "system_prompt": system_prompt,
             "task_context": task_context,

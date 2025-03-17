@@ -16,23 +16,21 @@ logger = logging.getLogger("patronus.core")
 
 
 class Once:
-    """Execute a function exactly once and block all callers until the function returns
-
-    Same as golang's `sync.Once <https://pkg.go.dev/sync#Once>`_
-    """
+    # Execute a function exactly once and block all callers until the function returns
+    #
+    # Same as golang's `sync.Once <https://pkg.go.dev/sync#Once>`_
 
     def __init__(self) -> None:
         self._lock = Lock()
         self._done = False
 
     def do_once(self, func: Callable[[], None]) -> bool:
-        """Execute ``func`` if it hasn't been executed or return.
-
-        Will block until ``func`` has been called by one thread.
-
-        Returns:
-            Whether ``func`` was executed in this call
-        """
+        # Execute ``func`` if it hasn't been executed or return.
+        #
+        # Will block until ``func`` has been called by one thread.
+        #
+        # Returns:
+        #     Whether ``func`` was executed in this call
 
         # fast path, try to avoid locking
         if self._done:
@@ -50,9 +48,9 @@ _BEE_RESET_ONCE = Once()
 
 
 # _FlushRequest is based on _FlushRequest from otel sdk trace batch processor/exporter.
+#
+# Represents a request for the BatchEvaluationExporter to flush evaluations.
 class _FlushRequest:
-    """Represents a request for the BatchEvaluationExporter to flush evaluations."""
-
     __slots__ = ["event", "num_evaluations"]
 
     def __init__(self):

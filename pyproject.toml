@@ -19,7 +19,7 @@ mypy = "^1.12.1"
 
 [tool.poetry.group.docs.dependencies]
 mkdocs-material = "^9.6.7"
-mkdocstrings = {extras = ["python"], version = "^0.28.2"}
+mkdocstrings-python = "^1.16.5"
 
 [project.urls]
 Homepage = "https://www.patronus.ai"
