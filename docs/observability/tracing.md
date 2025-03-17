@@ -1,6 +1,7 @@
-# Tracing Setup
+# Tracing
 
-Tracing is a core feature of the Patronus SDK that allows you to monitor and understand the behavior of your LLM applications. This page covers how to set up and use tracing in your code.
+Tracing is a core feature of the Patronus SDK that allows you to monitor and understand the behavior of your LLM applications.
+This page covers how to set up and use tracing in your code.
 
 ## Getting Started with Tracing
 
