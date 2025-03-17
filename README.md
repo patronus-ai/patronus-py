@@ -1,5 +1,16 @@
 # Patronus Python SDK
 
+[![PyPI version](https://img.shields.io/pypi/v/openai.svg)](https://pypi.org/project/patronus/)
+[![Documentation](https://img.shields.io/badge/docs-link-blue.svg)](https://patronus-ai.github.io/patronus-py/)
+
+---
+
+**SDK Documentation**: <a href="https://patronus-ai.github.io/patronus-py" target="_blank">https://patronus-ai.github.io/patronus-py</a>
+
+**Platform Documentation**: <a href="https://docs.patronus.ai" target="_blank">https://docs.patronus.ai</a>
+
+---
+
 The Patronus Python SDK is a Python library for systematic evaluation of Large Language Models (LLMs).
 Build, test, and improve your LLM applications with customizable tasks, evaluators, and comprehensive experiment tracking.
 

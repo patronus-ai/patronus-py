@@ -1,8 +1,10 @@
-site_name: Patronus Python SDK Documentation
+site_name: PatronusAI Python SDK
 site_url: https://docs.patronus.ai/patronus-py
 repo_name: patronus-ai/patronus-py
 repo_url: https://github.com/patronus-ai/patronus-py
 theme:
+  logo: assets/boxwhite.svg
+  favicon: assets/favicon-32x32.png
   name: material
   features:
     - content.code.copy
@@ -12,13 +14,13 @@ theme:
   palette:
     - scheme: default
       toggle:
-        icon: material/brightness-7
+        icon: material/toggle-switch
         name: Switch to dark mode
 
     # Palette toggle for dark mode
     - scheme: slate
       toggle:
-        icon: material/brightness-4
+        icon: material/toggle-switch-off-outline
         name: Switch to light mode
 
 extra_css:
