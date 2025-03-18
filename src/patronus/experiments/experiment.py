@@ -1,3 +1,5 @@
+import contextlib
+
 import asyncio
 import httpx
 import inspect
@@ -21,15 +23,27 @@ from patronus.experiments.reporter import Reporter
 from patronus.experiments.tqdm import AsyncTQDMWithHandle
 from patronus.experiments.types import EvalParent, TaskResult, _EvalParent, EvalsMap
 from patronus.tracing import traced
+from patronus.tracing.attributes import Attributes, SpanTypes
 from patronus.utils import merge_tags
 
-# TODO Type hint them
 Tags = dict[str, str]
+"""
+Tags are key-value pairs applied to experiments, task results and evaluation results.
+"""
 
 T = typing.TypeVar("T")
 
 
 class TaskProtocol(typing.Protocol[T]):
+    """
+    Defines an interface for a task.
+
+    Task is a function that processes each dataset row and produces output for evaluation.
+
+    Attributes:
+        None directly; this is a Protocol class defining a callable contract.
+    """
+
     def __call__(self, *, row: datasets.Row, parent: EvalParent, tags: Tags) -> T: ...
 
 
@@ -39,6 +53,9 @@ Task = Union[
     # Asynchronous task signature
     TaskProtocol[typing.Awaitable[Union[TaskResult, str, None]]],
 ]
+"""
+A function that processes each dataset row and produces output for evaluation.
+"""
 
 ExperimentDataset = Union[
     Dataset,
@@ -49,11 +66,25 @@ ExperimentDataset = Union[
     typing.Awaitable,
     typing.Callable[[], typing.Awaitable],
 ]
+"""
+Any object that would "resolve" into [Dataset][patronus.datasets.Dataset].
+"""
 
 AdaptableEvaluators = Union[StructuredEvaluator, AsyncStructuredEvaluator, BaseEvaluatorAdapter]
 
 
 class ChainLink(typing.TypedDict):
+    """
+    Represents a single stage in an experiment's processing chain.
+
+    Each ChainLink contains an optional task function that processes dataset rows
+    and a list of evaluators that assess the task's output.
+
+    Attributes:
+        task: Function that processes a dataset row and produces output.
+        evaluators: List of evaluators to assess the task's output.
+    """
+
     task: Optional[Task]
     evaluators: list[AdaptableEvaluators]
 
@@ -72,9 +103,15 @@ def run_experiment(
     max_concurrency: int = 10,
     project_name: Optional[str] = None,
     experiment_name: Optional[str] = None,
+    service: Optional[str] = None,
     api_key: Optional[str] = None,
+    api_url: Optional[str] = None,
+    otel_endpoint: Optional[str] = None,
+    ui_url: Optional[str] = None,
+    timeout_s: Optional[int] = None,
+    integrations: Optional[list[typing.Any]] = None,
     **kwargs,
-) -> "Experiment":
+) -> Union["Experiment", typing.Awaitable["Experiment"]]:
     """
     Create and run an experiment.
 
@@ -87,15 +124,7 @@ def run_experiment(
       experiment completes and returns the Experiment object.
 
 
-    Returns
-    -------
-    `Union[Experiment, Awaitable[Experiment]]`
-
-    - In a synchronous context: the completed Experiment object.
-    - In an asynchronous context: an awaitable that resolves to the Experiment object.
-
-    Examples
-    ---------
+    **Examples:**
 
     Synchronous execution:
 
@@ -111,15 +140,23 @@ def run_experiment(
     # Must be awaited within an async function or event loop.
     ```
 
-    Notes
-    ------
+    **Parameters:**
 
-    For manual control of the event loop, you can create and run the experiment as follows:
+    See [Experiment.create][patronus.experiments.experiment.Experiment.create] for list of arguments.
 
-    ```python
-    experiment = await Experiment.create(...)
-    await experiment.run()
-    ```
+    Returns:
+        Experiment (Experiment): In a synchronous context: the completed Experiment object.
+        Experiment (Awaitable[Experiment]): In an asynchronous context:
+            an awaitable that resolves to the Experiment object.
+
+    Notes:
+        For manual control of the event loop, you can create and run the experiment as follows:
+
+        ```python
+        experiment = await Experiment.create(...)
+        await experiment.run()
+        ```
+
     """
 
     async def _run_experiment() -> Union[Experiment, typing.Awaitable[Experiment]]:
@@ -132,7 +169,13 @@ def run_experiment(
             max_concurrency=max_concurrency,
             project_name=project_name,
             experiment_name=experiment_name,
+            service=service,
             api_key=api_key,
+            api_url=api_url,
+            otel_endpoint=otel_endpoint,
+            ui_url=ui_url,
+            timeout_s=timeout_s,
+            integrations=integrations,
             **kwargs,
         )
         return await ex.run()
@@ -141,6 +184,17 @@ def run_experiment(
 
 
 class Experiment:
+    """
+    Manages evaluation experiments across datasets using tasks and evaluators.
+
+    An experiment represents a complete evaluation pipeline that processes a dataset
+    using defined tasks, applies evaluators to the outputs, and collects the results.
+    Experiments track progress, create reports, and interface with the Patronus platform.
+
+    Create experiment instances using the [`create()`][patronus.experiments.experiment.Experiment.create] class method
+    or through the [`run_experiment()`][patronus.experiments.experiment.run_experiment] convenience function.
+    """
+
     project: Optional[api_types.Project]
     experiment: Optional[api_types.Experiment]
     tags: dict[str, str]
@@ -158,7 +212,12 @@ class Experiment:
     _sem_tasks: asyncio.Semaphore
     _sem_evals: asyncio.Semaphore
 
+    _service: Optional[str]
     _api_key: Optional[str]
+    _api_url: Optional[str]
+    _otel_endpoint: Optional[str]
+    _ui_url: Optional[str]
+    _timeout_s: Optional[int]
 
     _ctx: Optional[context.PatronusContext] = None
 
@@ -173,9 +232,13 @@ class Experiment:
         max_concurrency: int = 10,
         project_name: Optional[str] = None,
         experiment_name: Optional[str] = None,
-        # TODO
-        # ...
+        service: Optional[str] = None,
         api_key: Optional[str] = None,
+        api_url: Optional[str] = None,
+        otel_endpoint: Optional[str] = None,
+        ui_url: Optional[str] = None,
+        timeout_s: Optional[int] = None,
+        integrations: Optional[list[typing.Any]] = None,
         **kwargs,
     ):
         if chain and evaluators:
@@ -201,12 +264,18 @@ class Experiment:
 
         self.max_concurrency = max_concurrency
 
+        self._service = service
         self._api_key = api_key
+        self._api_url = api_url
+        self._otel_endpoint = otel_endpoint
+        self._ui_url = ui_url
+        self._timeout_s = timeout_s
+
         self._prepared = False
 
         self.reporter = Reporter()
 
-        self._integrations = kwargs.get("integrations")
+        self._integrations = integrations
 
     @classmethod
     async def create(
@@ -219,9 +288,56 @@ class Experiment:
         max_concurrency: int = 10,
         project_name: Optional[str] = None,
         experiment_name: Optional[str] = None,
+        service: Optional[str] = None,
         api_key: Optional[str] = None,
+        api_url: Optional[str] = None,
+        otel_endpoint: Optional[str] = None,
+        ui_url: Optional[str] = None,
+        timeout_s: Optional[int] = None,
+        integrations: Optional[list[typing.Any]] = None,
         **kwargs,
     ) -> te.Self:
+        """
+        Creates an instance of the class asynchronously with the specified parameters while performing
+        necessary preparations. This method initializes various attributes including dataset, task,
+        evaluators, chain, and additional configurations for managing concurrency, project details,
+        service information, API keys, timeout settings, and integrations.
+
+        Use [run_experiment][patronus.experiments.experiment.run_experiment] for more convenient usage.
+
+        Args:
+            dataset: The dataset to run evaluations against.
+            task: A function that processes each dataset row and produces output for evaluation.
+                Mutually exclusive with the `chain` parameter.
+            evaluators: A list of evaluators to assess the task output. Mutually exclusive with
+                the `chain` parameter.
+            chain: A list of processing stages, each containing a task and associated evaluators.
+                Use this for multi-stage evaluation pipelines.
+            tags: Key-value pairs for categorizing and filtering.
+                All evaluations created by the experiment will contain these tags.
+            max_concurrency: Maximum number of concurrent task and evaluation operations.
+            project_name: Name of the project to create or use. Falls back to configuration or
+                environment variables if not provided.
+            experiment_name: Custom name for this experiment run. A timestamp will be appended.
+            service: OpenTelemetry service name for tracing. Falls back to configuration or
+                environment variables if not provided.
+            api_key: API key for Patronus services. Falls back to configuration or environment
+                variables if not provided.
+            api_url: URL for the Patronus API. Falls back to configuration or environment
+                variables if not provided.
+            otel_endpoint: OpenTelemetry collector endpoint. Falls back to configuration or
+                environment variables if not provided.
+            ui_url: URL for the Patronus UI. Falls back to configuration or environment
+                variables if not provided.
+            timeout_s: Timeout in seconds for API operations. Falls back to configuration or
+                environment variables if not provided.
+            integrations: A list of OpenTelemetry instrumentors for additional tracing capabilities.
+            **kwargs: Additional keyword arguments passed to the experiment.
+
+        Returns:
+            Experiment: ...
+
+        """
         ex = cls(
             dataset=dataset,
             task=task,
@@ -231,7 +347,13 @@ class Experiment:
             max_concurrency=max_concurrency,
             project_name=project_name,
             experiment_name=experiment_name,
+            service=service,
             api_key=api_key,
+            api_url=api_url,
+            otel_endpoint=otel_endpoint,
+            ui_url=ui_url,
+            timeout_s=timeout_s,
+            integrations=integrations,
             **kwargs,
         )
         ex._ctx = await ex._prepare()
@@ -239,6 +361,16 @@ class Experiment:
         return ex
 
     async def run(self) -> te.Self:
+        """
+        Executes the experiment by processing all dataset items.
+
+        Runs the experiment's task chain on each dataset row, applying evaluators
+        to the results and collecting metrics. Progress is displayed with a progress
+        bar and results are logged to the Patronus platform.
+
+        Returns:
+            The experiment instance.
+        """
         if self._started:
             raise RuntimeError("Experiment already started")
         if self._prepared is False:
@@ -259,11 +391,33 @@ class Experiment:
         return self
 
     def to_dataframe(self) -> pd.DataFrame:
+        """
+        Converts experiment results to a pandas DataFrame.
+
+        Creates a tabular representation of all evaluation results with
+        dataset identifiers, task information, evaluation scores, and metadata.
+
+        Returns:
+            A pandas DataFrame containing all experiment results.
+        """
         if self._finished is not True:
             raise RuntimeError("Experiment has to be in finished state")
         return self.reporter.to_dataframe()
 
     def to_csv(self, path_or_buf, **kwargs) -> Optional[str]:
+        """
+        Saves experiment results to a CSV file.
+
+        Converts experiment results to a DataFrame and saves them as a CSV file.
+
+        Args:
+            path_or_buf: String path or file-like object where the CSV will be saved.
+            **kwargs: Additional arguments passed to pandas.DataFrame.to_csv().
+
+        Returns:
+            String path if a path was specified and return_path is True, otherwise None.
+
+        """
         return self.to_dataframe().to_csv(path_or_buf, **kwargs)
 
     async def _prepare(self) -> context.PatronusContext:
@@ -283,7 +437,7 @@ class Experiment:
         api = PatronusAPIClient(
             client_http_async=client_http_async,
             client_http=client_http,
-            base_url=cfg.api_url,
+            base_url=self._api_url or cfg.api_url,
             api_key=self._api_key or cfg.api_key,
         )
 
@@ -298,14 +452,17 @@ class Experiment:
         self._experiment_name = None
 
         ctx = build_context(
+            service=self._service or cfg.service,
             project_name=self.project.name,
             app=None,
             experiment_id=self.experiment.id,
-            api_url=cfg.api_url,
-            otel_endpoint=cfg.otel_endpoint,
+            experiment_name=self.experiment.name,
+            api_url=self._api_url or cfg.api_url,
+            otel_endpoint=self._otel_endpoint or cfg.otel_endpoint,
             api_key=self._api_key or cfg.api_key,
             client_http=client_http,
             client_http_async=client_http_async,
+            timeout_s=self._timeout_s or cfg.timeout_s,
             integrations=self._integrations,
         )
         self._prepared = True
@@ -362,13 +519,22 @@ class Experiment:
 
     async def _run_chain(self, idx: int, row: datasets.Row):
         tracer = get_tracer()
-        span_name = f"Sample {idx}/{self.dataset.df.shape[0]}"
-        with tracer.start_as_current_span(span_name):
+
+        @contextlib.contextmanager
+        def chain_link_span(create_span: bool, link_idx: int):
+            if not create_span:
+                yield
+                return
+            attrs = {Attributes.span_type.value: SpanTypes.experiment_chain_step.value}
+            with tracer.start_as_current_span(f"experiment.chain.step.{link_idx}", attributes=attrs) as span:
+                yield span
+
+        attrs = {Attributes.span_type.value: SpanTypes.experiment_sample.value}
+        with tracer.start_as_current_span("experiment.sample.processing", attributes=attrs):
             parent = None
 
             for link_idx, eval_link in enumerate(self._chain):
-                # TODO come up with better span name
-                with tracer.start_as_current_span(f"Stage {link_idx+1}"):
+                with chain_link_span(create_span=len(self._chain) > 1, link_idx=link_idx):
                     task = eval_link["task"]
                     adapted_evaluators: list[BaseEvaluatorAdapter] = eval_link["evaluators"]
 
@@ -402,6 +568,11 @@ class Experiment:
 
                         eval_results_map[adapter.canonical_name] = result
 
+                        if not isinstance(result, EvaluationResult):
+                            raise TypeError(
+                                f"evaluator {adapter} returned unexpected unexpected type {type(result)!r}. "
+                                f"Allowed types: {EvaluationResult.__name__!r}."
+                            )
                         await self.reporter.add_result(
                             link_idx,
                             task.__name__ if task else None,
@@ -463,10 +634,7 @@ class Experiment:
                 for adapter in adapted_evaluators
             )
 
-            if len(adapted_evaluators) > 1:
-                with bundled_eval("Evaluations"):
-                    results = await asyncio.gather(*evals_gen, return_exceptions=True)
-            else:
+            with bundled_eval("experiment.evaluation"):
                 results = await asyncio.gather(*evals_gen, return_exceptions=True)
         return results
 
@@ -501,4 +669,5 @@ def _trace_task(task):
         return None
     if hasattr(task, "_pat_traced"):
         return task
-    return traced(attributes={"gen_ai.operation.name": "task"})(task)
+    attributes = {Attributes.span_type: SpanTypes.experiment_task.value}
+    return traced(f"experiment.task {task.__name__}", attributes=attributes)(task)

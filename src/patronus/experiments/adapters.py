@@ -55,60 +55,59 @@ class EvaluatorAdapter(BaseEvaluatorAdapter):
     or AsyncEvaluator interface within the experiment framework.
 
     Attributes:
-        evaluator (Union[evals.Evaluator, evals.AsyncEvaluator]): The evaluator instance to adapt.
+        evaluator: The evaluator instance to adapt.
+
+    **Examples:**
+
+    ```python
+    import typing
+    from typing import Optional
+
+    from patronus import datasets
+    from patronus.evals import Evaluator, EvaluationResult
+    from patronus.experiments import run_experiment
+    from patronus.experiments.adapters import EvaluatorAdapter
+    from patronus.experiments.types import TaskResult, EvalParent
 
 
-    Examples:
+    class MatchEvaluator(Evaluator):
+        def __init__(self, sanitizer=None):
+            if sanitizer is None:
+                sanitizer = lambda x: x
+            self.sanitizer = sanitizer
 
-        ```python
-        import typing
-        from typing import Optional
-
-        from patronus import datasets
-        from patronus.evals import Evaluator, EvaluationResult
-        from patronus.experiments import run_experiment
-        from patronus.experiments.adapters import EvaluatorAdapter
-        from patronus.experiments.types import TaskResult, EvalParent
+        def evaluate(self, actual: str, expected: str) -> EvaluationResult:
+            matched = self.sanitizer(actual) == self.sanitizer(expected)
+            return EvaluationResult(pass_=matched, score=int(matched))
 
 
-        class MatchEvaluator(Evaluator):
-            def __init__(self, sanitizer=None):
-                if sanitizer is None:
-                    sanitizer = lambda x: x
-                self.sanitizer = sanitizer
-
-            def evaluate(self, actual: str, expected: str) -> EvaluationResult:
-                matched = self.sanitizer(actual) == self.sanitizer(expected)
-                return EvaluationResult(pass_=matched, score=int(matched))
+    exact_match = MatchEvaluator()
+    fuzzy_match = MatchEvaluator(lambda x: x.strip().lower())
 
 
-        exact_match = MatchEvaluator()
-        fuzzy_match = MatchEvaluator(lambda x: x.strip().lower())
+    class MatchAdapter(EvaluatorAdapter):
+        def __init__(self, evaluator: MatchEvaluator):
+            super().__init__(evaluator)
+
+        def transform(
+            self,
+            row: datasets.Row,
+            task_result: Optional[TaskResult],
+            parent: EvalParent,
+            **kwargs
+        ) -> tuple[list[typing.Any], dict[str, typing.Any]]:
+            args = [row.task_output, row.gold_answer]
+            kwargs = {}
+            # Passing arguments via kwargs would also work in this case.
+            # kwargs = {"actual": row.task_output, "expected": row.gold_answer}
+            return args, kwargs
 
 
-        class MatchAdapter(EvaluatorAdapter):
-            def __init__(self, evaluator: MatchEvaluator):
-                super().__init__(evaluator)
-
-            def transform(
-                self,
-                row: datasets.Row,
-                task_result: Optional[TaskResult],
-                parent: EvalParent,
-                **kwargs
-            ) -> tuple[list[typing.Any], dict[str, typing.Any]]:
-                args = [row.task_output, row.gold_answer]
-                kwargs = {}
-                # Passing arguments via kwargs would also work in this case.
-                # kwargs = {"actual": row.task_output, "expected": row.gold_answer}
-                return args, kwargs
-
-
-        run_experiment(
-            dataset=[{"task_output": "string\t", "gold_answer": "string"}],
-            evaluators=[MatchAdapter(exact_match), MatchAdapter(fuzzy_match)],
-        )
-        ```
+    run_experiment(
+        dataset=[{"task_output": "string\t", "gold_answer": "string"}],
+        evaluators=[MatchAdapter(exact_match), MatchAdapter(fuzzy_match)],
+    )
+    ```
 
     """
 
@@ -183,7 +182,7 @@ class StructuredEvaluatorAdapter(EvaluatorAdapter):
 
     evaluator: Union[evals.StructuredEvaluator, evals.AsyncStructuredEvaluator]
 
-    def __init__(self, evaluator: evals.AsyncStructuredEvaluator):
+    def __init__(self, evaluator: Union[evals.StructuredEvaluator, evals.AsyncStructuredEvaluator]):
         if not isinstance(evaluator, (evals.StructuredEvaluator, evals.AsyncStructuredEvaluator)):
             raise TypeError(
                 f"{type(evaluator)} is not "
