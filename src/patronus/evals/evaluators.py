@@ -94,7 +94,7 @@ class UniqueEvaluationDataSet:
                 return log_id
             record = self._add_log(bound_arguments)
         logger.log(
-            body=record.arguments,
+            body={k: v for k, v in record.arguments.items() if v is not None},
             log_type=LogTypes.eval,
             log_id=record.log_id,
             span_context=self.span_context,
@@ -239,6 +239,7 @@ def coerce_eval_output_type(ev_output: typing.Any, qualname: str) -> EvaluationR
 
 
 class PrepEval(typing.NamedTuple):
+    span_name: Optional[str]
     evaluator_id: str
     criteria: Optional[str]
     metric_name: str
@@ -248,6 +249,8 @@ class PrepEval(typing.NamedTuple):
     disable_export: bool
 
     def display_name(self):
+        if self.span_name:
+            return self.span_name
         if not self.criteria:
             return self.evaluator_id
         return f"{self.criteria} ({self.evaluator_id})"
@@ -298,6 +301,7 @@ def evaluator(
     # User-code usually shouldn't use it as long as user defined class-based evaluators inherit from
     # the library provided Evaluator base classes.
     is_method: bool = False,
+    span_name: Optional[str] = None,
     **kwargs,
 ):
     """
@@ -340,6 +344,7 @@ def evaluator(
             disable_export = isinstance(instance, RemoteEvaluatorMixin) and instance._disable_export
 
             return PrepEval(
+                span_name=span_name,
                 evaluator_id=eval_id,
                 criteria=eval_criteria,
                 metric_name=met_name,
@@ -461,6 +466,7 @@ class _EvaluatorMeta(abc.ABCMeta):
                 evaluator_id=evaluator_id,
                 criteria=namespace.get("criteria"),
                 is_method=True,
+                span_name=namespace.get("_span_name"),
             )
             namespace["evaluate"] = into_evaluator(namespace["evaluate"])
         return super().__new__(mcls, name, bases, namespace, **kwargs)
@@ -589,6 +595,8 @@ class RemoteEvaluatorMixin:
 class RemoteEvaluator(RemoteEvaluatorMixin, StructuredEvaluator):
     """Synchronous remote evaluator"""
 
+    _span_name = "http.request POST /v1/evaluate"
+
     def evaluate(
         self,
         *,
@@ -684,6 +692,8 @@ class RemoteEvaluator(RemoteEvaluatorMixin, StructuredEvaluator):
 
 class AsyncRemoteEvaluator(RemoteEvaluatorMixin, AsyncStructuredEvaluator):
     """Asynchronous remote evaluator"""
+
+    _span_name = "http.request POST /v1/evaluate"
 
     async def evaluate(
         self,
