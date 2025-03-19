@@ -1,3 +1,5 @@
+import contextlib
+
 import asyncio
 import httpx
 import inspect
@@ -362,13 +364,20 @@ class Experiment:
 
     async def _run_chain(self, idx: int, row: datasets.Row):
         tracer = get_tracer()
-        span_name = f"Sample {idx}/{self.dataset.df.shape[0]}"
-        with tracer.start_as_current_span(span_name):
+
+        @contextlib.contextmanager
+        def chain_link_span(create_span: bool, link_idx: int):
+            if not create_span:
+                yield
+                return
+            with tracer.start_as_current_span(f"experiment.chain.step.{link_idx}") as span:
+                yield span
+
+        with tracer.start_as_current_span("experiment.sample.processing"):
             parent = None
 
             for link_idx, eval_link in enumerate(self._chain):
-                # TODO come up with better span name
-                with tracer.start_as_current_span(f"Stage {link_idx+1}"):
+                with chain_link_span(create_span=len(self._chain) > 1, link_idx=link_idx):
                     task = eval_link["task"]
                     adapted_evaluators: list[BaseEvaluatorAdapter] = eval_link["evaluators"]
 
@@ -463,10 +472,7 @@ class Experiment:
                 for adapter in adapted_evaluators
             )
 
-            if len(adapted_evaluators) > 1:
-                with bundled_eval("Evaluations"):
-                    results = await asyncio.gather(*evals_gen, return_exceptions=True)
-            else:
+            with bundled_eval("experiment.evaluation"):
                 results = await asyncio.gather(*evals_gen, return_exceptions=True)
         return results
 
@@ -501,4 +507,4 @@ def _trace_task(task):
         return None
     if hasattr(task, "_pat_traced"):
         return task
-    return traced(attributes={"gen_ai.operation.name": "task"})(task)
+    return traced(f"experiment.task {task.__name__}")(task)

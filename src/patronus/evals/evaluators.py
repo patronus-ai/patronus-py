@@ -595,7 +595,7 @@ class RemoteEvaluatorMixin:
 class RemoteEvaluator(RemoteEvaluatorMixin, StructuredEvaluator):
     """Synchronous remote evaluator"""
 
-    _span_name = "http.request evaluate"
+    _span_name = "POST /v1/evaluate"
 
     def evaluate(
         self,
@@ -693,7 +693,7 @@ class RemoteEvaluator(RemoteEvaluatorMixin, StructuredEvaluator):
 class AsyncRemoteEvaluator(RemoteEvaluatorMixin, AsyncStructuredEvaluator):
     """Asynchronous remote evaluator"""
 
-    _span_name = "http.request evaluate"
+    _span_name = "POST /v1/evaluate"
 
     async def evaluate(
         self,
