@@ -23,6 +23,7 @@ from patronus.experiments.reporter import Reporter
 from patronus.experiments.tqdm import AsyncTQDMWithHandle
 from patronus.experiments.types import EvalParent, TaskResult, _EvalParent, EvalsMap
 from patronus.tracing import traced
+from patronus.tracing.attributes import Attributes, SpanTypes
 from patronus.utils import merge_tags
 
 # TODO Type hint them
@@ -303,6 +304,7 @@ class Experiment:
             project_name=self.project.name,
             app=None,
             experiment_id=self.experiment.id,
+            experiment_name=self.experiment.name,
             api_url=cfg.api_url,
             otel_endpoint=cfg.otel_endpoint,
             api_key=self._api_key or cfg.api_key,
@@ -370,10 +372,12 @@ class Experiment:
             if not create_span:
                 yield
                 return
-            with tracer.start_as_current_span(f"experiment.chain.step.{link_idx}") as span:
+            attrs = {Attributes.span_type.value: SpanTypes.experiment_chain_step.value}
+            with tracer.start_as_current_span(f"experiment.chain.step.{link_idx}", attributes=attrs) as span:
                 yield span
 
-        with tracer.start_as_current_span("experiment.sample.processing"):
+        attrs = {Attributes.span_type.value: SpanTypes.experiment_sample.value}
+        with tracer.start_as_current_span("experiment.sample.processing", attributes=attrs):
             parent = None
 
             for link_idx, eval_link in enumerate(self._chain):
@@ -507,4 +511,5 @@ def _trace_task(task):
         return None
     if hasattr(task, "_pat_traced"):
         return task
-    return traced(f"experiment.task {task.__name__}")(task)
+    attributes = {Attributes.span_type: SpanTypes.experiment_task.value}
+    return traced(f"experiment.task {task.__name__}", attributes=attributes)(task)

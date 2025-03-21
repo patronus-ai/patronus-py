@@ -325,7 +325,7 @@ class ClientEvaluation(pydantic.BaseModel):
     experiment_id: Optional[str] = None
     evaluator_id: SanitizedLocalEvaluatorID
     criteria: Optional[str] = None
-    pass_: Optional[bool] = pydantic.Field(default=None, alias="pass")
+    pass_: Optional[bool] = pydantic.Field(default=None, serialization_alias="pass")
     score: Optional[float] = None
     text_output: Optional[str] = None
     metadata: Optional[dict[str, typing.Any]] = None

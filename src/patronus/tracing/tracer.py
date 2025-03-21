@@ -8,12 +8,11 @@ from typing import Optional
 from opentelemetry import context as context_api
 from opentelemetry import trace
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
-from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import Span, SpanProcessor, TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
 from patronus import context
-from patronus.tracing.attributes import Attributes, format_service_name
+from patronus.tracing.attributes import Attributes
 
 
 class PatronusAttributesSpanProcessor(SpanProcessor):
@@ -76,6 +75,10 @@ def create_tracer_provider(
     """
     service_name = format_service_name(scope.project_name, scope.app, scope.experiment_id)
     resource = Resource.create({"service.name": service_name})
+    # service_name = format_service_name(scope.project_name, scope.app, scope.experiment_id)
+    # TODO
+    # resource = Resource.create({"service.name": service_name})
+    resource = None
     provider = TracerProvider(resource=resource)
     provider.add_span_processor(
         PatronusAttributesSpanProcessor(

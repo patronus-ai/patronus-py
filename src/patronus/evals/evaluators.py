@@ -19,7 +19,7 @@ from patronus.api import api_types
 from patronus.evals.types import EvaluationResult
 from patronus.exceptions import UninitializedError
 from patronus.retry import retry
-from patronus.tracing.attributes import LogTypes, GenAIAttributes, OperationNames
+from patronus.tracing.attributes import LogTypes, GenAIAttributes, OperationNames, Attributes, SpanTypes, EventNames
 from patronus.tracing.decorators import start_span
 from patronus.tracing.logger import Logger
 from patronus.utils import merge_tags
@@ -82,7 +82,13 @@ class UniqueEvaluationDataSet:
         return eval_log
 
     def log(
-        self, *, logger: Logger, is_method: bool, self_key_name: Optional[str], bound_arguments: dict[str, Any]
+        self,
+        *,
+        logger: Logger,
+        is_method: bool,
+        self_key_name: Optional[str],
+        bound_arguments: dict[str, Any],
+        log_none_arguments: bool,
     ) -> LogID:
         if is_method:
             assert self_key_name is not None
@@ -93,11 +99,17 @@ class UniqueEvaluationDataSet:
             if log_id is not None:
                 return log_id
             record = self._add_log(bound_arguments)
+
+        body = record.arguments
+        if log_none_arguments is True:
+            body = {k: v for k, v in record.arguments.items() if v is not None}
+
         logger.log(
-            body={k: v for k, v in record.arguments.items() if v is not None},
+            body=body,
             log_type=LogTypes.eval,
             log_id=record.log_id,
             span_context=self.span_context,
+            event_name=EventNames.evaluation_data.value,
         )
         return record.log_id
 
@@ -139,7 +151,7 @@ def _get_or_start_evaluation_log_group() -> typing.Iterator[UniqueEvaluationData
 
 
 @contextlib.contextmanager
-def bundled_eval(span_name: str = "Evaluation bundle"):
+def bundled_eval(span_name: str = "Evaluation bundle", attributes: Optional[dict[str, str]] = None):
     """
     Start a span that would automatically bundle evaluations.
 
@@ -163,7 +175,11 @@ def bundled_eval(span_name: str = "Evaluation bundle"):
         yield
         return
 
-    with tracer.start_as_current_span(span_name):
+    attributes = {
+        **(attributes or {}),
+        Attributes.span_type.value: SpanTypes.eval.value,
+    }
+    with tracer.start_as_current_span(span_name, attributes=attributes):
         with _start_evaluation_log_group():
             yield
 
@@ -216,10 +232,6 @@ def handle_eval_output(
         ctx.exporter.submit(eval_payload)
     except Exception:
         log.exception("Failed to submit evaluation payload to the exported")
-
-    # # Debug evaluation log
-    # ev_data = sorted([f"{k}={v!r}" for k, v in ev.model_dump().items() if v is not None])
-    # get_logger().warning(f"Evaluation({', '.join(ev_data)})")
 
 
 def coerce_eval_output_type(ev_output: typing.Any, qualname: str) -> EvaluationResult:
@@ -282,6 +294,7 @@ def _as_applied_argument(signature: inspect.Signature, bound_arguments: inspect.
 
 
 def evaluator(
+    _fn: Optional[typing.Callable[..., typing.Any]] = None,
     *,
     # Name for the evaluator. Defaults to function name (or class name in case of class based evaluators).
     evaluator_id: Union[str, typing.Callable[[], str], None] = None,
@@ -301,12 +314,21 @@ def evaluator(
     # User-code usually shouldn't use it as long as user defined class-based evaluators inherit from
     # the library provided Evaluator base classes.
     is_method: bool = False,
+    # Name of the span to represent this evaluation in the tracing system.
+    # Defaults to None, in which case a default name is generated based on the evaluator.
     span_name: Optional[str] = None,
+    # Controls whether arguments with None values are included in log output.
+    # This setting affects only logging behavior and has no impact on function execution.
+    # Note: Only applies to top-level arguments. For nested structures like dictionaries,
+    # None values will always be logged regardless of this setting.
+    log_none_arguments: bool = False,
     **kwargs,
 ):
     """
     Mark function as an evaluator.
     """
+    if _fn is not None:
+        return evaluator()(_fn)
 
     def decorator(fn):
         fn_sign = inspect.signature(fn)
@@ -354,6 +376,11 @@ def evaluator(
                 disable_export=disable_export,
             )
 
+        attributes = {
+            Attributes.span_type.value: SpanTypes.eval.value,
+            GenAIAttributes.operation_name.value: OperationNames.eval.value,
+        }
+
         @functools.wraps(fn)
         async def wrapper_async(*fn_args, **fn_kwargs):
             ctx = context.get_current_context_or_none()
@@ -364,13 +391,14 @@ def evaluator(
 
             start = time.perf_counter()
             try:
-                with start_span(prep.display_name(), attributes={GenAIAttributes.operation_name: OperationNames.eval}):
+                with start_span(prep.display_name(), attributes=attributes):
                     with _get_or_start_evaluation_log_group() as log_group:
                         log_id = log_group.log(
                             logger=ctx.pat_logger,
                             is_method=is_method,
                             self_key_name=prep.self_key_name,
                             bound_arguments=prep.arguments,
+                            log_none_arguments=log_none_arguments,
                         )
                         ret = await fn(*fn_args, **fn_kwargs)
             except Exception as e:
@@ -402,13 +430,14 @@ def evaluator(
 
             start = time.perf_counter()
             try:
-                with start_span(prep.display_name(), attributes={GenAIAttributes.operation_name: OperationNames.eval}):
+                with start_span(prep.display_name(), attributes=attributes):
                     with _get_or_start_evaluation_log_group() as log_group:
                         log_id = log_group.log(
                             logger=ctx.pat_logger,
                             is_method=is_method,
                             self_key_name=prep.self_key_name,
                             bound_arguments=prep.arguments,
+                            log_none_arguments=log_none_arguments,
                         )
                         ret = fn(*fn_args, **fn_kwargs)
             except Exception as e:

@@ -19,6 +19,7 @@ class PatronusScope:
     project_name: Optional[str]
     app: Optional[str]
     experiment_id: Optional[str]
+    experiment_name: Optional[str]
 
 
 @dataclasses.dataclass(frozen=True)

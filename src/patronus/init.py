@@ -37,6 +37,7 @@ def init(
         project_name=project_name or cfg.project_name,
         app=app or cfg.app,
         experiment_id=None,
+        experiment_name=None,
         api_url=api_url or cfg.api_url,
         otel_endpoint=otel_endpoint or cfg.otel_endpoint,
         api_key=api_key or cfg.api_key,
@@ -50,6 +51,7 @@ def build_context(
     project_name: str,
     app: Optional[str],
     experiment_id: Optional[str],
+    experiment_name: Optional[str],
     api_url: Optional[str],
     otel_endpoint: str,
     api_key: str,
@@ -66,6 +68,7 @@ def build_context(
         project_name=project_name,
         app=app,
         experiment_id=experiment_id,
+        experiment_name=experiment_name,
     )
     api = PatronusAPIClient(
         client_http_async=client_http_async,

@@ -17,6 +17,8 @@ DEFAULT_APP_NAME = "default"
 class Config(pydantic_settings.BaseSettings):
     model_config = pydantic_settings.SettingsConfigDict(env_prefix="patronus_", yaml_file="patronus.yaml")
 
+    service: Optional[str] = pydantic.Field(default=None)
+
     api_key: Optional[str] = pydantic.Field(default=None)
     api_url: str = pydantic.Field(default=DEFAULT_API_URL)
     otel_endpoint: str = pydantic.Field(default=DEFAULT_OTEL_ENDPOINT)
