@@ -13,19 +13,54 @@ from .tracing.tracer import create_tracer_provider
 
 
 def init(
-    # Initialize SDK with project name.
-    # If value is not provided, then it's loaded from the configuration file.
-    # Defaults to "Global" if neither is provided.
     project_name: Optional[str] = None,
-    # Initialize SDK with an app.
-    # If value is not provided, then it's loaded from the configuration file.
-    # Defaults to "default" if neither is provided.
     app: Optional[str] = None,
     api_url: Optional[str] = None,
     otel_endpoint: Optional[str] = None,
     api_key: Optional[str] = None,
+    service: Optional[str] = None,
     **kwargs,
 ):
+    """
+    Initializes the Patronus SDK with the specified configuration.
+
+    This function sets up the SDK with project details, API connections, and telemetry.
+    It must be called before using evaluators or experiments to ensure proper recording
+    of results and metrics.
+
+    Args:
+        project_name: Name of the project for organizing evaluations and experiments.
+            Falls back to configuration file, then defaults to "Global" if not provided.
+        app: Name of the application within the project.
+            Falls back to configuration file, then defaults to "default" if not provided.
+        api_url: URL for the Patronus API service.
+            Falls back to configuration file or environment variables if not provided.
+        otel_endpoint: Endpoint for OpenTelemetry data collection.
+            Falls back to configuration file or environment variables if not provided.
+        api_key: Authentication key for Patronus services.
+            Falls back to configuration file or environment variables if not provided.
+        service: Service name for OpenTelemetry traces.
+            Falls back to configuration file or environment variables if not provided.
+        **kwargs: Additional configuration options for the SDK.
+
+    Returns:
+        PatronusContext: The initialized context object.
+
+    Example:
+        ```python
+        import patronus
+
+        # Load configuration from configuration file or environment variables
+        patronus.init()
+
+        # Custom initialization
+        patronus.init(
+            project_name="my-project",
+            app="recommendation-service",
+            api_key="your-api-key"
+        )
+        ```
+    """
     if api_url != config.DEFAULT_API_URL and otel_endpoint == config.DEFAULT_OTEL_ENDPOINT:
         raise ValueError(
             "'api_url' is set to non-default value, "
@@ -34,9 +69,11 @@ def init(
 
     cfg = config.config()
     ctx = build_context(
+        service=service or cfg.service,
         project_name=project_name or cfg.project_name,
         app=app or cfg.app,
         experiment_id=None,
+        experiment_name=None,
         api_url=api_url or cfg.api_url,
         otel_endpoint=otel_endpoint or cfg.otel_endpoint,
         api_key=api_key or cfg.api_key,
@@ -47,9 +84,11 @@ def init(
 
 
 def build_context(
+    service: str,
     project_name: str,
     app: Optional[str],
     experiment_id: Optional[str],
+    experiment_name: Optional[str],
     api_url: Optional[str],
     otel_endpoint: str,
     api_key: str,
@@ -63,9 +102,11 @@ def build_context(
     if client_http_async is None:
         client_http_async = httpx.AsyncClient(timeout=timeout_s)
     scope = context.PatronusScope(
+        service=service,
         project_name=project_name,
         app=app,
         experiment_id=experiment_id,
+        experiment_name=experiment_name,
     )
     api = PatronusAPIClient(
         client_http_async=client_http_async,

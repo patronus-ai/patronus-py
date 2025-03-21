@@ -8,15 +8,16 @@ The Patronus Experimentation Framework offers several configuration options that
 
 Configuration options are prioritized in the order listed above.
 
-| Config name   | Environment Variable   | Default Value                   |
-|---------------|------------------------|---------------------------------|
-| project_name  | PATRONUS_PROJECT_NAE   | `Global`                        |
-| app           | PATRONUS_APP           | `default`                       |
-| api_key       | PATRONUS_API_KEY       |                                 |
-| api_url       | PATRONUS_API_URL       | `https://api.patronus.ai`       |
-| ui_url        | PATRONUS_UI_URL        | `https://app.patronus.ai`       |
-| otel_endpoint | PATRONUS_OTEL_ENDPOINT | `https://otel.patronus.ai:4317` |
-| timeout_s     | PATRONUS_TIMEOUT_S     | `300`                           |
+| Config name   | Environment Variable   | Default Value                                                                      |
+|---------------|------------------------|------------------------------------------------------------------------------------|
+| service       | PATRONUS_SERVICE       | Defaults to value retrieved from `OTEL_SERVICE_NAME` env var or `platform.node()`. |
+| project_name  | PATRONUS_PROJECT_NAME  | `Global`                                                                           |
+| app           | PATRONUS_APP           | `default`                                                                          |
+| api_key       | PATRONUS_API_KEY       |                                                                                    |
+| api_url       | PATRONUS_API_URL       | `https://api.patronus.ai`                                                          |
+| ui_url        | PATRONUS_UI_URL        | `https://app.patronus.ai`                                                          |
+| otel_endpoint | PATRONUS_OTEL_ENDPOINT | `https://otel.patronus.ai:4317`                                                    |
+| timeout_s     | PATRONUS_TIMEOUT_S     | `300`                                                                              |
 
 ## Configuration File (`patronus.yaml`)
 
@@ -24,6 +25,7 @@ You can also provide configuration options using a patronus.yaml file. This file
 directory when executing your script.
 
 ```yaml
+service: "my-agent"
 project_name: "my-project"
 app: "my-agent"
 

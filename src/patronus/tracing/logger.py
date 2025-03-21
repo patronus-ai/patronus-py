@@ -22,7 +22,7 @@ from opentelemetry.util.types import Attributes as OTeLAttributes
 
 from patronus import context
 from patronus.context.context_utils import ResourceMutex
-from patronus.tracing.attributes import Attributes, LogTypes, format_service_name
+from patronus.tracing.attributes import Attributes, LogTypes
 
 
 @dataclasses.dataclass
@@ -30,6 +30,7 @@ class PatronusScope:
     project_name: Optional[str]
     app: Optional[str]
     experiment_id: Optional[str]
+    experiment_name: Optional[str]
 
     @functools.cached_property
     def as_attributes(self) -> dict[str, str]:
@@ -40,6 +41,8 @@ class PatronusScope:
             attrs[Attributes.app.value] = self.app
         if self.experiment_id:
             attrs[Attributes.experiment_id.value] = self.experiment_id
+        if self.experiment_name:
+            attrs[Attributes.experiment_name.value] = self.experiment_name
         return attrs
 
 
@@ -47,12 +50,15 @@ class LoggerProvider(OTELLoggerProvider):
     project_name: Optional[str]
     app: Optional[str]
     experiment_id: Optional[str]
+    experiment_name: Optional[str]
 
     def __init__(
         self,
+        service: Optional[str] = None,
         project_name: Optional[str] = None,
         app: Optional[str] = None,
         experiment_id: Optional[str] = None,
+        experiment_name: Optional[str] = None,
         shutdown_on_exit: bool = True,
         multi_log_record_processor: Union[
             SynchronousMultiLogRecordProcessor,
@@ -62,9 +68,11 @@ class LoggerProvider(OTELLoggerProvider):
         self.project_name = project_name
         self.app = app
         self.experiment_id = experiment_id
+        self.experiment_name = experiment_name
 
-        service_name = format_service_name(self.project_name, self.app, self.experiment_id)
-        resource = Resource.create({"service.name": service_name})
+        resource = None
+        if service is not None:
+            resource = Resource.create({"service.name": service})
         super().__init__(resource, shutdown_on_exit, multi_log_record_processor)
 
     def _get_logger_no_cache(
@@ -78,6 +86,7 @@ class LoggerProvider(OTELLoggerProvider):
             project_name=self.project_name,
             app=self.app,
             experiment_id=self.experiment_id,
+            experiment_name=self.experiment_name,
         )
         attributes = attributes or {}
         attributes = {**attributes, **pat_scope.as_attributes}
@@ -124,27 +133,21 @@ def encode_attrs(v):
     return str(v)
 
 
-def cleanup_log(v: typing.Any):
-    # Logger cannot handle null values. Shouldn't be necessary according to the spec, but
-    # the otel lib is not serializing nulls to proto (it seems like a omission/bug to me).
+def transform_body(v: typing.Any):
     if v is None:
-        return "<null>"
+        return None
     if isinstance(v, MappingProxyType):
         v = dict(v)
     if isinstance(v, list):
-        return [cleanup_log(vv) for vv in v]
+        return [transform_body(vv) for vv in v]
     if isinstance(v, tuple):
-        return tuple(cleanup_log(vv) for vv in v)
+        return tuple(transform_body(vv) for vv in v)
     if isinstance(v, (str, bool, int, float)):
         return v
     if not isinstance(v, dict):
         return str(v)
 
-    keys = list(v.keys())
-    ret_v = {**v}
-    for k in keys:
-        ret_v[k] = cleanup_log(v[k])
-    return ret_v
+    return {str(k): transform_body(v) for k, v in v.items()}
 
 
 class Logger(OTELLogger):
@@ -170,6 +173,7 @@ class Logger(OTELLogger):
         log_type: LogTypes = LogTypes.user,
         log_id: Optional[uuid.UUID] = None,
         span_context: Optional[SpanContext] = None,
+        event_name: Optional[str] = None,
     ) -> uuid.UUID:
         severity: SeverityNumber = severity or SeverityNumber.INFO
         span_context = span_context or get_current_span().get_span_context()
@@ -182,24 +186,23 @@ class Logger(OTELLogger):
                 Attributes.log_type.value: log_type.value,
             }
         )
+        if event_name is not None:
+            log_attrs[Attributes.event_name.value] = event_name
         log_attrs.update(self.pat_scope.as_attributes)
 
-        body = cleanup_log(body)
-        self.emit(
-            LogRecord(
-                timestamp=time_ns(),
-                observed_timestamp=time_ns(),
-                # Invalid span IDs are 0, so set None instead in such case.
-                trace_id=span_context.trace_id,
-                span_id=span_context.span_id,
-                trace_flags=span_context.trace_flags,
-                severity_text=severity.name,
-                severity_number=severity,
-                body=body,
-                attributes=log_attrs,
-                resource=self.resource,
-            )
+        record = LogRecord(
+            timestamp=time_ns(),
+            observed_timestamp=time_ns(),
+            trace_id=span_context.trace_id,
+            span_id=span_context.span_id,
+            trace_flags=span_context.trace_flags,
+            severity_text=severity.name,
+            severity_number=severity,
+            body=transform_body(body),
+            attributes=log_attrs,
+            resource=self.resource,
         )
+        self.emit(record)
         return log_id
 
     def evaluation_data(
@@ -277,7 +280,12 @@ def create_logger(
     else:
         suffix = f".{n}"
     logger = logging.getLogger(f"patronus.sdk{suffix}")
-    pat_scope = PatronusScope(project_name=scope.project_name, app=scope.app, experiment_id=scope.experiment_id)
+    pat_scope = PatronusScope(
+        project_name=scope.project_name,
+        app=scope.app,
+        experiment_id=scope.experiment_id,
+        experiment_name=scope.experiment_name,
+    )
     logger.addHandler(LoggingHandler(pat_scope=pat_scope, level=logging.NOTSET, logger_provider=provider))
     logger.setLevel(logging.DEBUG)
     return logger

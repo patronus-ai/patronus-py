@@ -7,23 +7,21 @@ from typing_extensions import Self
 
 
 class AsyncTQDMWithHandle(tqdm_async):
-    """
-    Workaround for accessing tqdm instance with async tasks.
-    Instead of calling gather which don't provide access to tqdm instance:
-    ```
-    tqdm_async.gather(features)
-    ```
+    # Workaround for accessing tqdm instance with async tasks.
+    # Instead of calling gather which don't provide access to tqdm instance:
+    # ```
+    # tqdm_async.gather(features)
+    # ```
 
-    Call prep_gather() follow by gather()
-    ```
-    tqdm_instance = AsyncTQDMWithHandle.pre_gather(features)
-    ...
-    tqdm_instance.gather()
-    ```
+    # Call prep_gather() follow by gather()
+    # ```
+    # tqdm_instance = AsyncTQDMWithHandle.pre_gather(features)
+    # ...
+    # tqdm_instance.gather()
+    # ```
 
-    tqdm_instance can be used to clear and display progress bar using tqdm_instance.clear() and tqdm_instance.display()
-    methods.
-    """
+    # tqdm_instance can be used to clear and display progress bar using tqdm_instance.clear() and
+    # tqdm_instance.display() methods.
 
     async def gather(self):
         def into_iter():
