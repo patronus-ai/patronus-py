@@ -21,6 +21,7 @@ def keyword_match(text: str, keywords: list[str]) -> float:
 ```
 
 This decorator automatically:
+
 - Integrates with the Patronus tracing
 - Exports evaluation results to the Patronus Platform
 

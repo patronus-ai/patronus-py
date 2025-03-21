@@ -37,11 +37,9 @@ class TypedAsyncResult(typing.Generic[T]):
 
 
 def _into_thread_run_fn(eval_fn, *args, **kwargs) -> typing.Callable[[...], typing.Any]:
-    """
-    Prepare a function to run in a thread.
-    This function make sure that contextvars are propagated as it is necessary for proper
-    evaluation and telemetry tracing across thread boundary.
-    """
+    # Prepare a function to run in a thread.
+    # This function make sure that contextvars are propagated as it is necessary for proper
+    # evaluation and telemetry tracing across thread boundary.
     ctx = contextvars.copy_context()
     func_call = functools.partial(ctx.run, eval_fn, *args, **kwargs)
     return func_call
@@ -101,6 +99,9 @@ class Patronus:
         task_metadata: typing.Optional[dict[str, typing.Any]] = None,
         return_exceptions: bool = False,
     ) -> EvaluationContainer:
+        """
+        Run multiple evaluators in parallel.
+        """
         if not isinstance(evaluators, list):
             evaluators = [evaluators]
         evaluators = self._map_evaluators(evaluators)
@@ -132,6 +133,10 @@ class Patronus:
         gold_answer: typing.Optional[str] = None,
         task_metadata: typing.Optional[dict[str, typing.Any]] = None,
     ) -> TypedAsyncResult[EvaluationContainer]:
+        """
+        Run multiple evaluators in parallel. The returned task will be a background task.
+        """
+
         def _run():
             with bundled_eval():
                 callables = [
@@ -154,6 +159,9 @@ class Patronus:
         )
 
     def close(self):
+        """
+        Gracefully close the client. This will wait for all background tasks to finish.
+        """
         self._close()
         if self._at_exit_handler:
             atexit.unregister(self._at_exit_handler)

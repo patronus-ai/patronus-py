@@ -69,6 +69,9 @@ class AsyncPatronus:
         task_metadata: Optional[dict] = None,
         return_exceptions: bool = False,
     ) -> EvaluationContainer:
+        """
+        Run multiple evaluators in parallel.
+        """
         singular_eval = not isinstance(evaluators, list)
         if singular_eval:
             evaluators = [evaluators]
@@ -110,6 +113,9 @@ class AsyncPatronus:
         gold_answer: Optional[str] = None,
         task_metadata: Optional[dict] = None,
     ) -> Task[EvaluationContainer]:
+        """
+        Run multiple evaluators in parallel. The returned task will be a background task.
+        """
         loop = asyncio.get_running_loop()
         task = loop.create_task(
             self.evaluate(
@@ -137,5 +143,8 @@ class AsyncPatronus:
                 return
 
     async def close(self):
+        """
+        Gracefully close the client. This will wait for all background tasks to finish.
+        """
         while len(self._pending_tasks) != 0:
             await self._pending_tasks.popleft()

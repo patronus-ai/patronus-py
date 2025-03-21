@@ -89,24 +89,37 @@ def run_experiment(
 
     Returns
     -------
-    Union[Experiment, Awaitable[Experiment]]
-        In a synchronous context: the completed Experiment object.
-        In an asynchronous context: an awaitable that resolves to the Experiment object.
+    `Union[Experiment, Awaitable[Experiment]]`
 
-    Examples:
-        Synchronous execution:
-            experiment = run_experiment(dataset, task=some_task)
-            # Blocks until the experiment finishes.
+    - In a synchronous context: the completed Experiment object.
+    - In an asynchronous context: an awaitable that resolves to the Experiment object.
 
-        Asynchronous execution (e.g., in a Jupyter Notebook):
-            experiment = await run_experiment(dataset, task=some_task)
-            # Must be awaited within an async function or event loop.
+    Examples
+    ---------
 
-    Notes:
-        For manual control of the event loop, you can create and run the experiment as follows:
-            experiment = await Experiment.create(...)
-            await experiment.run()
+    Synchronous execution:
 
+    ```python
+    experiment = run_experiment(dataset, task=some_task)
+    # Blocks until the experiment finishes.
+    ```
+
+    Asynchronous execution (e.g., in a Jupyter Notebook):
+
+    ```python
+    experiment = await run_experiment(dataset, task=some_task)
+    # Must be awaited within an async function or event loop.
+    ```
+
+    Notes
+    ------
+
+    For manual control of the event loop, you can create and run the experiment as follows:
+
+    ```python
+    experiment = await Experiment.create(...)
+    await experiment.run()
+    ```
     """
 
     async def _run_experiment() -> Union[Experiment, typing.Awaitable[Experiment]]:

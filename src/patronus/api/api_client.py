@@ -10,26 +10,31 @@ log = logging.getLogger("patronus.core")
 
 class PatronusAPIClient(BaseAPIClient):
     async def whoami(self) -> api_types.WhoAmIResponse:
+        """Fetches information about the authenticated user."""
         resp = await self.call("GET", "/v1/whoami", response_cls=api_types.WhoAmIResponse)
         resp.raise_for_status()
         return resp.data
 
     def whoami_sync(self) -> api_types.WhoAmIResponse:
+        """Fetches information about the authenticated user."""
         resp = self.call_sync("GET", "/v1/whoami", response_cls=api_types.WhoAmIResponse)
         resp.raise_for_status()
         return resp.data
 
     async def create_project(self, request: api_types.CreateProjectRequest) -> api_types.Project:
+        """Creates a new project based on the given request."""
         resp = await self.call("POST", "/v1/projects", body=request, response_cls=api_types.Project)
         resp.raise_for_status()
         return resp.data
 
     def create_project_sync(self, request: api_types.CreateProjectRequest) -> api_types.Project:
+        """Creates a new project based on the given request."""
         resp = self.call_sync("POST", "/v1/projects", body=request, response_cls=api_types.Project)
         resp.raise_for_status()
         return resp.data
 
     async def get_project(self, project_id: str) -> api_types.Project:
+        """Fetches a project by its ID."""
         resp = await self.call(
             "GET",
             f"/v1/projects/{project_id}",
@@ -39,6 +44,7 @@ class PatronusAPIClient(BaseAPIClient):
         return resp.data.project
 
     def get_project_sync(self, project_id: str) -> api_types.Project:
+        """Fetches a project by its ID."""
         resp = self.call_sync(
             "GET",
             f"/v1/projects/{project_id}",
@@ -48,6 +54,7 @@ class PatronusAPIClient(BaseAPIClient):
         return resp.data.project
 
     async def create_experiment(self, request: api_types.CreateExperimentRequest) -> api_types.Experiment:
+        """Creates a new experiment based on the given request."""
         resp = await self.call(
             "POST",
             "/v1/experiments",
@@ -58,6 +65,7 @@ class PatronusAPIClient(BaseAPIClient):
         return resp.data.experiment
 
     def create_experiment_sync(self, request: api_types.CreateExperimentRequest) -> api_types.Experiment:
+        """Creates a new experiment based on the given request."""
         resp = self.call_sync(
             "POST",
             "/v1/experiments",
@@ -68,6 +76,7 @@ class PatronusAPIClient(BaseAPIClient):
         return resp.data.experiment
 
     async def get_experiment(self, experiment_id: str) -> Optional[api_types.Experiment]:
+        """Fetches an experiment by its ID or returns None if not found."""
         resp = await self.call(
             "GET",
             f"/v1/experiments/{experiment_id}",
@@ -79,6 +88,7 @@ class PatronusAPIClient(BaseAPIClient):
         return resp.data.experiment
 
     def get_experiment_sync(self, experiment_id: str) -> Optional[api_types.Experiment]:
+        """Fetches an experiment by its ID or returns None if not found."""
         resp = self.call_sync(
             "GET",
             f"/v1/experiments/{experiment_id}",
@@ -90,6 +100,7 @@ class PatronusAPIClient(BaseAPIClient):
         return resp.data.experiment
 
     async def evaluate(self, request: api_types.EvaluateRequest) -> api_types.EvaluateResponse:
+        """Evaluates content using the specified evaluators."""
         resp = await self.call(
             "POST",
             "/v1/evaluate",
@@ -100,6 +111,7 @@ class PatronusAPIClient(BaseAPIClient):
         return resp.data
 
     def evaluate_sync(self, request: api_types.EvaluateRequest) -> api_types.EvaluateResponse:
+        """Evaluates content using the specified evaluators."""
         resp = self.call_sync(
             "POST",
             "/v1/evaluate",
@@ -110,6 +122,7 @@ class PatronusAPIClient(BaseAPIClient):
         return resp.data
 
     async def evaluate_one(self, request: api_types.EvaluateRequest) -> api_types.EvaluationResult:
+        """Evaluates content using a single evaluator."""
         if len(request.evaluators) > 1:
             raise ValueError("'evaluate_one()' cannot accept more than one evaluator in the request body")
         resp = await self.call(
@@ -121,6 +134,7 @@ class PatronusAPIClient(BaseAPIClient):
         return self._evaluate_one_process_resp(resp)
 
     def evaluate_one_sync(self, request: api_types.EvaluateRequest) -> api_types.EvaluationResult:
+        """Evaluates content using a single evaluator."""
         if len(request.evaluators) > 1:
             raise ValueError("'evaluate_one_sync()' cannot accept more than one evaluator in the request body")
         resp = self.call_sync(
@@ -193,6 +207,7 @@ class PatronusAPIClient(BaseAPIClient):
     async def export_evaluations(
         self, request: api_types.ExportEvaluationRequest
     ) -> api_types.ExportEvaluationResponse:
+        """Exports evaluations based on the given request."""
         resp = await self.call(
             "POST",
             "/v1/evaluation-results/batch",
@@ -203,6 +218,7 @@ class PatronusAPIClient(BaseAPIClient):
         return resp.data
 
     def export_evaluations_sync(self, request: api_types.ExportEvaluationRequest) -> api_types.ExportEvaluationResponse:
+        """Exports evaluations based on the given request."""
         resp = self.call_sync(
             "POST",
             "/v1/evaluation-results/batch",
@@ -213,16 +229,19 @@ class PatronusAPIClient(BaseAPIClient):
         return resp.data
 
     async def list_evaluators(self) -> list[api_types.Evaluator]:
+        """Retrieves a list of available evaluators."""
         resp = await self.call("GET", "/v1/evaluators", response_cls=api_types.ListEvaluatorsResponse)
         resp.raise_for_status()
         return resp.data.evaluators
 
     def list_evaluators_sync(self) -> list[api_types.Evaluator]:
+        """Retrieves a list of available evaluators."""
         resp = self.call_sync("GET", "/v1/evaluators", response_cls=api_types.ListEvaluatorsResponse)
         resp.raise_for_status()
         return resp.data.evaluators
 
     async def create_criteria(self, request: api_types.CreateCriteriaRequest) -> api_types.CreateCriteriaResponse:
+        """Creates evaluation criteria based on the given request."""
         resp = await self.call(
             "POST",
             "/v1/evaluator-criteria",
@@ -233,6 +252,7 @@ class PatronusAPIClient(BaseAPIClient):
         return resp.data
 
     def create_criteria_sync(self, request: api_types.CreateCriteriaRequest) -> api_types.CreateCriteriaResponse:
+        """Creates evaluation criteria based on the given request."""
         resp = self.call_sync(
             "POST",
             "/v1/evaluator-criteria",
@@ -247,6 +267,7 @@ class PatronusAPIClient(BaseAPIClient):
         evaluator_criteria_id,
         request: api_types.AddEvaluatorCriteriaRevisionRequest,
     ) -> api_types.AddEvaluatorCriteriaRevisionResponse:
+        """Adds a revision to existing evaluator criteria."""
         resp = await self.call(
             "POST",
             f"/v1/evaluator-criteria/{evaluator_criteria_id}/revision",
@@ -261,6 +282,7 @@ class PatronusAPIClient(BaseAPIClient):
         evaluator_criteria_id,
         request: api_types.AddEvaluatorCriteriaRevisionRequest,
     ) -> api_types.AddEvaluatorCriteriaRevisionResponse:
+        """Adds a revision to existing evaluator criteria."""
         resp = self.call_sync(
             "POST",
             f"/v1/evaluator-criteria/{evaluator_criteria_id}/revision",
@@ -271,6 +293,7 @@ class PatronusAPIClient(BaseAPIClient):
         return resp.data
 
     async def list_criteria(self, request: api_types.ListCriteriaRequest) -> api_types.ListCriteriaResponse:
+        """Retrieves a list of evaluation criteria based on the given request."""
         params = request.model_dump(exclude_none=True)
         resp = await self.call(
             "GET",
@@ -282,6 +305,7 @@ class PatronusAPIClient(BaseAPIClient):
         return resp.data
 
     def list_criteria_sync(self, request: api_types.ListCriteriaRequest) -> api_types.ListCriteriaResponse:
+        """Retrieves a list of evaluation criteria based on the given request."""
         params = request.model_dump(exclude_none=True)
         resp = self.call_sync(
             "GET",
@@ -293,6 +317,7 @@ class PatronusAPIClient(BaseAPIClient):
         return resp.data
 
     async def list_dataset_data(self, dataset_id: str) -> api_types.ListDatasetData:
+        """Retrieves data from a dataset by its ID."""
         resp = await self.call(
             "GET",
             f"/v1/datasets/{dataset_id}/data",
@@ -302,6 +327,7 @@ class PatronusAPIClient(BaseAPIClient):
         return resp.data
 
     def list_dataset_data_sync(self, dataset_id: str) -> api_types.ListDatasetData:
+        """Retrieves data from a dataset by its ID."""
         resp = self.call_sync(
             "GET",
             f"/v1/datasets/{dataset_id}/data",
@@ -313,6 +339,7 @@ class PatronusAPIClient(BaseAPIClient):
     async def batch_create_evaluations(
         self, request: api_types.BatchCreateEvaluationsRequest
     ) -> api_types.BatchCreateEvaluationsResponse:
+        """Creates multiple evaluations in a single request."""
         resp = await self.call(
             "POST",
             "/v1/evaluations/batch",
@@ -325,6 +352,7 @@ class PatronusAPIClient(BaseAPIClient):
     def batch_create_evaluations_sync(
         self, request: api_types.BatchCreateEvaluationsRequest
     ) -> api_types.BatchCreateEvaluationsResponse:
+        """Creates multiple evaluations in a single request."""
         resp = self.call_sync(
             "POST",
             "/v1/evaluations/batch",
@@ -337,6 +365,7 @@ class PatronusAPIClient(BaseAPIClient):
     def search_evaluations_sync(
         self, request: api_types.SearchEvaluationsRequest
     ) -> api_types.SearchEvaluationsResponse:
+        """Searches for evaluations based on the given criteria."""
         resp = self.call_sync(
             "POST",
             "/v1/evaluations/search",
@@ -349,6 +378,7 @@ class PatronusAPIClient(BaseAPIClient):
     async def search_evaluations(
         self, request: api_types.SearchEvaluationsRequest
     ) -> api_types.SearchEvaluationsResponse:
+        """Searches for evaluations based on the given criteria."""
         resp = await self.call(
             "POST",
             "/v1/evaluations/search",
@@ -359,6 +389,7 @@ class PatronusAPIClient(BaseAPIClient):
         return resp.data
 
     async def annotate(self, request: api_types.AnnotateRequest) -> api_types.AnnotateResponse:
+        """Annotates log based on the given request."""
         resp = await self.call(
             "POST",
             "/v1/annotate",
@@ -369,6 +400,7 @@ class PatronusAPIClient(BaseAPIClient):
         return resp.data
 
     def annotate_sync(self, request: api_types.AnnotateRequest) -> api_types.AnnotateResponse:
+        """Annotates log based on the given request."""
         resp = self.call_sync(
             "POST",
             "/v1/annotate",
@@ -381,6 +413,7 @@ class PatronusAPIClient(BaseAPIClient):
     async def list_annotation_criteria(
         self, *, project_id: Optional[str] = None, limit: Optional[int] = None, offset: Optional[int] = None
     ) -> api_types.ListAnnotationCriteriaResponse:
+        """Retrieves a list of annotation criteria with optional filtering."""
         params = {}
         if project_id is not None:
             params["project_id"] = project_id
@@ -400,6 +433,7 @@ class PatronusAPIClient(BaseAPIClient):
     def list_annotation_criteria_sync(
         self, *, project_id: Optional[str] = None, limit: Optional[int] = None, offset: Optional[int] = None
     ) -> api_types.ListAnnotationCriteriaResponse:
+        """Retrieves a list of annotation criteria with optional filtering."""
         params = {}
         if project_id is not None:
             params["project_id"] = project_id
@@ -419,6 +453,7 @@ class PatronusAPIClient(BaseAPIClient):
     async def create_annotation_criteria(
         self, request: api_types.CreateAnnotationCriteriaRequest
     ) -> api_types.CreateAnnotationCriteriaResponse:
+        """Creates annotation criteria based on the given request."""
         resp = await self.call(
             "POST",
             "/v1/annotation-criteria",
@@ -431,6 +466,7 @@ class PatronusAPIClient(BaseAPIClient):
     def create_annotation_criteria_sync(
         self, request: api_types.CreateAnnotationCriteriaRequest
     ) -> api_types.CreateAnnotationCriteriaResponse:
+        """Creates annotation criteria based on the given request."""
         resp = self.call_sync(
             "POST",
             "/v1/annotation-criteria",
@@ -443,6 +479,7 @@ class PatronusAPIClient(BaseAPIClient):
     async def update_annotation_criteria(
         self, criteria_id: str, request: api_types.UpdateAnnotationCriteriaRequest
     ) -> api_types.UpdateAnnotationCriteriaResponse:
+        """Creates annotation criteria based on the given request."""
         resp = await self.call(
             "PUT",
             f"/v1/annotation-criteria/{criteria_id}",
@@ -455,6 +492,7 @@ class PatronusAPIClient(BaseAPIClient):
     def update_annotation_criteria_sync(
         self, criteria_id: str, request: api_types.UpdateAnnotationCriteriaRequest
     ) -> api_types.UpdateAnnotationCriteriaResponse:
+        """Creates annotation criteria based on the given request."""
         resp = self.call_sync(
             "PUT",
             f"/v1/annotation-criteria/{criteria_id}",
@@ -465,6 +503,7 @@ class PatronusAPIClient(BaseAPIClient):
         return resp.data
 
     async def delete_annotation_criteria(self, criteria_id: str) -> None:
+        """Deletes annotation criteria by its ID."""
         resp = await self.call(
             "DELETE",
             f"/v1/annotation-criteria/{criteria_id}",
@@ -473,6 +512,7 @@ class PatronusAPIClient(BaseAPIClient):
         resp.raise_for_status()
 
     def delete_annotation_criteria_sync(self, criteria_id: str) -> None:
+        """Deletes annotation criteria by its ID."""
         resp = self.call_sync(
             "DELETE",
             f"/v1/annotation-criteria/{criteria_id}",
@@ -481,6 +521,7 @@ class PatronusAPIClient(BaseAPIClient):
         resp.raise_for_status()
 
     async def search_logs(self, request: api_types.SearchLogsRequest) -> api_types.SearchLogsResponse:
+        """Searches for logs based on the given request."""
         resp = await self.call(
             "POST",
             "/v1/otel/logs/search",
@@ -491,6 +532,7 @@ class PatronusAPIClient(BaseAPIClient):
         return resp.data
 
     def search_logs_sync(self, request: api_types.SearchLogsRequest) -> api_types.SearchLogsResponse:
+        """Searches for logs based on the given request."""
         resp = self.call_sync(
             "POST",
             "/v1/otel/logs/search",

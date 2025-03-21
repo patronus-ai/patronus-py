@@ -50,23 +50,26 @@ nav:
 #      - Running: ...
 #      - Datasets: experiments/datasets.md
   - Configuration: configuration.md
-  - API Reference: api.md
+  - API Reference:
+      - tracing: api_ref/tracing.md
+      - evals: api_ref/evals.md
+      - experiments: api_ref/experiments.md
+      - api_client: api_ref/api_client.md
+      - pat_client: api_ref/pat_client.md
 
 plugins:
   - search
   - mkdocstrings:
+      default_handler: python
       handlers:
         python:
           paths: [src]
           options:
+            allow_inspection: true
             members_order: source
             separate_signature: true
-            filters: ["!^_"]
             docstring_options:
               ignore_init_summary: true
             merge_init_into_class: true
             show_signature_annotations: true
             signature_crossrefs: true
-#          import:
-#            - url: https://docs.python.org/3/objects.inv
-#              domains: [py, std]

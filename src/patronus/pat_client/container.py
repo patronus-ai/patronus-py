@@ -10,9 +10,15 @@ class EvaluationContainer:
     results: list[Union[EvaluationResult, None, Exception]]
 
     def has_exception(self) -> bool:
+        """
+        Checks if the results contain any exception.
+        """
         return any(isinstance(r, Exception) for r in self.results)
 
     def raise_on_exception(self) -> None:
+        """
+        Checks the results for any exceptions and raises them accordingly.
+        """
         if not self.has_exception():
             return None
         exceptions = list(r for r in self.results if isinstance(r, Exception))
@@ -57,7 +63,13 @@ class EvaluationContainer:
         return False
 
     def failed_evaluations(self) -> Generator[EvaluationResult, None, None]:
+        """
+        Generates all failed evaluations from the results.
+        """
         return (r for r in self.results if not isinstance(r, (Exception, type(None))) and r.pass_ is False)
 
     def succeeded_evaluations(self) -> Generator[EvaluationResult, None, None]:
+        """
+        Generates all successfully passed evaluations from the `results` attribute.
+        """
         return (r for r in self.results if not isinstance(r, (Exception, type(None))) and r.pass_ is True)
