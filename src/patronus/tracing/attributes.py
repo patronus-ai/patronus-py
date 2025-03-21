@@ -1,5 +1,4 @@
 from enum import Enum
-from typing import Optional
 
 
 class EventNames(str, Enum):
@@ -42,12 +41,3 @@ class SpanTypes(str, Enum):
     experiment_sample = "experiment.sample"
     experiment_chain_step = "experiment.chain.step"
     experiment_task = "experiment.task"
-
-
-def format_service_name(project_name: str, app: Optional[str] = None, experiment_id: Optional[str] = None) -> str:
-    service_name = f"{project_name}/"
-    if experiment_id:
-        service_name += f"ex:{experiment_id}"
-    else:
-        service_name += f"app:{app}"
-    return service_name

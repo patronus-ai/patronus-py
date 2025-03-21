@@ -182,7 +182,7 @@ class StructuredEvaluatorAdapter(EvaluatorAdapter):
 
     evaluator: Union[evals.StructuredEvaluator, evals.AsyncStructuredEvaluator]
 
-    def __init__(self, evaluator: evals.AsyncStructuredEvaluator):
+    def __init__(self, evaluator: Union[evals.StructuredEvaluator, evals.AsyncStructuredEvaluator]):
         if not isinstance(evaluator, (evals.StructuredEvaluator, evals.AsyncStructuredEvaluator)):
             raise TypeError(
                 f"{type(evaluator)} is not "

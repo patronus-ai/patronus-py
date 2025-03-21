@@ -16,6 +16,7 @@ if TYPE_CHECKING:
 
 @dataclasses.dataclass(frozen=True)
 class PatronusScope:
+    service: Optional[str]
     project_name: Optional[str]
     app: Optional[str]
     experiment_id: Optional[str]

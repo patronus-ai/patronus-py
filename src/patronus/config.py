@@ -1,3 +1,6 @@
+import platform
+import os
+
 import functools
 import typing
 from typing import Optional
@@ -14,10 +17,32 @@ DEFAULT_PROJECT_NAME = "Global"
 DEFAULT_APP_NAME = "default"
 
 
+def get_service_default():
+    otel_service_name = os.getenv("OTEL_SERVICE_NAME")
+    if otel_service_name:
+        return otel_service_name
+    service = None
+    try:
+        service = platform.node()
+    except Exception:
+        pass
+    if not service:
+        service = "unknown_service"
+    return service
+
+
 class Config(pydantic_settings.BaseSettings):
     model_config = pydantic_settings.SettingsConfigDict(env_prefix="patronus_", yaml_file="patronus.yaml")
 
-    service: Optional[str] = pydantic.Field(default=None)
+    service: str = pydantic.Field(
+        default_factory=get_service_default,
+        description=(
+            "The name of the service or application component being configured. "
+            "Recommended to set the same value as `app` although not required."
+            "If not provided, the `OTEL_SERVICE_NAME` environment variable will be searched. "
+            "Fallbacks to `platform.node()`."
+        ),
+    )
 
     api_key: Optional[str] = pydantic.Field(default=None)
     api_url: str = pydantic.Field(default=DEFAULT_API_URL)

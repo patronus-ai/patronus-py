@@ -85,6 +85,9 @@ class Reporter:
         row: datasets.Row,
     ):
         async with self.lock:
+            print(f"{evaluator_id=}, {criteria=}")
+            print(f"{evaluation_result.__class__.__qualname__}")
+            print(f"appending result to reporter; {evaluation_result=}")
             self.results.append(
                 Result(
                     link_idx=link_idx,

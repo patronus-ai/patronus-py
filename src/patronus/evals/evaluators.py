@@ -100,7 +100,7 @@ class UniqueEvaluationDataSet:
             record = self._add_log(bound_arguments)
 
         body = record.arguments
-        if log_none_arguments is True:
+        if log_none_arguments is False:
             body = {k: v for k, v in record.arguments.items() if v is not None}
 
         logger.log(

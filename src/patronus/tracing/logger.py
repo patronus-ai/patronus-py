@@ -54,6 +54,7 @@ class LoggerProvider(OTELLoggerProvider):
 
     def __init__(
         self,
+        service: Optional[str] = None,
         project_name: Optional[str] = None,
         app: Optional[str] = None,
         experiment_id: Optional[str] = None,
@@ -69,10 +70,9 @@ class LoggerProvider(OTELLoggerProvider):
         self.experiment_id = experiment_id
         self.experiment_name = experiment_name
 
-        # service_name = format_service_name(self.project_name, self.app, self.experiment_id)
-        # TODO
-        # resource = Resource.create({"service.name": service_name})
         resource = None
+        if service is not None:
+            resource = Resource.create({"service.name": service})
         super().__init__(resource, shutdown_on_exit, multi_log_record_processor)
 
     def _get_logger_no_cache(

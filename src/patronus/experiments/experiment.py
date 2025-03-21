@@ -452,6 +452,7 @@ class Experiment:
         self._experiment_name = None
 
         ctx = build_context(
+            service=self._service or cfg.service,
             project_name=self.project.name,
             app=None,
             experiment_id=self.experiment.id,
@@ -567,6 +568,11 @@ class Experiment:
 
                         eval_results_map[adapter.canonical_name] = result
 
+                        if not isinstance(result, EvaluationResult):
+                            raise TypeError(
+                                f"evaluator {adapter} returned unexpected unexpected type {type(result)!r}. "
+                                f"Allowed types: {EvaluationResult.__name__!r}."
+                            )
                         await self.reporter.add_result(
                             link_idx,
                             task.__name__ if task else None,
