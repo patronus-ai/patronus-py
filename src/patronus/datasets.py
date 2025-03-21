@@ -10,11 +10,37 @@ import pandas as pd
 import typing_extensions as te
 
 
+class Attachment(typing.TypedDict, total=False):
+    """
+    Represent an attachment entry. Usually used in context of multimodal evaluation.
+    """
+
+    media_type: str
+    url: str
+
+
 class Fields(typing.TypedDict, total=False):
+    """
+    A TypedDict class representing fields for a structured data entity.
+
+    Attributes:
+        sid: An optional identifier for the system or session.
+        system_prompt: An optional string representing the system
+            prompt associated with the task.
+        task_context: Optional contextual
+            information for the task in the form of a string or a list of strings.
+        task_attachments: Optional list of attachments associated with the task.
+        task_input: An optional string representing the input data for the task. Usually a user input sent to an LLM.
+        task_output: An optional string representing the output result of the task. Usually a response from an LLM.
+        gold_answer: An optional string representing the correct or expected answer for evaluation purposes.
+        task_metadata: Optional dictionary containing metadata associated with the task.
+        tags: Optional dictionary holding additional key-value pair tags relevant to the task.
+    """
+
     sid: te.NotRequired[Optional[str]]
     system_prompt: te.NotRequired[Optional[str]]
     task_context: te.NotRequired[Union[str, list[str], None]]
-    task_attachments: te.NotRequired[Optional[list[typing.Any]]]
+    task_attachments: te.NotRequired[Optional[list[Attachment]]]
     task_input: te.NotRequired[Optional[str]]
     task_output: te.NotRequired[Optional[str]]
     gold_answer: te.NotRequired[Optional[str]]
@@ -101,6 +127,10 @@ class Row:
 
 @dataclasses.dataclass
 class Dataset:
+    """
+    Represents a dataset.
+    """
+
     dataset_id: Optional[str]
     df: pd.DataFrame
 
@@ -119,6 +149,20 @@ class Dataset:
         records: Union[typing.Iterable[Fields], typing.Iterable[dict[str, typing.Any]]],
         dataset_id: Optional[str] = None,
     ) -> te.Self:
+        """
+        Creates an instance of the class by processing and sanitizing provided records
+        and optionally associating them with a specific dataset ID.
+
+        Args:
+            records:
+                A collection of records to initialize the instance. Each record can either
+                be an instance of `Fields` or a dictionary containing corresponding data.
+            dataset_id:
+                An optional identifier for associating the data with a specific dataset.
+
+        Returns:
+            te.Self: A new instance of the class with the processed and sanitized data.
+        """
         df = pd.DataFrame.from_records(records)
         df = cls.__sanitize_df(df, dataset_id)
         return cls(df=df, dataset_id=dataset_id)
@@ -267,6 +311,38 @@ def read_csv(
     tags_field: str = "tags",
     **kwargs,
 ) -> Dataset:
+    """
+    Reads a CSV file and converts it into a Dataset object. The CSV file is transformed
+    into a structured dataset where each field maps to a specific aspect of the dataset
+    schema provided via function arguments. You may specify custom field mappings as per
+    your dataset structure, while additional keyword arguments are passed directly to the
+    underlying 'pd.read_csv' function.
+
+    Args:
+        filename_or_buffer: Path to the CSV file or a file-like object containing the
+            dataset to be read.
+        dataset_id: Optional identifier for the dataset being read. Default is None.
+        sid_field: Name of the column containing unique sample identifiers.
+        system_prompt_field: Name of the column representing the system prompts.
+        task_input_field: Name of the column containing the main input for the task.
+        task_context_field: Name of the column describing the broader task context.
+        task_attachments_field: Name of the column with supplementary attachments
+            related to the task.
+        task_output_field: Name of the column containing responses or outputs for the
+            task.
+        gold_answer_field: Name of the column detailing the expected or correct
+            answer to the task.
+        task_metadata_field: Name of the column storing metadata attributes
+            associated with the task.
+        tags_field: Name of the column containing tags or annotations related to each
+            sample.
+        **kwargs: Additional keyword arguments passed to 'pandas.read_csv' for fine-tuning
+            the CSV parsing behavior, such as delimiters, encoding, etc.
+
+    Returns:
+        Dataset: The parsed dataset object containing structured data from the input
+            CSV file.
+    """
     return _read_dataframe(
         pd.read_csv,
         filename_or_buffer,
@@ -299,6 +375,43 @@ def read_jsonl(
     tags_field: str = "tags",
     **kwargs,
 ) -> Dataset:
+    """
+    Reads a JSONL (JSON Lines) file and transforms it into a Dataset object. This function
+    parses the input data file or buffer in JSON Lines format into a structured format,
+    extracting specified fields and additional metadata for usage in downstream tasks. The
+    field mappings and additional keyword arguments can be customized to accommodate
+    application-specific requirements.
+
+    Args:
+        filename_or_buffer: The path to the file or a file-like object containing the JSONL
+            data to be read.
+        dataset_id: An optional identifier for the dataset being read. Defaults to None.
+        sid_field: The field name in the JSON lines representing the unique identifier for
+            a sample. Defaults to "sid".
+        system_prompt_field: The field name for the system prompt in the JSON lines file.
+            Defaults to "system_prompt".
+        task_input_field: The field name for the task input data in the JSON lines file.
+            Defaults to "task_input".
+        task_context_field: The field name for the task context data in the JSON lines file.
+            Defaults to "task_context".
+        task_attachments_field: The field name for any task attachments in the JSON lines
+            file. Defaults to "task_attachments".
+        task_output_field: The field name for task output data in the JSON lines file.
+            Defaults to "task_output".
+        gold_answer_field: The field name for the gold (ground truth) answer in the JSON
+            lines file. Defaults to "gold_answer".
+        task_metadata_field: The field name for metadata associated with the task in the
+            JSON lines file. Defaults to "task_metadata".
+        tags_field: The field name for tags in the parsed JSON lines file. Defaults to
+            "tags".
+        **kwargs: Additional keyword arguments to be passed to `pd.read_json` for
+            customization. The parameter "lines" will be forcibly set to True if not
+            provided.
+
+    Returns:
+        Dataset: A Dataset object containing the parsed and structured data.
+
+    """
     kwargs.setdefault("lines", True)
     return _read_dataframe(
         pd.read_json,
@@ -366,12 +479,22 @@ def _sanitize_dataset_id(dataset_id: str) -> Optional[str]:
 
 
 class DatasetLoader:
+    """
+    Encapsulates asynchronous loading of a dataset.
+
+    This class provides a mechanism to lazily load a dataset asynchronously only
+    once, using a provided dataset loader function.
+    """
+
     def __init__(self, loader: typing.Awaitable[Dataset]):
         self.__lock = asyncio.Lock()
         self.__loader = loader
         self.dataset: Optional[Dataset] = None
 
     async def load(self) -> Dataset:
+        """
+        Load dataset. Repeated calls will return already loaded dataset.
+        """
         async with self.__lock:
             if self.dataset is not None:
                 return self.dataset

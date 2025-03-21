@@ -133,21 +133,21 @@ def encode_attrs(v):
     return str(v)
 
 
-def cleanup_log(v: typing.Any):
+def transform_body(v: typing.Any):
     if v is None:
         return None
     if isinstance(v, MappingProxyType):
         v = dict(v)
     if isinstance(v, list):
-        return [cleanup_log(vv) for vv in v]
+        return [transform_body(vv) for vv in v]
     if isinstance(v, tuple):
-        return tuple(cleanup_log(vv) for vv in v)
+        return tuple(transform_body(vv) for vv in v)
     if isinstance(v, (str, bool, int, float)):
         return v
     if not isinstance(v, dict):
         return str(v)
 
-    return {str(k): cleanup_log(v) for k, v in v.items()}
+    return {str(k): transform_body(v) for k, v in v.items()}
 
 
 class Logger(OTELLogger):
@@ -190,10 +190,6 @@ class Logger(OTELLogger):
             log_attrs[Attributes.event_name.value] = event_name
         log_attrs.update(self.pat_scope.as_attributes)
 
-        print(f"before {body=}")
-        body = cleanup_log(body)
-        print(f"after {body=}")
-        # body = body
         record = LogRecord(
             timestamp=time_ns(),
             observed_timestamp=time_ns(),
@@ -202,7 +198,7 @@ class Logger(OTELLogger):
             trace_flags=span_context.trace_flags,
             severity_text=severity.name,
             severity_number=severity,
-            body=body,
+            body=transform_body(body),
             attributes=log_attrs,
             resource=self.resource,
         )

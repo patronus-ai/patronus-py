@@ -13,9 +13,9 @@ from opentelemetry.trace import get_current_span, SpanContext
 from typing import Any, Optional, Union
 
 from patronus import context
+from patronus.api import api_types
 from patronus.api.api_client import PatronusAPIClient
 from patronus.evals.context import get_context_evaluation_attributes
-from patronus.api import api_types
 from patronus.evals.types import EvaluationResult
 from patronus.exceptions import UninitializedError
 from patronus.retry import retry
@@ -25,7 +25,6 @@ from patronus.tracing.logger import Logger
 from patronus.utils import merge_tags
 
 log = logging.getLogger("patronus.core")
-
 
 LogID = uuid.UUID
 
@@ -296,36 +295,99 @@ def _as_applied_argument(signature: inspect.Signature, bound_arguments: inspect.
 def evaluator(
     _fn: Optional[typing.Callable[..., typing.Any]] = None,
     *,
-    # Name for the evaluator. Defaults to function name (or class name in case of class based evaluators).
     evaluator_id: Union[str, typing.Callable[[], str], None] = None,
-    # Name of the criteria used by the evaluator.
-    # The use of the criteria is only recommended in more complex evaluator setups
-    # where evaluation algorithm changes depending on a criteria (think strategy pattern).
     criteria: Union[str, typing.Callable[[], str], None] = None,
-    # Name for the evaluation metric. Defaults to evaluator_id value.
     metric_name: Optional[str] = None,
-    # The description of the metric used for evaluation.
-    # If not provided then the docstring of the wrapped function is used for this value.
     metric_description: Optional[str] = None,
-    # Whether the wrapped function is a method.
-    # This value is used to determine whether to remove "self" argument from the log.
-    # It also allows for dynamic evaluator_id and criteria discovery
-    # based on `get_evaluator_id()` and `get_criteria_id()` methods.
-    # User-code usually shouldn't use it as long as user defined class-based evaluators inherit from
-    # the library provided Evaluator base classes.
     is_method: bool = False,
-    # Name of the span to represent this evaluation in the tracing system.
-    # Defaults to None, in which case a default name is generated based on the evaluator.
     span_name: Optional[str] = None,
-    # Controls whether arguments with None values are included in log output.
-    # This setting affects only logging behavior and has no impact on function execution.
-    # Note: Only applies to top-level arguments. For nested structures like dictionaries,
-    # None values will always be logged regardless of this setting.
     log_none_arguments: bool = False,
     **kwargs,
 ):
     """
-    Mark function as an evaluator.
+    Decorator for creating functional-style evaluators that log execution and results.
+
+    This decorator works with both synchronous and asynchronous functions. The decorator doesn't
+    modify the function's return value, but records it after converting to an EvaluationResult.
+
+    Evaluators can return different types which are automatically converted to `EvaluationResult` objects:
+
+    * `bool`: `True`/`False` indicating pass/fail.
+    * `float`/`int`: Numerical scores (typically between 0-1).
+    * `str`: Text output categorizing the result.
+    * [EvaluationResult][patronus.evals.types.EvaluationResult]: Complete evaluation with scores, explanations, etc.
+    * `None`: Indicates evaluation was skipped and no result will be recorded.
+
+    Evaluation results are exported in the background without blocking execution. The SDK must be
+    initialized with `patronus.init()` for evaluations to be recorded, though decorated functions
+    will still execute even without initialization.
+
+    The evaluator integrates with a context-based system to identify and handle shared evaluation
+    logging and tracing spans.
+
+    **Example:**
+
+    ```python
+    from patronus import init, evaluator
+    from patronus.evals import EvaluationResult
+
+    # Initialize the SDK to record evaluations
+    init()
+
+    # Simple evaluator function
+    @evaluator()
+    def exact_match(actual: str, expected: str) -> bool:
+        return actual.strip() == expected.strip()
+
+    # More complex evaluator with detailed result
+    @evaluator()
+    def semantic_match(actual: str, expected: str) -> EvaluationResult:
+        similarity = calculate_similarity(actual, expected)  # Your similarity function
+        return EvaluationResult(
+            score=similarity,
+            pass_=similarity > 0.8,
+            text_output="High similarity" if similarity > 0.8 else "Low similarity",
+            explanation=f"Calculated similarity: {similarity}"
+        )
+
+    # Use the evaluators
+    result = exact_match("Hello world", "Hello world")
+    print(f"Match: {result}")  # Output: Match: True
+    ```
+
+    Args:
+        _fn: The function to be decorated.
+        evaluator_id: Name for the evaluator.
+            Defaults to function name (or class name in case of class based evaluators).
+        criteria: Name of the criteria used by the evaluator.
+            The use of the criteria is only recommended in more complex evaluator setups
+            where evaluation algorithm changes depending on a criteria (think strategy pattern).
+        metric_name: Name for the evaluation metric. Defaults to evaluator_id value.
+        metric_description: The description of the metric used for evaluation.
+            If not provided then the docstring of the wrapped function is used for this value.
+        is_method: Whether the wrapped function is a method.
+            This value is used to determine whether to remove "self" argument from the log.
+            It also allows for dynamic evaluator_id and criteria discovery
+            based on `get_evaluator_id()` and `get_criteria_id()` methods.
+            User-code usually shouldn't use it as long as user defined class-based evaluators inherit from
+            the library provided Evaluator base classes.
+        span_name: Name of the span to represent this evaluation in the tracing system.
+            Defaults to None, in which case a default name is generated based on the evaluator.
+        log_none_arguments: Controls whether arguments with None values are included in log output.
+            This setting affects only logging behavior and has no impact on function execution.
+            Note: Only applies to top-level arguments. For nested structures like dictionaries,
+            None values will always be logged regardless of this setting.
+        **kwargs: Additional keyword arguments that may be passed to the decorator or its internal methods.
+
+    Returns:
+        Callable: Returns the decorated function with additional evaluation behavior, suitable for
+            synchronous or asynchronous usage.
+
+    Note:
+        For evaluations that need to be compatible with experiments, consider using
+        [StructuredEvaluator][patronus.evals.evaluators.StructuredEvaluator] or
+        [AsyncStructuredEvaluator][patronus.evals.evaluators.AsyncStructuredEvaluator] classes instead.
+
     """
     if _fn is not None:
         return evaluator()(_fn)
@@ -334,7 +396,7 @@ def evaluator(
         fn_sign = inspect.signature(fn)
 
         def _get_eval_id():
-            return (callable(evaluator_id) and evaluator_id()) or evaluator_id or fn.__qualname__
+            return (callable(evaluator_id) and evaluator_id()) or evaluator_id or fn.__name__
 
         def _get_criteria():
             return (callable(criteria) and criteria()) or criteria or None

@@ -73,8 +73,8 @@ def create_tracer_provider(
     The function utilizes an OpenTelemetry BatchSpanProcessor and an
     OTLPSpanExporter to initialize the tracer. The configuration is cached for reuse.
     """
-    service_name = format_service_name(scope.project_name, scope.app, scope.experiment_id)
-    resource = Resource.create({"service.name": service_name})
+    # service_name = format_service_name(scope.project_name, scope.app, scope.experiment_id)
+    # resource = Resource.create({"service.name": service_name})
     # service_name = format_service_name(scope.project_name, scope.app, scope.experiment_id)
     # TODO
     # resource = Resource.create({"service.name": service_name})

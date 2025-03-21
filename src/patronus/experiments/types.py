@@ -8,6 +8,19 @@ import pydantic
 
 
 class TaskResult(pydantic.BaseModel):
+    """
+    Represents the result of a task with optional output, metadata, and tags.
+
+    This class is used to encapsulate the result of a task, including optional
+    fields for the output of the task, metadata related to the task, and any
+    tags that can provide additional information or context about the task.
+
+    Attributes:
+        output: The output of the task, if any.
+        metadata: Additional information or metadata associated with the task.
+        tags: Key-value pairs used to tag and describe the task.
+    """
+
     output: Optional[str] = None
     metadata: Optional[dict[str, typing.Any]] = None
     tags: Optional[dict[str, str]] = None
