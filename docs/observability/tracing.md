@@ -46,7 +46,7 @@ def my_function():
     pass
 ```
 
-See the [API Reference](../api.md#traced) for complete details.
+See the [API Reference][patronus.tracing.decorators.traced] for complete details.
 
 ## Using the `start_span()` Context Manager
 
@@ -89,7 +89,7 @@ with start_span(
     span.set_attribute("dynamic_value", 42)
 ```
 
-See the [API Reference](../api.md#start_span) for complete details.
+See the [API Reference][patronus.tracing.decorators.start_span] for complete details.
 
 ## Custom Attributes
 
