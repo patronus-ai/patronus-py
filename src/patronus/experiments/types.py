@@ -30,6 +30,13 @@ MaybeEvaluationResult = typing.Union[EvaluationResult, api_types.EvaluationResul
 
 
 class EvalsMap(dict):
+    """
+    A specialized dictionary for storing evaluation results with flexible key handling.
+
+    This class extends dict to provide automatic key normalization for evaluation results,
+    allowing lookup by evaluator objects, strings, or any object with a canonical_name attribute.
+    """
+
     def __contains__(self, item) -> bool:
         item = self._key(item)
         return super().__contains__(item)
@@ -52,6 +59,15 @@ class EvalsMap(dict):
 
 
 class _EvalParent(pydantic.BaseModel):
+    """
+    Represents a node in the evaluation parent-child hierarchy, tracking task results and evaluations.
+
+    Args:
+        task: The task result associated with this evaluation node
+        evals: A mapping of evaluator IDs to their evaluation results
+        parent: Optional reference to a parent evaluation node, forming a linked list
+    """
+
     model_config = pydantic.ConfigDict(arbitrary_types_allowed=True)
 
     task: Optional[TaskResult]
@@ -59,6 +75,15 @@ class _EvalParent(pydantic.BaseModel):
     parent: typing.Optional["_EvalParent"]
 
     def find_eval_result(self, evaluator_or_name) -> typing.Union[api_types.EvaluationResult, EvaluationResult, None]:
+        """
+        Recursively searches for an evaluation result by evaluator ID or name.
+
+        Args:
+            evaluator_or_name: The evaluator ID, name, or object to search for
+
+        Returns:
+            The matching evaluation result, or None if not found
+        """
         if not self.evals and self.parent:
             return self.parent.find_eval_result(evaluator_or_name)
         if evaluator_or_name in self.evals:
@@ -68,4 +93,9 @@ class _EvalParent(pydantic.BaseModel):
 
 _EvalParent.model_rebuild()
 
+
 EvalParent = typing.Optional[_EvalParent]
+"""
+Type alias representing an optional reference to an evaluation parent,
+used to track the hierarchy of evaluations and their results
+"""

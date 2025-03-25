@@ -50,6 +50,14 @@ class Fields(typing.TypedDict, total=False):
 
 @dataclasses.dataclass
 class Row:
+    """
+    Represents a data row encapsulating access to properties in a pandas Series.
+
+    Provides attribute-based access to underlying pandas Series data with properties
+    that ensure compatibility with structured evaluators through consistent field naming
+    and type handling.
+    """
+
     _row: pd.Series
 
     def __getattr__(self, name: str):

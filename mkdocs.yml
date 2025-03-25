@@ -46,9 +46,13 @@ nav:
       - Evaluators: evaluations/evaluators.md
       - Patronus Evaluators: evaluations/patronus-evaluators.md
       - Batching Evaluations: evaluations/batching.md
-#  - Experiments:
-#      - Running: ...
-#      - Datasets: experiments/datasets.md
+  - Experiments:
+      - Introduction: experiments/introduction.md
+      - Running Experiments: experiments/running.md
+      - Working with Datasets: experiments/datasets.md
+      - Creating Tasks: experiments/tasks.md
+      - Using Evaluators: experiments/evaluators.md
+      - Advanced Features: experiments/advanced.md
   - Configuration: configuration.md
   - API Reference:
       - tracing: api_ref/tracing.md

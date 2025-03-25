@@ -28,6 +28,12 @@ def init(
     It must be called before using evaluators or experiments to ensure proper recording
     of results and metrics.
 
+    Note:
+        `init()` should not be used for running experiments.
+        Experiments have its own initialization process.
+        You can configure them by passing configuration options to [run_experiment](patronus.experiments.experiment.run_experiment)
+        or using configuration file.
+
     Args:
         project_name: Name of the project for organizing evaluations and experiments.
             Falls back to configuration file, then defaults to "Global" if not provided.
