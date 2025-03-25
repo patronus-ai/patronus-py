@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://docs.patronus.ai/patronus-py/getting-started/installation/">
+        <link rel="canonical" href="https://docs.patronus.ai/patronus-py/experiments/introduction/">
       
       
-        <link rel="prev" href="../..">
+        <link rel="prev" href="../../evaluations/batching/">
       
       
-        <link rel="next" href="../initialization/">
+        <link rel="next" href="../running/">
       
       
       <link rel="icon" href="../../assets/favicon-32x32.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>Installation - PatronusAI Python SDK</title>
+        <title>Introduction - PatronusAI Python SDK</title>
       
     
     
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#installation" class="md-skip">
+        <a href="#introduction-to-experiments" class="md-skip">
           Skip to content
         </a>
       
@@ -113,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Installation
+              Introduction
             
           </span>
         </div>
@@ -273,19 +273,17 @@
       
   
   
-    
   
   
-  
     
     
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
@@ -300,7 +298,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Getting Started
@@ -311,31 +309,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  <span class="md-ellipsis">
-    Installation
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../getting-started/installation/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -345,68 +322,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#requirements" class="md-nav__link">
-    <span class="md-ellipsis">
-      Requirements
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#installation-methods" class="md-nav__link">
-    <span class="md-ellipsis">
-      Installation Methods
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Installation Methods">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#using-pip" class="md-nav__link">
-    <span class="md-ellipsis">
-      Using pip
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#next-steps" class="md-nav__link">
-    <span class="md-ellipsis">
-      Next steps:
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -419,7 +334,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../initialization/" class="md-nav__link">
+      <a href="../../getting-started/initialization/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -441,7 +356,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../quickstart/" class="md-nav__link">
+      <a href="../../getting-started/quickstart/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -663,17 +578,19 @@
       
   
   
+    
   
   
+  
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
           <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
@@ -688,7 +605,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             Experiments
@@ -699,10 +616,31 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../experiments/introduction/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Introduction
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -712,6 +650,104 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-are-experiments" class="md-nav__link">
+    <span class="md-ellipsis">
+      What are Experiments?
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#key-concepts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Concepts
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Key Concepts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dataset" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dataset
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#task" class="md-nav__link">
+    <span class="md-ellipsis">
+      Task
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evaluators" class="md-nav__link">
+    <span class="md-ellipsis">
+      Evaluators
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chains" class="md-nav__link">
+    <span class="md-ellipsis">
+      Chains
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-use-the-experimentation-framework" class="md-nav__link">
+    <span class="md-ellipsis">
+      Why Use the Experimentation Framework?
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-basic-experiment" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example: Basic Experiment
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -724,7 +760,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../experiments/running/" class="md-nav__link">
+      <a href="../running/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -746,7 +782,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../experiments/datasets/" class="md-nav__link">
+      <a href="../datasets/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -768,7 +804,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../experiments/tasks/" class="md-nav__link">
+      <a href="../tasks/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -790,7 +826,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../experiments/evaluators/" class="md-nav__link">
+      <a href="../evaluators/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -812,7 +848,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../experiments/advanced/" class="md-nav__link">
+      <a href="../advanced/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1057,28 +1093,55 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#requirements" class="md-nav__link">
+  <a href="#what-are-experiments" class="md-nav__link">
     <span class="md-ellipsis">
-      Requirements
+      What are Experiments?
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#installation-methods" class="md-nav__link">
+  <a href="#key-concepts" class="md-nav__link">
     <span class="md-ellipsis">
-      Installation Methods
+      Key Concepts
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Installation Methods">
+    <nav class="md-nav" aria-label="Key Concepts">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#using-pip" class="md-nav__link">
+  <a href="#dataset" class="md-nav__link">
     <span class="md-ellipsis">
-      Using pip
+      Dataset
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#task" class="md-nav__link">
+    <span class="md-ellipsis">
+      Task
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#evaluators" class="md-nav__link">
+    <span class="md-ellipsis">
+      Evaluators
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chains" class="md-nav__link">
+    <span class="md-ellipsis">
+      Chains
     </span>
   </a>
   
@@ -1090,9 +1153,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#next-steps" class="md-nav__link">
+  <a href="#why-use-the-experimentation-framework" class="md-nav__link">
     <span class="md-ellipsis">
-      Next steps:
+      Why Use the Experimentation Framework?
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-basic-experiment" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example: Basic Experiment
     </span>
   </a>
   
@@ -1117,27 +1189,114 @@
   
 
 
-<h1 id="installation">Installation</h1>
-<p>The Patronus SDK provides tools for evaluating, monitoring, and improving LLM applications.
-This guide will help you install and set up the SDK in your environment.</p>
-<h2 id="requirements">Requirements</h2>
+<h1 id="introduction-to-experiments">Introduction to Experiments</h1>
+<p>The Patronus Experimentation Framework provides a systematic way to evaluate, compare, and improve Large Language Model (LLM) applications.
+By standardizing the evaluation process, the framework enables consistent testing across model versions, prompting strategies, and data inputs.</p>
+<h2 id="what-are-experiments">What are Experiments?</h2>
+<p>In Patronus, an experiment is a structured evaluation that:</p>
+<ol>
+<li>Processes a <strong>dataset</strong> of examples</li>
+<li>Runs each example through a <strong>task</strong> function (optional)</li>
+<li>Evaluates the output using one or more <strong>evaluators</strong></li>
+<li>Records and analyzes the results</li>
+</ol>
+<p>This approach provides a comprehensive view of how your LLM application performs across different inputs,
+making it easier to identify strengths, weaknesses, and areas for improvement.</p>
+<h2 id="key-concepts">Key Concepts</h2>
+<h3 id="dataset">Dataset</h3>
+<p>A dataset in Patronus consists of examples that your models or systems will process.
+Each example, represented as a <code>Row</code> object, can contain:</p>
 <ul>
-<li>Python 3.8 or higher</li>
-<li>pip (Python package installer)</li>
+<li>Input data</li>
+<li>Context information</li>
+<li>Expected outputs (gold answers)</li>
+<li>Metadata</li>
+<li>And more...</li>
 </ul>
-<h2 id="installation-methods">Installation Methods</h2>
-<h3 id="using-pip">Using pip</h3>
-<p>The recommended way to install the Patronus SDK is via pip:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>patronus
-</span></code></pre></div>
-<p>For a specific version:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>pip<span class="w"> </span>install<span class="w"> </span><span class="nv">patronus</span><span class="o">==</span><span class="m">0</span>.1.0
-</span></code></pre></div>
-<h2 id="next-steps">Next steps:</h2>
+<p>Datasets can be loaded from various sources including JSON files, CSV files, Pandas DataFrames, or defined directly in your code.</p>
+<h3 id="task">Task</h3>
+<p>A task is a function that processes each dataset example. Tasks typically:</p>
 <ul>
-<li><a href="../initialization/">Initialization</a></li>
-<li><a href="../quickstart/">Quickstart</a></li>
+<li>Receive a <code>Row</code> object from the dataset</li>
+<li>Perform some processing (like calling an LLM)</li>
+<li>Return a <code>TaskResult</code> containing the output</li>
 </ul>
+<p>Tasks are optional - you can evaluate pre-existing outputs by including them directly in your dataset.</p>
+<h3 id="evaluators">Evaluators</h3>
+<p>Evaluators assess the quality of task outputs based on specific criteria. Patronus supports various types of evaluators:</p>
+<ul>
+<li><strong>Remote Evaluators</strong>: Use Patronus's managed evaluation services</li>
+<li><strong>Custom Evaluators</strong>: Your own evaluation logic.<ul>
+<li><strong>Function-based</strong>: Simple functions decorated with @evaluator() that need to be wrapped with FuncEvaluatorAdapter when used in experiments.</li>
+<li><strong>Class-based</strong>: More powerful evaluators created by extending <code>StructuredEvaluator</code> (synchronous) or <code>AsyncStructuredEvaluator</code> (asynchronous) base classes with predefined interfaces.</li>
+</ul>
+</li>
+</ul>
+<p>Each evaluator produces an <code>EvaluationResult</code> containing scores, pass/fail status, explanations, and other metadata.</p>
+<h3 id="chains">Chains</h3>
+<p>For more complex workflows, Patronus supports multi-stage evaluation chains where the output of one evaluation stage becomes the input for the next.
+This allows for pipeline-based approaches to LLM evaluation.</p>
+<h2 id="why-use-the-experimentation-framework">Why Use the Experimentation Framework?</h2>
+<p>The Patronus Experimentation Framework offers several advantages over ad-hoc evaluation approaches:</p>
+<ul>
+<li><strong>Consistency</strong>: Standardized evaluation across models and time</li>
+<li><strong>Reproducibility</strong>: Experiments can be re-run with the same configuration</li>
+<li><strong>Scalability</strong>: Process large datasets efficiently with concurrent execution</li>
+<li><strong>Comprehensive Analysis</strong>: Collect detailed metrics and explanations</li>
+<li><strong>Integration</strong>: Built-in tracing and logging with the broader Patronus ecosystem</li>
+</ul>
+<h2 id="example-basic-experiment">Example: Basic Experiment</h2>
+<p>Here's a simple example of a Patronus experiment:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># experiment.py</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">patronus.evals</span><span class="w"> </span><span class="kn">import</span> <span class="n">RemoteEvaluator</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">patronus.experiments</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_experiment</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1"># Define a simple task function</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="k">def</span><span class="w"> </span><span class="nf">my_task</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;The answer is: </span><span class="si">{</span><span class="n">row</span><span class="o">.</span><span class="n">task_input</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="c1"># Run the experiment</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="n">experiment</span> <span class="o">=</span> <span class="n">run_experiment</span><span class="p">(</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">dataset</span><span class="o">=</span><span class="p">[</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>        <span class="p">{</span><span class="s2">&quot;task_input&quot;</span><span class="p">:</span> <span class="s2">&quot;What is 2+2?&quot;</span><span class="p">,</span> <span class="s2">&quot;gold_answer&quot;</span><span class="p">:</span> <span class="s2">&quot;4&quot;</span><span class="p">},</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>        <span class="p">{</span><span class="s2">&quot;task_input&quot;</span><span class="p">:</span> <span class="s2">&quot;Who wrote Hamlet?&quot;</span><span class="p">,</span> <span class="s2">&quot;gold_answer&quot;</span><span class="p">:</span> <span class="s2">&quot;Shakespeare&quot;</span><span class="p">}</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>    <span class="p">],</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>    <span class="n">task</span><span class="o">=</span><span class="n">my_task</span><span class="p">,</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>    <span class="n">evaluators</span><span class="o">=</span><span class="p">[</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>        <span class="n">RemoteEvaluator</span><span class="p">(</span><span class="s2">&quot;judge&quot;</span><span class="p">,</span> <span class="s2">&quot;patronus:fuzzy-match&quot;</span><span class="p">)</span>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>    <span class="p">]</span>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="p">)</span>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="n">experiment</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;./experiment-result.csv&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+<p>You can run the experiment by simply executing the python file:</p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>python<span class="w"> </span>./exeriment.py
+</span></code></pre></div>
+<p>The output of the script should look similar to this:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>==================================
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Experiment  Global/root-1742834029: 100%|██████████| 2/2 [00:04&lt;00:00,  2.44s/sample]
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>patronus:fuzzy-match (judge) [link_idx=0]
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>-----------------------------------------
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>Count     : 2
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>Pass rate : 0
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>Mean      : 0.0
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>Min       : 0.0
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>25%       : 0.0
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>50%       : 0.0
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>75%       : 0.0
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>Max       : 0.0
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>Score distribution
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>Score Range          Count      Histogram
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>0.00 - 0.20          2          ####################
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>0.20 - 0.40          0
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>0.40 - 0.60          0
+</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>0.60 - 0.80          0
+</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>0.80 - 1.00          0
+</span></code></pre></div>
+<p>In the following sections, we'll explore how to set up, run, and analyze experiments in detail.</p>
 
 
 

@@ -2,70 +2,90 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://docs.patronus.ai/patronus-py/</loc>
-         <lastmod>2025-03-21</lastmod>
+         <lastmod>2025-03-25</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/configuration/</loc>
-         <lastmod>2025-03-21</lastmod>
+         <lastmod>2025-03-25</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/api_ref/api_client/</loc>
-         <lastmod>2025-03-21</lastmod>
+         <lastmod>2025-03-25</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/api_ref/datasets/</loc>
-         <lastmod>2025-03-21</lastmod>
+         <lastmod>2025-03-25</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/api_ref/evals/</loc>
-         <lastmod>2025-03-21</lastmod>
+         <lastmod>2025-03-25</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/api_ref/experiments/</loc>
-         <lastmod>2025-03-21</lastmod>
+         <lastmod>2025-03-25</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/api_ref/pat_client/</loc>
-         <lastmod>2025-03-21</lastmod>
+         <lastmod>2025-03-25</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/api_ref/tracing/</loc>
-         <lastmod>2025-03-21</lastmod>
+         <lastmod>2025-03-25</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/evaluations/batching/</loc>
-         <lastmod>2025-03-21</lastmod>
+         <lastmod>2025-03-25</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/evaluations/evaluators/</loc>
-         <lastmod>2025-03-21</lastmod>
+         <lastmod>2025-03-25</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/evaluations/patronus-evaluators/</loc>
-         <lastmod>2025-03-21</lastmod>
+         <lastmod>2025-03-25</lastmod>
+    </url>
+    <url>
+         <loc>https://docs.patronus.ai/patronus-py/experiments/advanced/</loc>
+         <lastmod>2025-03-25</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/experiments/datasets/</loc>
-         <lastmod>2025-03-21</lastmod>
+         <lastmod>2025-03-25</lastmod>
+    </url>
+    <url>
+         <loc>https://docs.patronus.ai/patronus-py/experiments/evaluators/</loc>
+         <lastmod>2025-03-25</lastmod>
+    </url>
+    <url>
+         <loc>https://docs.patronus.ai/patronus-py/experiments/introduction/</loc>
+         <lastmod>2025-03-25</lastmod>
+    </url>
+    <url>
+         <loc>https://docs.patronus.ai/patronus-py/experiments/running/</loc>
+         <lastmod>2025-03-25</lastmod>
+    </url>
+    <url>
+         <loc>https://docs.patronus.ai/patronus-py/experiments/tasks/</loc>
+         <lastmod>2025-03-25</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/getting-started/initialization/</loc>
-         <lastmod>2025-03-21</lastmod>
+         <lastmod>2025-03-25</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/getting-started/installation/</loc>
-         <lastmod>2025-03-21</lastmod>
+         <lastmod>2025-03-25</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/getting-started/quickstart/</loc>
-         <lastmod>2025-03-21</lastmod>
+         <lastmod>2025-03-25</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/observability/logging/</loc>
-         <lastmod>2025-03-21</lastmod>
+         <lastmod>2025-03-25</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/observability/tracing/</loc>
-         <lastmod>2025-03-21</lastmod>
+         <lastmod>2025-03-25</lastmod>
     </url>
 </urlset>

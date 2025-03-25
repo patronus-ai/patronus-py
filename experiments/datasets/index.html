@@ -11,6 +11,10 @@
         <link rel="canonical" href="https://docs.patronus.ai/patronus-py/experiments/datasets/">
       
       
+        <link rel="prev" href="../running/">
+      
+      
+        <link rel="next" href="../tasks/">
       
       
       <link rel="icon" href="../../assets/favicon-32x32.png">
@@ -18,7 +22,7 @@
     
     
       
-        <title>Datasets - PatronusAI Python SDK</title>
+        <title>Working with Datasets - PatronusAI Python SDK</title>
       
     
     
@@ -73,6 +77,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#working-with-datasets" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -104,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Datasets
+              Working with Datasets
             
           </span>
         </div>
@@ -569,6 +578,311 @@
       
   
   
+    
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Experiments
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Experiments
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../introduction/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Introduction
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../running/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Running Experiments
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Working with Datasets
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Working with Datasets
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#dataset-structure-and-evaluator-compatibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dataset Structure and Evaluator Compatibility
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-datasets" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating Datasets
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Creating Datasets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#list-of-dictionaries" class="md-nav__link">
+    <span class="md-ellipsis">
+      List of Dictionaries
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pandas-dataframe" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pandas DataFrame
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#csv-or-jsonl-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      CSV or JSONL Files
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#accessing-dataset-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      Accessing Dataset Fields
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-custom-dataset-schemas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using Custom Dataset Schemas
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dataset-ids-and-sample-ids" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dataset IDs and Sample IDs
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      Best Practices
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tasks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Creating Tasks
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../evaluators/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Using Evaluators
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../advanced/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Advanced Features
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
   
   
     <li class="md-nav__item">
@@ -600,10 +914,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
         
           
-          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -615,8 +929,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_6">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
             API Reference
           </label>
@@ -778,6 +1092,103 @@
   
   
   
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#dataset-structure-and-evaluator-compatibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dataset Structure and Evaluator Compatibility
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-datasets" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating Datasets
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Creating Datasets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#list-of-dictionaries" class="md-nav__link">
+    <span class="md-ellipsis">
+      List of Dictionaries
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pandas-dataframe" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pandas DataFrame
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#csv-or-jsonl-files" class="md-nav__link">
+    <span class="md-ellipsis">
+      CSV or JSONL Files
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#accessing-dataset-fields" class="md-nav__link">
+    <span class="md-ellipsis">
+      Accessing Dataset Fields
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#using-custom-dataset-schemas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using Custom Dataset Schemas
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dataset-ids-and-sample-ids" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dataset IDs and Sample IDs
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      Best Practices
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -796,9 +1207,164 @@
   
 
 
-  <h1>Datasets</h1>
-
-
+<h1 id="working-with-datasets">Working with Datasets</h1>
+<p>Datasets provide the foundation for Patronus experiments, containing the examples that your tasks and evaluators will process.
+This page explains how to create, load, and work with datasets effectively.</p>
+<h2 id="dataset-structure-and-evaluator-compatibility">Dataset Structure and Evaluator Compatibility</h2>
+<p>Patronus experiments are designed to work with <code>StructuredEvaluator</code> classes, which expect specific input parameters.
+The standard dataset fields map directly to these parameters, making integration seamless:</p>
+<ul>
+<li><code>system_prompt</code>: System instruction for LLM-based tasks</li>
+<li><code>task_context</code>: Additional information or context (string or list of strings)</li>
+<li><code>task_metadata</code>: Additional structured information about the task</li>
+<li><code>task_attachments</code>: Files or other binary data</li>
+<li><code>task_input</code>: The primary input query or text</li>
+<li><code>task_output</code>: The model's response or output to evaluate</li>
+<li><code>gold_answer</code>: The expected correct answer or reference output</li>
+<li><code>tags</code>: Key-value pairs</li>
+<li><code>sid</code>: A unique identifier for the example (automatically generated if not provided)</li>
+</ul>
+<p>While you can include any custom fields in your dataset,using these standard field names ensures compatibility withstructured evaluators without additional configuration.</p>
+<h2 id="creating-datasets">Creating Datasets</h2>
+<p>Patronus accepts datasets in several formats:</p>
+<h3 id="list-of-dictionaries">List of Dictionaries</h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">dataset</span> <span class="o">=</span> <span class="p">[</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="p">{</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>        <span class="s2">&quot;task_input&quot;</span><span class="p">:</span> <span class="s2">&quot;What is machine learning?&quot;</span><span class="p">,</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        <span class="s2">&quot;gold_answer&quot;</span><span class="p">:</span> <span class="s2">&quot;Machine learning is a subfield of artificial intelligence...&quot;</span><span class="p">,</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>        <span class="s2">&quot;tags&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;category&quot;</span><span class="p">:</span> <span class="s2">&quot;ai&quot;</span><span class="p">,</span> <span class="s2">&quot;difficulty&quot;</span><span class="p">:</span> <span class="s2">&quot;beginner&quot;</span><span class="p">},</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>        <span class="s2">&quot;difficulty&quot;</span><span class="p">:</span> <span class="s2">&quot;beginner&quot;</span>  <span class="c1"># Custom field</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="p">},</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="p">{</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>        <span class="s2">&quot;task_input&quot;</span><span class="p">:</span> <span class="s2">&quot;Explain quantum computing&quot;</span><span class="p">,</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>        <span class="s2">&quot;gold_answer&quot;</span><span class="p">:</span> <span class="s2">&quot;Quantum computing uses quantum phenomena...&quot;</span><span class="p">,</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>        <span class="s2">&quot;tags&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;category&quot;</span><span class="p">:</span> <span class="s2">&quot;physics&quot;</span><span class="p">,</span> <span class="s2">&quot;difficulty&quot;</span><span class="p">:</span> <span class="s2">&quot;advanced&quot;</span><span class="p">},</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>        <span class="s2">&quot;difficulty&quot;</span><span class="p">:</span> <span class="s2">&quot;advanced&quot;</span>  <span class="c1"># Custom field</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="p">}</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="p">]</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="n">experiment</span> <span class="o">=</span> <span class="n">run_experiment</span><span class="p">(</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>    <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>    <span class="n">task</span><span class="o">=</span><span class="n">my_task</span><span class="p">,</span>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>    <span class="n">evaluators</span><span class="o">=</span><span class="p">[</span><span class="n">my_evaluator</span><span class="p">]</span>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="pandas-dataframe">Pandas DataFrame</h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="s2">&quot;task_input&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;What is Python?&quot;</span><span class="p">,</span> <span class="s2">&quot;What is JavaScript?&quot;</span><span class="p">],</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="s2">&quot;gold_answer&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Python is a programming language...&quot;</span><span class="p">,</span> <span class="s2">&quot;JavaScript is a programming language...&quot;</span><span class="p">],</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="s2">&quot;tags&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;backend&quot;</span><span class="p">},</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;frontend&quot;</span><span class="p">}],</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="s2">&quot;language_type&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;backend&quot;</span><span class="p">,</span> <span class="s2">&quot;frontend&quot;</span><span class="p">]</span>  <span class="c1"># Custom field</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="p">})</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="n">experiment</span> <span class="o">=</span> <span class="n">run_experiment</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+</span></code></pre></div>
+<h3 id="csv-or-jsonl-files">CSV or JSONL Files</h3>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">patronus.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_csv</span><span class="p">,</span> <span class="n">read_jsonl</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="c1"># Load with default field mappings</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;questions.csv&quot;</span><span class="p">)</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="c1"># Load with custom field mappings</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">read_jsonl</span><span class="p">(</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="s2">&quot;custom.jsonl&quot;</span><span class="p">,</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="n">task_input_field</span><span class="o">=</span><span class="s2">&quot;question&quot;</span><span class="p">,</span>     <span class="c1"># Map &quot;question&quot; field to &quot;task_input&quot;</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    <span class="n">gold_answer_field</span><span class="o">=</span><span class="s2">&quot;answer&quot;</span><span class="p">,</span>      <span class="c1"># Map &quot;answer&quot; field to &quot;gold_answer&quot;</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    <span class="n">system_prompt_field</span><span class="o">=</span><span class="s2">&quot;instruction&quot;</span><span class="p">,</span> <span class="c1"># Map &quot;instruction&quot; field to &quot;system_prompt&quot;</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>    <span class="n">tags_field</span><span class="o">=</span><span class="s2">&quot;metadata&quot;</span>            <span class="c1"># Map &quot;metadata&quot; field to &quot;tags&quot;</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="p">)</span>
+</span></code></pre></div>
+<h2 id="accessing-dataset-fields">Accessing Dataset Fields</h2>
+<p>During experiment execution, dataset examples are provided as <code>Row</code> objects:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">my_task</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="c1"># Access standard fields</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="n">question</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">task_input</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">reference</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">gold_answer</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">context</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">task_context</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>    <span class="c1"># Access tags</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    <span class="k">if</span> <span class="n">row</span><span class="o">.</span><span class="n">tags</span><span class="p">:</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>        <span class="n">category</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">tags</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;category&quot;</span><span class="p">)</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>    <span class="c1"># Access custom fields directly</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>    <span class="n">difficulty</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">difficulty</span>  <span class="c1"># Access custom field by name</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a>    <span class="c1"># Access row ID</span>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>    <span class="n">sample_id</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">sid</span>
+</span><span id="__span-3-16"><a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>
+</span><span id="__span-3-17"><a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a>    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Answering </span><span class="si">{</span><span class="n">difficulty</span><span class="si">}</span><span class="s2"> question (ID: </span><span class="si">{</span><span class="n">sample_id</span><span class="si">}</span><span class="s2">): </span><span class="si">{</span><span class="n">question</span><span class="si">}</span><span class="s2">&quot;</span>
+</span></code></pre></div>
+<p>The <code>Row</code> object automatically provides attributes for all fields in your dataset, making access straightforward for both standard and custom fields.</p>
+<h2 id="using-custom-dataset-schemas">Using Custom Dataset Schemas</h2>
+<p>If your dataset uses a different schema than the standard field names, you have two options:</p>
+<ol>
+<li>
+<p><strong>Map fields during loading</strong>: Use field mapping parameters when loading data
+   <div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">patronus.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_csv</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;data.csv&quot;</span><span class="p">,</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>                  <span class="n">task_input_field</span><span class="o">=</span><span class="s2">&quot;question&quot;</span><span class="p">,</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>                  <span class="n">gold_answer_field</span><span class="o">=</span><span class="s2">&quot;answer&quot;</span><span class="p">,</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>                  <span class="n">tags_field</span><span class="o">=</span><span class="s2">&quot;metadata&quot;</span><span class="p">)</span>
+</span></code></pre></div></p>
+</li>
+<li>
+<p><strong>Use evaluator adapters</strong>: Create adapters that transform your data structure to match what evaluators expect</p>
+</li>
+</ol>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">patronus</span><span class="w"> </span><span class="kn">import</span> <span class="n">evaluator</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">patronus.experiments</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_experiment</span><span class="p">,</span> <span class="n">FuncEvaluatorAdapter</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="nd">@evaluator</span><span class="p">()</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="k">def</span><span class="w"> </span><span class="nf">my_evaluator_function</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">expected</span><span class="p">,</span> <span class="n">actual</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>    <span class="o">...</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="k">class</span><span class="w"> </span><span class="nc">CustomAdapter</span><span class="p">(</span><span class="n">FuncEvaluatorAdapter</span><span class="p">):</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">task_result</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>        <span class="c1"># Transform dataset fields to evaluator parameters.</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>        <span class="c1"># The first value is list of positional arguments (*args) passed to the evaluator function.</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>        <span class="c1"># The second value is named arguments (**kwargs) passed to the evaluator function.</span>
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>        <span class="k">return</span> <span class="p">[],</span> <span class="p">{</span>
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>            <span class="s2">&quot;expected&quot;</span><span class="p">:</span> <span class="n">row</span><span class="o">.</span><span class="n">reference_answer</span><span class="p">,</span>  <span class="c1"># Map custom field to expected parameter</span>
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>            <span class="s2">&quot;actual&quot;</span><span class="p">:</span> <span class="n">task_result</span><span class="o">.</span><span class="n">output</span> <span class="k">if</span> <span class="n">task_result</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>            <span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="n">row</span><span class="o">.</span><span class="n">additional_info</span>    <span class="c1"># Map custom field to context parameter</span>
+</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a>        <span class="p">}</span>
+</span><span id="__span-5-18"><a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a>
+</span><span id="__span-5-19"><a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a><span class="n">experiment</span> <span class="o">=</span> <span class="n">run_experiment</span><span class="p">(</span>
+</span><span id="__span-5-20"><a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a>    <span class="n">dataset</span><span class="o">=</span><span class="n">custom_dataset</span><span class="p">,</span>
+</span><span id="__span-5-21"><a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a>    <span class="n">evaluators</span><span class="o">=</span><span class="p">[</span><span class="n">CustomAdapter</span><span class="p">(</span><span class="n">my_evaluator_function</span><span class="p">)]</span>
+</span><span id="__span-5-22"><a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a><span class="p">)</span>
+</span></code></pre></div>
+<p>This adapter approach is particularly important for function-based evaluators, which need to be explicitly adapted for use in experiments.</p>
+<h2 id="dataset-ids-and-sample-ids">Dataset IDs and Sample IDs</h2>
+<p>Each dataset and row can have identifiers that are used for organization and tracing:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">patronus.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1"># Dataset with explicit ID</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">from_records</span><span class="p">(</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>    <span class="n">records</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">],</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>    <span class="n">dataset_id</span><span class="o">=</span><span class="s2">&quot;qa-dataset-v1&quot;</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="p">)</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="c1"># Dataset with explicit sample IDs</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">from_records</span><span class="p">([</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>    <span class="p">{</span><span class="s2">&quot;sid&quot;</span><span class="p">:</span> <span class="s2">&quot;q1&quot;</span><span class="p">,</span> <span class="s2">&quot;task_input&quot;</span><span class="p">:</span> <span class="s2">&quot;Question 1&quot;</span><span class="p">,</span> <span class="s2">&quot;gold_answer&quot;</span><span class="p">:</span> <span class="s2">&quot;Answer 1&quot;</span><span class="p">},</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>    <span class="p">{</span><span class="s2">&quot;sid&quot;</span><span class="p">:</span> <span class="s2">&quot;q2&quot;</span><span class="p">,</span> <span class="s2">&quot;task_input&quot;</span><span class="p">:</span> <span class="s2">&quot;Question 2&quot;</span><span class="p">,</span> <span class="s2">&quot;gold_answer&quot;</span><span class="p">:</span> <span class="s2">&quot;Answer 2&quot;</span><span class="p">}</span>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="p">])</span>
+</span></code></pre></div>
+<p>If not provided, sample IDs (<code>sid</code>) are automatically generated.</p>
+<h2 id="best-practices">Best Practices</h2>
+<ol>
+<li><strong>Use standard field names when possible</strong>: This minimizes the need for custom adapters</li>
+<li><strong>Include gold answers</strong>: This enables more comprehensive evaluation</li>
+<li><strong>Use tags for organization</strong>: Tags provide a flexible way to categorize examples</li>
+<li><strong>Keep task inputs focused</strong>: Clear, concise inputs lead to better evaluations</li>
+<li><strong>Add relevant metadata</strong>: Additional context helps with result analysis</li>
+<li><strong>Normalize data before experiments</strong>: Pre-process data to ensure consistent format</li>
+</ol>
+<p>In the next section, we'll explore how to create tasks that process your dataset examples.</p>
 
 
 
