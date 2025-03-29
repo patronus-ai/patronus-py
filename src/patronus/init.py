@@ -12,6 +12,9 @@ from .api.api_client import PatronusAPIClient
 from .evals.exporter import BatchEvaluationExporter
 from .tracing.logger import create_logger, create_patronus_logger
 from .tracing.tracer import create_tracer_provider
+from .utils import Once
+
+_INIT_ONCE = Once()
 
 
 def init(
@@ -75,21 +78,30 @@ def init(
             "but 'otel_endpoint' is a default. Change 'otel_endpoint' to point to the same environment as 'api_url'"
         )
 
-    cfg = config.config()
-    ctx = build_context(
-        service=service or cfg.service,
-        project_name=project_name or cfg.project_name,
-        app=app or cfg.app,
-        experiment_id=None,
-        experiment_name=None,
-        api_url=api_url or cfg.api_url,
-        otel_endpoint=otel_endpoint or cfg.otel_endpoint,
-        api_key=api_key or cfg.api_key,
-        timeout_s=cfg.timeout_s,
-        **kwargs,
-    )
-    context.set_global_patronus_context(ctx)
-    return ctx
+    def build_and_set():
+        cfg = config.config()
+        ctx = build_context(
+            service=service or cfg.service,
+            project_name=project_name or cfg.project_name,
+            app=app or cfg.app,
+            experiment_id=None,
+            experiment_name=None,
+            api_url=api_url or cfg.api_url,
+            otel_endpoint=otel_endpoint or cfg.otel_endpoint,
+            api_key=api_key or cfg.api_key,
+            timeout_s=cfg.timeout_s,
+            **kwargs,
+        )
+        context.set_global_patronus_context(ctx)
+
+    inited_now = _INIT_ONCE.do_once(build_and_set)
+    if not inited_now:
+        warnings.warn(
+            ("The Patronus SDK has already been initialized. " "Duplicate initialization attempts are ignored."),
+            UserWarning,
+            stacklevel=2,
+        )
+    return context.get_current_context()
 
 
 def build_context(
