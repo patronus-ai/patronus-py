@@ -68,7 +68,7 @@ def traced(
     # Whether to prevent a log message to be created.
     disable_log: bool = False,
     attributes: Attributes = None,
-    **kwargs,
+    **kwargs: typing.Any,
 ):
     """
     A decorator to trace function execution by recording a span for the traced function.

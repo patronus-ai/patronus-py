@@ -302,8 +302,8 @@ def evaluator(
     is_method: bool = False,
     span_name: Optional[str] = None,
     log_none_arguments: bool = False,
-    **kwargs,
-):
+    **kwargs: typing.Any,
+) -> typing.Callable[..., typing.Any]:
     """
     Decorator for creating functional-style evaluators that log execution and results.
 

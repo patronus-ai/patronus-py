@@ -28,6 +28,8 @@ project_name:  "Global"
 app: "default"
 ```
 
+For experiments, you don't need to explicitly call [`init()`][patronus.init.init] as [`run_experiment()`][patronus.experiments.run_experiment] handles initialization automatically.
+
 ## Example 1: Tracing with a Functional Evaluator
 
 This example demonstrates how to trace function execution and create a simple functional evaluator.

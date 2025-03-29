@@ -1,5 +1,6 @@
 import dataclasses
-from typing import Union, Generator
+from typing import Union, Generator, IO, Optional
+from io import StringIO
 
 from patronus.evals import EvaluationResult
 from patronus.exceptions import MultiException
@@ -8,6 +9,47 @@ from patronus.exceptions import MultiException
 @dataclasses.dataclass
 class EvaluationContainer:
     results: list[Union[EvaluationResult, None, Exception]]
+
+    def format(self) -> str:
+        """
+        Format the evaluation results into a readable summary.
+        """
+        buf = StringIO()
+
+        total = len(self.results)
+        exceptions_count = sum(1 for r in self.results if isinstance(r, Exception))
+        successes_count = sum(1 for r in self.results if isinstance(r, EvaluationResult) and r.pass_ is True)
+        failures_count = sum(1 for r in self.results if isinstance(r, EvaluationResult) and r.pass_ is False)
+
+        buf.write(f"Total evaluations: {total}\n")
+        buf.write(f"Successes: {successes_count}\n")
+        buf.write(f"Failures: {failures_count}\n")
+        buf.write(f"Exceptions: {exceptions_count}\n\n")
+        buf.write("Evaluation Details:\n")
+        buf.write("---\n")
+
+        # Add detailed evaluation results
+        for result in self.results:
+            if result is None:
+                buf.write("None\n")
+            elif isinstance(result, Exception):
+                buf.write(str(result))
+                buf.write("\n")
+            else:
+                buf.write(result.format())
+            buf.write("---\n")
+
+        return buf.getvalue()
+
+    def pretty_print(self, file: Optional[IO] = None) -> None:
+        """
+        Formats and prints the current object in a human-readable form.
+
+        Args:
+            file:
+        """
+        f = self.format()
+        print(f, file=file)
 
     def has_exception(self) -> bool:
         """

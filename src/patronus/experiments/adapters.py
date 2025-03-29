@@ -127,7 +127,11 @@ class EvaluatorAdapter(BaseEvaluatorAdapter):
         return self.evaluator.get_criteria()
 
     def transform(
-        self, row: datasets.Row, task_result: Optional[TaskResult], parent: EvalParent, **kwargs
+        self,
+        row: datasets.Row,
+        task_result: Optional[TaskResult],
+        parent: EvalParent,
+        **kwargs: typing.Any,
     ) -> tuple[list[typing.Any], dict[str, typing.Any]]:
         """
         Transform experiment framework arguments to evaluation method arguments.
@@ -139,15 +143,14 @@ class EvaluatorAdapter(BaseEvaluatorAdapter):
             **kwargs: Additional keyword arguments from the experiment.
 
         Returns:
-            A tuple containing:
-              - A list of positional arguments to pass to the evaluator function.
-              - A dictionary of keyword arguments to pass to the evaluator function.
+            A list of positional arguments to pass to the evaluator function.
+            A dictionary of keyword arguments to pass to the evaluator function.
         """
 
         return ([], {"row": row, "task_result": task_result, "prent": parent, **kwargs})
 
     async def evaluate(
-        self, row: datasets.Row, task_result: Optional[TaskResult], parent: EvalParent, **kwargs
+        self, row: datasets.Row, task_result: Optional[TaskResult], parent: EvalParent, **kwargs: typing.Any
     ) -> EvaluationResult:
         """
         Evaluate the given row and task result using the adapted evaluator function.
@@ -166,7 +169,7 @@ class EvaluatorAdapter(BaseEvaluatorAdapter):
         ev_args, ev_kwargs = self.transform(row, task_result, parent, **kwargs)
         return await self._evaluate(*ev_args, **ev_kwargs)
 
-    async def _evaluate(self, *args, **kwargs) -> TaskResult:
+    async def _evaluate(self, *args: typing.Any, **kwargs: typing.Any) -> TaskResult:
         if isinstance(self.evaluator, evals.AsyncEvaluator):
             return await self.evaluator.evaluate(*args, **kwargs)
         elif isinstance(self.evaluator, evals.Evaluator):
@@ -191,7 +194,7 @@ class StructuredEvaluatorAdapter(EvaluatorAdapter):
         super().__init__(evaluator)
 
     def transform(
-        self, row: datasets.Row, task_result: Optional[TaskResult], parent: EvalParent, **kwargs
+        self, row: datasets.Row, task_result: Optional[TaskResult], parent: EvalParent, **kwargs: typing.Any
     ) -> tuple[list[typing.Any], dict[str, typing.Any]]:
         task_output = row.task_output
         task_metadata = row.task_metadata
@@ -311,7 +314,7 @@ class FuncEvaluatorAdapter(BaseEvaluatorAdapter):
         return self.fn._pat_criteria  # noqa
 
     def transform(
-        self, row: datasets.Row, task_result: Optional[TaskResult], parent: EvalParent, **kwargs
+        self, row: datasets.Row, task_result: Optional[TaskResult], parent: EvalParent, **kwargs: typing.Any
     ) -> tuple[list[typing.Any], dict[str, typing.Any]]:
         """
         Transform experiment framework parameters to evaluator function parameters.
@@ -323,15 +326,18 @@ class FuncEvaluatorAdapter(BaseEvaluatorAdapter):
             **kwargs: Additional keyword arguments from the experiment.
 
         Returns:
-            A tuple containing:
-              - A list of positional arguments to pass to the evaluator function.
-              - A dictionary of keyword arguments to pass to the evaluator function.
+            A list of positional arguments to pass to the evaluator function.
+            A dictionary of keyword arguments to pass to the evaluator function.
         """
 
         return ([], {"row": row, "task_result": task_result, "prent": parent, **kwargs})
 
     async def evaluate(
-        self, row: datasets.Row, task_result: Optional[TaskResult], parent: EvalParent, **kwargs
+        self,
+        row: datasets.Row,
+        task_result: Optional[TaskResult],
+        parent: EvalParent,
+        **kwargs: typing.Any,
     ) -> EvaluationResult:
         """
         Evaluate the given row and task result using the adapted evaluator function.

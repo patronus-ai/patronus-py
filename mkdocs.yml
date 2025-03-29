@@ -46,17 +46,23 @@ nav:
       - Evaluators: evaluations/evaluators.md
       - Patronus Evaluators: evaluations/patronus-evaluators.md
       - Batching Evaluations: evaluations/batching.md
-#  - Experiments:
-#      - Running: ...
-#      - Datasets: experiments/datasets.md
+  - Experiments:
+      - Introduction: experiments/introduction.md
+      - Running Experiments: experiments/running.md
+      - Working with Datasets: experiments/datasets.md
+      - Creating Tasks: experiments/tasks.md
+      - Using Evaluators: experiments/evaluators.md
+      - Advanced Features: experiments/advanced.md
   - Configuration: configuration.md
   - API Reference:
-      - tracing: api_ref/tracing.md
-      - evals: api_ref/evals.md
-      - experiments: api_ref/experiments.md
-      - datasets: api_ref/datasets.md
-      - api_client: api_ref/api_client.md
-      - pat_client: api_ref/pat_client.md
+      - Init: api_ref/init.md
+      - Tracing: api_ref/tracing.md
+      - Evals: api_ref/evals.md
+      - Experiments: api_ref/experiments.md
+      - Datasets: api_ref/datasets.md
+      - API Client: api_ref/api_client.md
+      - Patronus Client: api_ref/pat_client.md
+      - Config: api_ref/config.md
 
 plugins:
   - search
