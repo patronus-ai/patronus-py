@@ -317,7 +317,7 @@ def read_csv(
     gold_answer_field: str = "gold_answer",
     task_metadata_field: str = "task_metadata",
     tags_field: str = "tags",
-    **kwargs,
+    **kwargs: typing.Any,
 ) -> Dataset:
     """
     Reads a CSV file and converts it into a Dataset object. The CSV file is transformed
@@ -369,7 +369,7 @@ def read_csv(
 
 
 def read_jsonl(
-    filename_or_buffer,
+    filename_or_buffer: Union[str, pathlib.Path, typing.IO[typing.AnyStr]],
     *,
     dataset_id: Optional[str] = None,
     sid_field: str = "sid",
@@ -381,7 +381,7 @@ def read_jsonl(
     gold_answer_field: str = "gold_answer",
     task_metadata_field: str = "task_metadata",
     tags_field: str = "tags",
-    **kwargs,
+    **kwargs: typing.Any,
 ) -> Dataset:
     """
     Reads a JSONL (JSON Lines) file and transforms it into a Dataset object. This function
@@ -440,7 +440,7 @@ def read_jsonl(
 
 def _read_dataframe(
     reader_function,
-    filename_or_buffer,
+    filename_or_buffer: Union[str, pathlib.Path, typing.IO[typing.AnyStr]],
     *,
     dataset_id: Optional[str] = None,
     sid_field: str = "sid",
@@ -452,7 +452,7 @@ def _read_dataframe(
     gold_answer_field: str = "gold_answer",
     task_metadata_field: str = "task_metadata",
     tags_field: str = "tags",
-    **kwargs,
+    **kwargs: typing.Any,
 ) -> Dataset:
     df = reader_function(filename_or_buffer, **kwargs)
 
@@ -472,6 +472,8 @@ def _read_dataframe(
         df["gold_answer"] = df[gold_answer_field]
     if task_metadata_field in df.columns:
         df["task_metadata"] = df[task_metadata_field]
+    if tags_field in df.columns:
+        df["tags"] = df[tags_field]
 
     dataset_id = _sanitize_dataset_id(dataset_id)
     return Dataset.from_dataframe(df, dataset_id=dataset_id)

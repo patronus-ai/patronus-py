@@ -1,5 +1,5 @@
 import dataclasses
-from typing import Union, Generator
+from typing import Union, Generator, IO, Optional
 from io import StringIO
 
 from patronus.evals import EvaluationResult
@@ -41,7 +41,7 @@ class EvaluationContainer:
 
         return buf.getvalue()
 
-    def pretty_print(self, file=None) -> None:
+    def pretty_print(self, file: Optional[IO] = None) -> None:
         """
         Formats and prints the current object in a human-readable form.
 

@@ -1,7 +1,7 @@
 import typing
 from typing import Optional
 
-from patronus.evals import EvaluationResult
+from patronus.evals import EvaluationResult, Evaluator
 from patronus.api import api_types
 
 import pydantic
@@ -62,7 +62,7 @@ class _EvalParent(pydantic.BaseModel):
     """
     Represents a node in the evaluation parent-child hierarchy, tracking task results and evaluations.
 
-    Args:
+    Attributes:
         task: The task result associated with this evaluation node
         evals: A mapping of evaluator IDs to their evaluation results
         parent: Optional reference to a parent evaluation node, forming a linked list
@@ -74,7 +74,9 @@ class _EvalParent(pydantic.BaseModel):
     evals: typing.Optional[EvalsMap]
     parent: typing.Optional["_EvalParent"]
 
-    def find_eval_result(self, evaluator_or_name) -> typing.Union[api_types.EvaluationResult, EvaluationResult, None]:
+    def find_eval_result(
+        self, evaluator_or_name: typing.Union[str, Evaluator]
+    ) -> typing.Union[api_types.EvaluationResult, EvaluationResult, None]:
         """
         Recursively searches for an evaluation result by evaluator ID or name.
 

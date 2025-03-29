@@ -32,6 +32,33 @@ def get_service_default():
 
 
 class Config(pydantic_settings.BaseSettings):
+    """
+    Configuration settings for the Patronus SDK.
+
+    This class defines all available configuration options with their default values
+    and handles loading configuration from environment variables and YAML files.
+
+    Configuration sources are checked in this order:
+
+    1. Code-specified values
+    2. Environment variables (with prefix PATRONUS_)
+    3. YAML configuration file (patronus.yaml)
+    4. Default values
+
+    Attributes:
+        service: The name of the service or application component.
+            Defaults to OTEL_SERVICE_NAME env var or platform.node().
+        api_key: Authentication key for Patronus services.
+        api_url: URL for the Patronus API service. Default: https://api.patronus.ai
+        otel_endpoint: Endpoint for OpenTelemetry data collection.
+            Default: https://otel.patronus.ai:4317
+        ui_url: URL for the Patronus UI. Default: https://app.patronus.ai
+        timeout_s: Timeout in seconds for HTTP requests. Default: 300
+        project_name: Name of the project for organizing evaluations and experiments.
+            Default: Global
+        app: Name of the application within the project. Default: default
+    """
+
     model_config = pydantic_settings.SettingsConfigDict(env_prefix="patronus_", yaml_file="patronus.yaml")
 
     service: str = pydantic.Field(
@@ -87,5 +114,26 @@ class Config(pydantic_settings.BaseSettings):
 
 @functools.lru_cache()
 def config() -> Config:
+    """
+    Returns the Patronus SDK configuration singleton.
+
+    Configuration is loaded from environment variables and the patronus.yaml file
+    (if present) when this function is first called.
+
+    Returns:
+        Config: A singleton Config object containing all Patronus configuration settings.
+
+    Example:
+        ```python
+        from patronus.config import config
+
+        # Get the configuration
+        cfg = config()
+
+        # Access configuration values
+        api_key = cfg.api_key
+        project_name = cfg.project_name
+        ```
+    """
     cfg = Config()
     return cfg

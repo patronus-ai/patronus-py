@@ -107,7 +107,7 @@ def score_task(row: Row, **kwargs) -> float:
 
 ### TaskResult Object
 
-For more control, return a [[TaskResult][patronus.experiments.types.TaskResult]] object:
+For more control, return a [TaskResult][patronus.experiments.types.TaskResult] object:
 
 ```python
 from patronus.experiments.types import TaskResult

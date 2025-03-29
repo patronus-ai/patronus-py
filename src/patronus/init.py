@@ -1,3 +1,5 @@
+import typing
+
 import warnings
 
 from typing import Optional
@@ -19,8 +21,8 @@ def init(
     otel_endpoint: Optional[str] = None,
     api_key: Optional[str] = None,
     service: Optional[str] = None,
-    **kwargs,
-):
+    **kwargs: typing.Any,
+) -> context.PatronusContext:
     """
     Initializes the Patronus SDK with the specified configuration.
 
@@ -31,7 +33,7 @@ def init(
     Note:
         `init()` should not be used for running experiments.
         Experiments have its own initialization process.
-        You can configure them by passing configuration options to [run_experiment](patronus.experiments.experiment.run_experiment)
+        You can configure them by passing configuration options to [`run_experiment()`][patronus.experiments.experiment.run_experiment]
         or using configuration file.
 
     Args:
@@ -87,6 +89,7 @@ def init(
         **kwargs,
     )
     context.set_global_patronus_context(ctx)
+    return ctx
 
 
 def build_context(
@@ -101,8 +104,37 @@ def build_context(
     client_http: Optional[httpx.Client] = None,
     client_http_async: Optional[httpx.AsyncClient] = None,
     timeout_s: int = 60,
-    **kwargs,
+    **kwargs: typing.Any,
 ) -> context.PatronusContext:
+    """
+    Builds a Patronus context with the specified configuration parameters.
+
+    This function creates the context object that contains all necessary components
+    for the SDK operation, including loggers, tracers, and API clients. It is used
+    internally by the [`init()`][patronus.init.init] function but can also be used directly for more
+    advanced configuration scenarios.
+
+    Args:
+        service: Service name for OpenTelemetry traces.
+        project_name: Name of the project for organizing evaluations and experiments.
+        app: Name of the application within the project.
+        experiment_id: Unique identifier for an experiment when running in experiment mode.
+        experiment_name: Display name for an experiment when running in experiment mode.
+        api_url: URL for the Patronus API service.
+        otel_endpoint: Endpoint for OpenTelemetry data collection.
+        api_key: Authentication key for Patronus services.
+        client_http: Custom HTTP client for synchronous API requests.
+            If not provided, a new client will be created.
+        client_http_async: Custom HTTP client for asynchronous API requests.
+            If not provided, a new client will be created.
+        timeout_s: Timeout in seconds for HTTP requests (default: 60).
+        **kwargs: Additional configuration options, including:
+            - integrations: List of OpenTelemetry instrumentors to enable.
+
+    Returns:
+        PatronusContext: The initialized context object containing all necessary
+            components for SDK operation.
+    """
     if client_http is None:
         client_http = httpx.Client(timeout=timeout_s)
     if client_http_async is None:
