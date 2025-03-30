@@ -25,7 +25,7 @@ The framework automatically converts numeric outputs to `TaskResult` objects.
 
 Task functions always receive these parameters:
 
-- `row`: [Row][patronus.datasets.Row] - The dataset example to process
+- `row`: [Row][patronus.datasets.datasets.Row] - The dataset example to process
 - `parent`: [EvalParent][patronus.experiments.types.EvalParent] - Information from previous chain stages (if any)
 - `tags`: [Tags][patronus.experiments.experiment.Tags] - Tags associated with the experiment and dataset
 - `**kwargs`: Additional keyword arguments

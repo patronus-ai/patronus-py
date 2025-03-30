@@ -18,7 +18,7 @@ The standard dataset fields map directly to these parameters, making integration
 - `tags`: Key-value pairs
 - `sid`: A unique identifier for the example (automatically generated if not provided)
 
-While you can include any custom fields in your dataset,using these standard field names ensures compatibility withstructured evaluators without additional configuration.
+While you can include any custom fields in your dataset, using these standard field names ensures compatibility with structured evaluators without additional configuration.
 
 ## Creating Datasets
 
@@ -81,6 +81,30 @@ dataset = read_jsonl(
     tags_field="metadata"            # Map "metadata" field to "tags"
 )
 ```
+
+### Remote Datasets
+
+Patronus allows you to work with datasets stored remotely on the Patronus platform.
+This is useful for sharing standard datasets across your organization or utilizing pre-built evaluation datasets.
+
+```python
+from patronus.datasets import RemoteDatasetLoader
+
+# Load a dataset from the Patronus platform using its ID
+remote_dataset = RemoteDatasetLoader("d-eo6a5zy3nwach69b")
+
+experiment = run_experiment(
+    dataset=remote_dataset,
+    task=my_task,
+    evaluators=[my_evaluator],
+)
+```
+
+The `RemoteDatasetLoader` asynchronously fetches the dataset from the Patronus API when the experiment runs.
+It handles the data mapping automatically, transforming the API response into the standard dataset structure
+with all the expected fields (`system_prompt`, `task_input`, `gold_answer`, etc.).
+
+Remote datasets follow the same structure and field conventions as local datasets, making them interchangeable in your experiment code.
 
 ## Accessing Dataset Fields
 
@@ -181,5 +205,6 @@ If not provided, sample IDs (`sid`) are automatically generated.
 4. **Keep task inputs focused**: Clear, concise inputs lead to better evaluations
 5. **Add relevant metadata**: Additional context helps with result analysis
 6. **Normalize data before experiments**: Pre-process data to ensure consistent format
+7. **Consider remote datasets for team collaboration**: Use the Patronus platform to share standardized datasets
 
 In the next section, we'll explore how to create tasks that process your dataset examples.

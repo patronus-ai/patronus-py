@@ -1,6 +1,8 @@
+import json
 import datetime
 import logging
-from typing import Optional
+import typing
+from typing import Optional, Union
 
 from . import api_types
 from .api_client_base import APIError, BaseAPIClient, CallResponse, RPMLimitError, UnrecoverableAPIError
@@ -335,6 +337,134 @@ class PatronusAPIClient(BaseAPIClient):
         )
         resp.raise_for_status()
         return resp.data
+
+    async def upload_dataset(
+        self,
+        file_path: str,
+        dataset_name: str,
+        dataset_description: Optional[str] = None,
+        custom_field_mapping: Optional[dict[str, Union[str, list[str]]]] = None,
+    ) -> api_types.Dataset:
+        """
+        Upload a dataset file to create a new dataset in Patronus.
+
+        Args:
+            file_path: Path to the dataset file (CSV or JSONL format)
+            dataset_name: Name for the created dataset
+            dataset_description: Optional description for the dataset
+            custom_field_mapping: Optional mapping of standard field names to custom field names in the dataset
+
+        Returns:
+            Dataset object representing the created dataset
+        """
+        with open(file_path, "rb") as f:
+            return await self.upload_dataset_from_buffer(f, dataset_name, dataset_description, custom_field_mapping)
+
+    async def upload_dataset_from_buffer(
+        self,
+        file_obj: typing.BinaryIO,
+        dataset_name: str,
+        dataset_description: Optional[str] = None,
+        custom_field_mapping: Optional[dict[str, Union[str, list[str]]]] = None,
+    ) -> api_types.Dataset:
+        """
+        Upload a dataset file to create a new dataset in Patronus AI Platform.
+
+        Args:
+            file_obj: File-like object containing dataset content (CSV or JSONL format)
+            dataset_name: Name for the created dataset
+            dataset_description: Optional description for the dataset
+            custom_field_mapping: Optional mapping of standard field names to custom field names in the dataset
+
+        Returns:
+            Dataset object representing the created dataset
+        """
+        data = {
+            "dataset_name": dataset_name,
+        }
+
+        if dataset_description is not None:
+            data["dataset_description"] = dataset_description
+
+        if custom_field_mapping is not None:
+            data["custom_field_mapping"] = json.dumps(custom_field_mapping)
+
+        files = {"file": (dataset_name, file_obj)}
+
+        resp = await self.call_multipart(
+            "POST",
+            "/v1/datasets",
+            files=files,
+            data=data,
+            response_cls=api_types.CreateDatasetResponse,
+        )
+
+        resp.raise_for_status()
+        return resp.data.dataset
+
+    def upload_dataset_sync(
+        self,
+        file_path: str,
+        dataset_name: str,
+        dataset_description: Optional[str] = None,
+        custom_field_mapping: Optional[dict[str, Union[str, list[str]]]] = None,
+    ) -> api_types.Dataset:
+        """
+        Upload a dataset file to create a new dataset in Patronus AI Platform.
+
+        Args:
+            file_path: Path to the dataset file (CSV or JSONL format)
+            dataset_name: Name for the created dataset
+            dataset_description: Optional description for the dataset
+            custom_field_mapping: Optional mapping of standard field names to custom field names in the dataset
+
+        Returns:
+            Dataset object representing the created dataset
+        """
+        with open(file_path, "rb") as f:
+            return self.upload_dataset_from_buffer_sync(f, dataset_name, dataset_description, custom_field_mapping)
+
+    def upload_dataset_from_buffer_sync(
+        self,
+        file_obj: typing.BinaryIO,
+        dataset_name: str,
+        dataset_description: Optional[str] = None,
+        custom_field_mapping: Optional[dict[str, Union[str, list[str]]]] = None,
+    ) -> api_types.Dataset:
+        """
+        Upload a dataset file to create a new dataset in Patronus AI Platform.
+
+        Args:
+            file_obj: File-like object containing dataset content (CSV or JSONL format)
+            dataset_name: Name for the created dataset
+            dataset_description: Optional description for the dataset
+            custom_field_mapping: Optional mapping of standard field names to custom field names in the dataset
+
+        Returns:
+            Dataset object representing the created dataset
+        """
+        data = {
+            "dataset_name": dataset_name,
+        }
+
+        if dataset_description is not None:
+            data["dataset_description"] = dataset_description
+
+        if custom_field_mapping is not None:
+            data["custom_field_mapping"] = json.dumps(custom_field_mapping)
+
+        files = {"file": (dataset_name, file_obj)}
+
+        resp = self.call_multipart_sync(
+            "POST",
+            "/v1/datasets",
+            files=files,
+            data=data,
+            response_cls=api_types.CreateDatasetResponse,
+        )
+
+        resp.raise_for_status()
+        return resp.data.dataset
 
     async def batch_create_evaluations(
         self, request: api_types.BatchCreateEvaluationsRequest

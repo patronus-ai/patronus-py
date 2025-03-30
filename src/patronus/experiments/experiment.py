@@ -94,7 +94,7 @@ ExperimentDataset = Union[
     typing.Callable[[], typing.Awaitable],
 ]
 """
-Any object that would "resolve" into [Dataset][patronus.datasets.Dataset].
+Any object that would "resolve" into [Dataset][patronus.datasets.datasets.Row].
 """
 
 AdaptableEvaluators = Union[StructuredEvaluator, AsyncStructuredEvaluator, BaseEvaluatorAdapter]
@@ -470,10 +470,6 @@ class Experiment:
             api_key=self._api_key or cfg.api_key,
         )
 
-        dataset = await self._prepare_dataset(self._raw_dataset)
-        self._raw_dataset = None
-        self.dataset = dataset
-
         self.project = await self._get_or_create_project(api, self._project_name or cfg.project_name)
         self._project_name = None
 
@@ -494,6 +490,12 @@ class Experiment:
             timeout_s=self._timeout_s or cfg.timeout_s,
             integrations=self._integrations,
         )
+
+        with context._CTX_PAT.using(ctx):
+            dataset = await self._prepare_dataset(self._raw_dataset)
+        self._raw_dataset = None
+        self.dataset = dataset
+
         self._prepared = True
         return ctx
 

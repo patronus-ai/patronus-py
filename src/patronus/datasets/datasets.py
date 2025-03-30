@@ -1,3 +1,5 @@
+import inspect
+
 import asyncio
 import dataclasses
 import json
@@ -174,6 +176,21 @@ class Dataset:
         df = pd.DataFrame.from_records(records)
         df = cls.__sanitize_df(df, dataset_id)
         return cls(df=df, dataset_id=dataset_id)
+
+    def to_csv(
+        self, path_or_buf: Union[str, pathlib.Path, typing.IO[typing.AnyStr]], **kwargs: typing.Any
+    ) -> Optional[str]:
+        """
+        Saves dataset to a CSV file.
+
+        Args:
+            path_or_buf: String path or file-like object where the CSV will be saved.
+            **kwargs: Additional arguments passed to pandas.DataFrame.to_csv().
+
+        Returns:
+            String path if a path was specified and return_path is True, otherwise None.
+        """
+        return self.df.to_csv(path_or_buf, **kwargs)
 
     @classmethod
     def __sanitize_df(cls, df: pd.DataFrame, dataset_id: str) -> pd.DataFrame:
@@ -496,7 +513,7 @@ class DatasetLoader:
     once, using a provided dataset loader function.
     """
 
-    def __init__(self, loader: typing.Awaitable[Dataset]):
+    def __init__(self, loader: Union[typing.Awaitable[Dataset], typing.Callable[[], typing.Awaitable[Dataset]]]):
         self.__lock = asyncio.Lock()
         self.__loader = loader
         self.dataset: Optional[Dataset] = None
@@ -508,5 +525,8 @@ class DatasetLoader:
         async with self.__lock:
             if self.dataset is not None:
                 return self.dataset
-            self.dataset = await self.__loader
+            if inspect.iscoroutinefunction(self.__loader):
+                self.dataset = await self.__loader()
+            else:
+                self.dataset = await self.__loader
             return self.dataset
