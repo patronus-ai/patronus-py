@@ -36,52 +36,48 @@ experiment = run_experiment(
 
 You can create custom evaluator classes by inheriting from the Patronus base classes:
 
+> **Note**: The following example uses the `transformers` library from Hugging Face. Install it with `pip install transformers` before running this code.
+
 ```python
-from patronus.evals import StructuredEvaluator, EvaluationResult
+import numpy as np
+from transformers import BertTokenizer, BertModel
+
+from patronus import StructuredEvaluator, EvaluationResult
 from patronus.experiments import run_experiment
 
-class KeywordMatchEvaluator(StructuredEvaluator):
-    def __init__(self, keywords, threshold=0.5):
-        self.keywords = [k.lower() for k in keywords]
-        self.threshold = threshold
 
-    def evaluate(
-        self,
-        *,
-        task_input=None,
-        task_output=None,
-        gold_answer=None,
-        **kwargs
-    ):
-        if not task_output:
-            return EvaluationResult(
-                pass_=False,
-                score=0.0,
-                text_output="Missing output"
-            )
+class BERTScore(StructuredEvaluator):
+    def __init__(self, pass_threshold: float):
+        self.pass_threshold = pass_threshold
+        self.tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
+        self.model = BertModel.from_pretrained("bert-base-uncased")
 
-        # Count matching keywords
-        output_lower = task_output.lower()
-        matches = sum(1 for kw in self.keywords if kw in output_lower)
+    def evaluate(self, *, task_output: str, gold_answer: str, **kwargs) -> EvaluationResult:
+        output_toks = self.tokenizer(task_output, return_tensors="pt", padding=True, truncation=True)
+        gold_answer_toks = self.tokenizer(gold_answer, return_tensors="pt", padding=True, truncation=True)
 
-        # Calculate score
-        score = matches / len(self.keywords) if self.keywords else 0
+        output_embeds = self.model(**output_toks).last_hidden_state.mean(dim=1).detach().numpy()
+        gold_answer_embeds = self.model(**gold_answer_toks).last_hidden_state.mean(dim=1).detach().numpy()
+
+        score = np.dot(output_embeds, gold_answer_embeds.T) / (
+            np.linalg.norm(output_embeds) * np.linalg.norm(gold_answer_embeds)
+        )
 
         return EvaluationResult(
             score=score,
-            pass_=score >= self.threshold,
-            text_output=f"Found {matches}/{len(self.keywords)} keywords",
-            explanation=f"Matched keywords: {[kw for kw in self.keywords if kw in output_lower]}"
+            pass_=score >= self.pass_threshold,
+            tags={"pass_threshold": str(self.pass_threshold)},
         )
 
-# Use in an experiment
+
 experiment = run_experiment(
-    dataset=dataset,
-    task=my_task,
-    evaluators=[
-        # Class-based evaluators are automatically adapted for the experiment
-        KeywordMatchEvaluator(["clear", "concise", "accurate", "helpful"])
-    ]
+    dataset=[
+        {
+            "task_output": "Translate 'Goodbye' to Spanish.",
+            "gold_answer": "Adiós",
+        }
+    ],
+    evaluators=[BERTScore(pass_threshold=0.8)],
 )
 ```
 
@@ -204,7 +200,7 @@ experiment = run_experiment(
         RemoteEvaluator("judge", "factual-accuracy"),
 
         # Class-based evaluator
-        KeywordMatchEvaluator(["clear", "concise", "accurate"]),
+        BERTScore(pass_threshold=0.7),
 
         # Function evaluator with standard adapter
         FuncEvaluatorAdapter(standard_evaluator),
