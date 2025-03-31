@@ -1,29 +1,68 @@
+from typing import Optional
+
 from .datasets import Dataset, DatasetLoader
 from patronus.context import get_api_client
 
 
-class RemoteDataset(Dataset):
+class DatasetNotFoundError(Exception):
+    """Raised when a dataset with the specified ID or name is not found"""
+
+    pass
+
+
+class RemoteDatasetLoader(DatasetLoader):
     """
-    Represents a dataset that is fetched from a remote source via the Patronus API.
+    A loader for datasets stored remotely on the Patronus platform.
+
+    This class provides functionality to asynchronously load a dataset from
+    the remote API by its name or identifier, handling the fetch operation lazily
+    and ensuring it's only performed once. You can specify either the dataset name or ID,
+    but not both.
     """
 
-    @classmethod
-    async def fetch(cls, dataset_id: str) -> "RemoteDataset":
+    def __init__(self, by_name: Optional[str] = None, *, by_id: Optional[str] = None):
         """
-        Fetches a dataset from the Patronus API by its ID and creates a RemoteDataset instance.
+        Initializes a new RemoteDatasetLoader instance.
 
-        This method retrieves dataset records from the API, transforms them into the expected
-        format, and constructs a new RemoteDataset instance containing the retrieved data.
-
-        Arguments:
-            dataset_id: A string identifier for the dataset to be fetched from the API.
-
-        Returns:
-            RemoteDataset: A new RemoteDataset instance containing the fetched data.
+        Args:
+            by_name: The name of the dataset to load.
+            by_id: The ID of the dataset to load.
         """
+        if not (bool(by_name) ^ bool(by_id)):
+            raise ValueError("Either by_name or by_id must be provided, but not both.")
+
+        self._dataset_name = by_name
+        self._dataset_id = by_id
+        super().__init__(self._load)
+
+    async def _load(self) -> Dataset:
         api = get_api_client()
+
+        # If we're loading by name, first find the dataset ID by listing datasets
+        dataset_id = self._dataset_id
+        if self._dataset_name:
+            datasets = await api.list_datasets()
+            matching_datasets = [d for d in datasets if d.name == self._dataset_name]
+
+            if not matching_datasets:
+                raise DatasetNotFoundError(f"No dataset found with name '{self._dataset_name}'")
+            if len(matching_datasets) > 1:
+                raise ValueError(
+                    f"Multiple datasets found with name '{self._dataset_name}'. " f"Please use a dataset ID instead."
+                )
+
+            dataset_id = matching_datasets[0].id
+
+        # Make sure we have a valid dataset ID
+        if not dataset_id:
+            raise ValueError("Unable to determine dataset ID")
+
         resp = await api.list_dataset_data(dataset_id)
         data = resp.model_dump()["data"]
+
+        if not data:
+            raise DatasetNotFoundError(f"Dataset with ID '{dataset_id}' not found or contains no data")
+
         records = [
             {
                 "sid": datum.get("sid"),
@@ -38,27 +77,4 @@ class RemoteDataset(Dataset):
             }
             for datum in data
         ]
-        return cls.from_records(records, dataset_id=dataset_id)
-
-
-class RemoteDatasetLoader(DatasetLoader):
-    """
-    A loader for datasets stored remotely on the Patronus platform.
-
-    This class provides functionality to asynchronously load a dataset from
-    the remote API by its identifier, handling the fetch operation lazily
-    and ensuring it's only performed once.
-    """
-
-    def __init__(self, dataset_id: str):
-        """
-        Initializes a new RemoteDatasetLoader instance.
-
-        Arguments:
-            dataset_id: A string identifier for the remote dataset to be loaded.
-        """
-        self._dataset_id = dataset_id
-        super().__init__(self._load)
-
-    async def _load(self) -> RemoteDataset:
-        return await RemoteDataset.fetch(self._dataset_id)
+        return Dataset.from_records(records, dataset_id=dataset_id)

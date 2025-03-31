@@ -445,8 +445,14 @@ class Dataset(pydantic.BaseModel):
     id: str
     name: str
     description: Optional[str] = None
-    sample_count: Optional[int] = None
-    created_at: Optional[datetime.datetime] = None
+    created_at: datetime.datetime
+    samples: int
+    type: str
+    creation_at: Optional[datetime.datetime] = None
+
+
+class ListDatasetsResponse(pydantic.BaseModel):
+    datasets: list[Dataset]
 
 
 class CreateDatasetResponse(pydantic.BaseModel):

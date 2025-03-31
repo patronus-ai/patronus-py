@@ -318,6 +318,40 @@ class PatronusAPIClient(BaseAPIClient):
         resp.raise_for_status()
         return resp.data
 
+    async def list_datasets(self, dataset_type: Optional[str] = None) -> list[api_types.Dataset]:
+        """
+        Retrieves a list of datasets, optionally filtered by type.
+        """
+        params = {}
+        if dataset_type is not None:
+            params["type"] = dataset_type
+
+        resp = await self.call(
+            "GET",
+            "/v1/datasets",
+            params=params,
+            response_cls=api_types.ListDatasetsResponse,
+        )
+        resp.raise_for_status()
+        return resp.data.datasets
+
+    def list_datasets_sync(self, dataset_type: Optional[str] = None) -> list[api_types.Dataset]:
+        """
+        Retrieves a list of datasets, optionally filtered by type.
+        """
+        params = {}
+        if dataset_type is not None:
+            params["type"] = dataset_type
+
+        resp = self.call_sync(
+            "GET",
+            "/v1/datasets",
+            params=params,
+            response_cls=api_types.ListDatasetsResponse,
+        )
+        resp.raise_for_status()
+        return resp.data.datasets
+
     async def list_dataset_data(self, dataset_id: str) -> api_types.ListDatasetData:
         """Retrieves data from a dataset by its ID."""
         resp = await self.call(
