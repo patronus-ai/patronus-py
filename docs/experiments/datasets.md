@@ -90,8 +90,11 @@ This is useful for sharing standard datasets across your organization or utilizi
 ```python
 from patronus.datasets import RemoteDatasetLoader
 
+# Load a dataset from the Patronus platform using its name
+remote_dataset = RemoteDatasetLoader("financebench")
+
 # Load a dataset from the Patronus platform using its ID
-remote_dataset = RemoteDatasetLoader("d-eo6a5zy3nwach69b")
+remote_dataset = RemoteDatasetLoader(by_id="d-eo6a5zy3nwach69b")
 
 experiment = run_experiment(
     dataset=remote_dataset,

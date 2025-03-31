@@ -1,24 +1,36 @@
-site_name: PatronusAI Python SDK
+site_name: ""
+site_description: "PatronusAI Python SKD"
 site_url: https://docs.patronus.ai/patronus-py
 repo_name: patronus-ai/patronus-py
 repo_url: https://github.com/patronus-ai/patronus-py
+edit_uri: edit/main/docs
 theme:
-  logo: assets/boxwhite.svg
+  logo: assets/patronus.webp
   favicon: assets/favicon-32x32.png
   name: material
   features:
     - content.code.copy
+    - navigation.indexes
+    - navigation.expand
+    - navigation.footer
+    - navigation.sections
+    - navigation.tabs
+    - navigation.top
   icon:
     repo: fontawesome/brands/github
 
   palette:
     - scheme: default
+      primary: white
+      accent: gray
       toggle:
         icon: material/toggle-switch
         name: Switch to dark mode
 
     # Palette toggle for dark mode
     - scheme: slate
+      primary: grey
+      accent: white
       toggle:
         icon: material/toggle-switch-off-outline
         name: Switch to light mode
@@ -34,26 +46,27 @@ markdown_extensions:
   - pymdownx.superfences:
 
 nav:
-  - Home: index.md
-  - Getting Started:
-      - Installation: getting-started/installation.md
-      - Initialization: getting-started/initialization.md
-      - Quickstart: getting-started/quickstart.md
-  - Observability:
-      - Tracing: observability/tracing.md
-      - Logging: observability/logging.md
-  - Evaluations:
-      - Evaluators: evaluations/evaluators.md
-      - Patronus Evaluators: evaluations/patronus-evaluators.md
-      - Batching Evaluations: evaluations/batching.md
-  - Experiments:
-      - Introduction: experiments/introduction.md
-      - Running Experiments: experiments/running.md
-      - Working with Datasets: experiments/datasets.md
-      - Creating Tasks: experiments/tasks.md
-      - Using Evaluators: experiments/evaluators.md
-      - Advanced Features: experiments/advanced.md
-  - Configuration: configuration.md
+  - Home:
+    - index.md
+    - Getting Started:
+        - Installation: getting-started/installation.md
+        - Initialization: getting-started/initialization.md
+        - Quickstart: getting-started/quickstart.md
+    - Observability:
+        - Tracing: observability/tracing.md
+        - Logging: observability/logging.md
+    - Evaluations:
+        - Evaluators: evaluations/evaluators.md
+        - Patronus Evaluators: evaluations/patronus-evaluators.md
+        - Batching Evaluations: evaluations/batching.md
+    - Experiments:
+        - Introduction: experiments/introduction.md
+        - Running Experiments: experiments/running.md
+        - Working with Datasets: experiments/datasets.md
+        - Creating Tasks: experiments/tasks.md
+        - Using Evaluators: experiments/evaluators.md
+        - Advanced Features: experiments/advanced.md
+    - Configuration: configuration.md
   - API Reference:
       - Init: api_ref/init.md
       - Tracing: api_ref/tracing.md

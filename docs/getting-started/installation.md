@@ -23,8 +23,3 @@ For a specific version:
 ```bash
 pip install patronus==0.1.0
 ```
-
-## Next steps:
-
-- [Initialization](initialization.md)
-- [Quickstart](quickstart.md)
