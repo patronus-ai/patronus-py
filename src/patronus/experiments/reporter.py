@@ -26,6 +26,8 @@ class Result(typing.NamedTuple):
 
 
 class Reporter:
+    tqdm: Optional[AsyncTQDMWithHandle]
+
     def __init__(self):
         self.tqdm = None
         self.lock = asyncio.Lock()
@@ -171,7 +173,18 @@ class Reporter:
         return self.df
 
     def summary(self):
+        # summary can be called only once experiment finished.
+        # We set tqdm to None to prevent showing progress bar in between error messages
+        self.tqdm = None
         df = self.to_dataframe()
+
+        if df.empty:
+            self.print_error("\nEvaluation summary could not be generated: No successful evaluations found.")
+            self.print_error(
+                "All evaluations in the experiment may have failed. See the error messages above for details."
+            )
+            return
+
         df["criteria"] = df["criteria"].fillna("None")
 
         grouped = df.groupby(["link_idx", "evaluator_id", "criteria"])

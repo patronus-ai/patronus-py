@@ -9,5 +9,6 @@ from .experiment import Experiment as Experiment
 from .types import TaskResult as TaskResult
 from .types import EvalParent as EvalParent
 
+from ..datasets import RemoteDatasetLoader as RemoteDatasetLoader
 from ..datasets import Dataset as Dataset
 from ..datasets import Row as Row

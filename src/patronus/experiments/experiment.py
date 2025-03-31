@@ -1,3 +1,5 @@
+import pathlib
+
 import contextlib
 
 import asyncio
@@ -39,12 +41,37 @@ class TaskProtocol(typing.Protocol[T]):
     Defines an interface for a task.
 
     Task is a function that processes each dataset row and produces output for evaluation.
-
-    Attributes:
-        None directly; this is a Protocol class defining a callable contract.
     """
 
-    def __call__(self, *, row: datasets.Row, parent: EvalParent, tags: Tags) -> T: ...
+    def __call__(self, *, row: datasets.Row, parent: EvalParent, tags: Tags) -> T:
+        """
+        Processes a dataset row, using the provided context to produce task output.
+
+        Args:
+            row: The dataset row to process.
+            parent: Reference to the parent task's output and evaluation results.
+            tags: Key-value pairs.
+
+        Returns:
+            Task output of type T or None to skip the row processing.
+
+        Example:
+            ```python
+            def simple_task(row: datasets.Row, parent: EvalParent, tags: Tags) -> TaskResult:
+                # Process input from the dataset row
+                input_text = row.task_input
+
+                # Generate output
+                output = f"Processed: {input_text}"
+
+                # Return result
+                return TaskResult(
+                    output=output,
+                    metadata={"processing_time_ms": 42},
+                    tags={"model": "example-model"}
+                )
+            ```
+        """
 
 
 Task = Union[
@@ -67,7 +94,7 @@ ExperimentDataset = Union[
     typing.Callable[[], typing.Awaitable],
 ]
 """
-Any object that would "resolve" into [Dataset][patronus.datasets.Dataset].
+Any object that would "resolve" into [Dataset][patronus.datasets.datasets.Row].
 """
 
 AdaptableEvaluators = Union[StructuredEvaluator, AsyncStructuredEvaluator, BaseEvaluatorAdapter]
@@ -295,7 +322,7 @@ class Experiment:
         ui_url: Optional[str] = None,
         timeout_s: Optional[int] = None,
         integrations: Optional[list[typing.Any]] = None,
-        **kwargs,
+        **kwargs: typing.Any,
     ) -> te.Self:
         """
         Creates an instance of the class asynchronously with the specified parameters while performing
@@ -313,7 +340,7 @@ class Experiment:
                 the `chain` parameter.
             chain: A list of processing stages, each containing a task and associated evaluators.
                 Use this for multi-stage evaluation pipelines.
-            tags: Key-value pairs for categorizing and filtering.
+            tags: Key-value pairs.
                 All evaluations created by the experiment will contain these tags.
             max_concurrency: Maximum number of concurrent task and evaluation operations.
             project_name: Name of the project to create or use. Falls back to configuration or
@@ -404,7 +431,9 @@ class Experiment:
             raise RuntimeError("Experiment has to be in finished state")
         return self.reporter.to_dataframe()
 
-    def to_csv(self, path_or_buf, **kwargs) -> Optional[str]:
+    def to_csv(
+        self, path_or_buf: Union[str, pathlib.Path, typing.IO[typing.AnyStr]], **kwargs: typing.Any
+    ) -> Optional[str]:
         """
         Saves experiment results to a CSV file.
 
@@ -441,10 +470,6 @@ class Experiment:
             api_key=self._api_key or cfg.api_key,
         )
 
-        dataset = await self._prepare_dataset(self._raw_dataset)
-        self._raw_dataset = None
-        self.dataset = dataset
-
         self.project = await self._get_or_create_project(api, self._project_name or cfg.project_name)
         self._project_name = None
 
@@ -465,6 +490,12 @@ class Experiment:
             timeout_s=self._timeout_s or cfg.timeout_s,
             integrations=self._integrations,
         )
+
+        with context._CTX_PAT.using(ctx):
+            dataset = await self._prepare_dataset(self._raw_dataset)
+        self._raw_dataset = None
+        self.dataset = dataset
+
         self._prepared = True
         return ctx
 

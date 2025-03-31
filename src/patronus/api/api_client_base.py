@@ -137,6 +137,54 @@ class BaseAPIClient:
         )
         return self._call_process_resp(url, response, response_cls)
 
+    async def call_multipart(
+        self,
+        method: str,
+        path: str,
+        *,
+        files: Optional[dict[str, typing.Any]] = None,
+        data: Optional[dict[str, typing.Any]] = None,
+        response_cls: Optional[type[R]],
+    ) -> CallResponse[R]:
+        url = self._url(path)
+        log.debug(f"Sending HTTP multipart request {url!r}")
+
+        # Don't set Content-Type as httpx will set it with boundary
+        headers = self.headers(content_type=None)
+
+        response = await self.http.request(
+            method,
+            url,
+            files=files,
+            data=data,
+            headers=headers,
+        )
+        return self._call_process_resp(url, response, response_cls)
+
+    def call_multipart_sync(
+        self,
+        method: str,
+        path: str,
+        *,
+        files: Optional[dict[str, typing.Any]] = None,
+        data: Optional[dict[str, typing.Any]] = None,
+        response_cls: Optional[type[R]],
+    ) -> CallResponse[R]:
+        url = self._url(path)
+        log.debug(f"Sending HTTP multipart request {url!r}")
+
+        # Don't set Content-Type as httpx will set it with boundary
+        headers = self.headers(content_type=None)
+
+        response = self.http_sync.request(
+            method,
+            url,
+            files=files,
+            data=data,
+            headers=headers,
+        )
+        return self._call_process_resp(url, response, response_cls)
+
     @staticmethod
     def _call_process_resp(url: str, response: httpx.Response, response_cls: Optional[type[R]]) -> CallResponse[R]:
         log.debug(f"Received HTTP response {url!r} {response.status_code}")
@@ -156,14 +204,18 @@ class BaseAPIClient:
         assert self.base_url, "BaseAPIClient: base_url must be set"
         return f"{self.base_url}{path}"
 
-    def headers(self) -> typing.Dict[str, str]:
-        return {
+    def headers(self, content_type: Optional[str] = "application/json") -> typing.Dict[str, str]:
+        headers = {
             "Accept": "application/json",
-            "Content-Type": "application/json",
             "User-Agent": self.user_agent,
             **self.auth_headers(),
             **self.platform_headers(),
         }
+
+        if content_type:
+            headers["Content-Type"] = content_type
+
+        return headers
 
     @property
     def user_agent(self) -> str:

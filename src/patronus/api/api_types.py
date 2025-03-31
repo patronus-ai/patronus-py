@@ -441,6 +441,25 @@ class GetAnnotationCriteriaResponse(pydantic.BaseModel):
     annotation_criteria: AnnotationCriteria
 
 
+class Dataset(pydantic.BaseModel):
+    id: str
+    name: str
+    description: Optional[str] = None
+    created_at: datetime.datetime
+    samples: int
+    type: str
+    creation_at: Optional[datetime.datetime] = None
+
+
+class ListDatasetsResponse(pydantic.BaseModel):
+    datasets: list[Dataset]
+
+
+class CreateDatasetResponse(pydantic.BaseModel):
+    dataset_id: str
+    dataset: Dataset
+
+
 class SearchLogsFilter(pydantic.BaseModel):
     field: Optional[str] = None
     op: Optional[str] = None
