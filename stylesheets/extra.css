@@ -1,7 +1,10 @@
-:root  > * {
-  --md-primary-fg-color: #917AF4;
+
+[data-md-color-scheme="slate"] .md-header {
+  background-color: #1E1E1E;
+  color: #BDBDBD;
 }
 
-[data-md-color-scheme="slate"] {
-  --md-hue: 210;
+[data-md-color-scheme="slate"] .md-tabs {
+  background-color: #1E1E1E;
+  color: #BDBDBD;
 }
