@@ -75,6 +75,8 @@ nav:
       - Datasets: api_ref/datasets.md
       - API Client: api_ref/api_client.md
       - Patronus Client: api_ref/pat_client.md
+      - Context: api_ref/context.md
+      - Integrations: api_ref/integrations.md
       - Config: api_ref/config.md
 
 plugins:
