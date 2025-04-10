@@ -26,7 +26,6 @@ class PatronusAPIClient(BaseAPIClient):
     async def create_project(self, request: api_types.CreateProjectRequest) -> api_types.Project:
         """Creates a new project based on the given request."""
         resp = await self.call("POST", "/v1/projects", body=request, response_cls=api_types.Project)
-        print(resp.response.text)
         resp.raise_for_status()
         return resp.data
 
