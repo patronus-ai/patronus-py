@@ -55,6 +55,9 @@ nav:
     - Observability:
         - Tracing: observability/tracing.md
         - Logging: observability/logging.md
+    - Integrations:
+        - Agent Integrations: integrations/agents.md
+        - LLM Integrations: integrations/llms.md
     - Evaluations:
         - Evaluators: evaluations/evaluators.md
         - Patronus Evaluators: evaluations/patronus-evaluators.md
