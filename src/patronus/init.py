@@ -10,7 +10,9 @@ from . import config
 from . import context
 from .api.api_client import PatronusAPIClient
 from .evals.exporter import BatchEvaluationExporter
-from .tracing.logger import create_logger, create_patronus_logger
+from .integrations.instrumenter import BasePatronusIntegrator
+from .integrations.otel import OpenTelemetryIntegrator
+from .tracing.logger import create_logger_provider
 from .tracing.tracer import create_tracer_provider
 from .utils import Once
 
@@ -24,6 +26,7 @@ def init(
     otel_endpoint: Optional[str] = None,
     api_key: Optional[str] = None,
     service: Optional[str] = None,
+    integrations: Optional[list[typing.Any]] = None,
     **kwargs: typing.Any,
 ) -> context.PatronusContext:
     """
@@ -52,6 +55,7 @@ def init(
             Falls back to configuration file or environment variables if not provided.
         service: Service name for OpenTelemetry traces.
             Falls back to configuration file or environment variables if not provided.
+        integrations: List of integration to use.
         **kwargs: Additional configuration options for the SDK.
 
     Returns:
@@ -90,6 +94,7 @@ def init(
             otel_endpoint=otel_endpoint or cfg.otel_endpoint,
             api_key=api_key or cfg.api_key,
             timeout_s=cfg.timeout_s,
+            integrations=integrations,
             **kwargs,
         )
         context.set_global_patronus_context(ctx)
@@ -116,6 +121,7 @@ def build_context(
     client_http: Optional[httpx.Client] = None,
     client_http_async: Optional[httpx.AsyncClient] = None,
     timeout_s: int = 60,
+    integrations: Optional[list[typing.Any]] = None,
     **kwargs: typing.Any,
 ) -> context.PatronusContext:
     """
@@ -140,6 +146,7 @@ def build_context(
         client_http_async: Custom HTTP client for asynchronous API requests.
             If not provided, a new client will be created.
         timeout_s: Timeout in seconds for HTTP requests (default: 60).
+        integrations: List of PatronusIntegrator instances.
         **kwargs: Additional configuration options, including:
             - integrations: List of OpenTelemetry instrumentors to enable.
 
@@ -151,6 +158,9 @@ def build_context(
         client_http = httpx.Client(timeout=timeout_s)
     if client_http_async is None:
         client_http_async = httpx.AsyncClient(timeout=timeout_s)
+
+    integrations = prepare_integrations(integrations)
+
     scope = context.PatronusScope(
         service=service,
         project_name=project_name,
@@ -164,45 +174,49 @@ def build_context(
         base_url=api_url,
         api_key=api_key,
     )
-    std_logger = create_logger(
-        scope=scope,
+    logger_provider = create_logger_provider(
         exporter_endpoint=otel_endpoint,
         api_key=api_key,
-    )
-    eval_logger = create_patronus_logger(
         scope=scope,
-        exporter_endpoint=otel_endpoint,
-        api_key=api_key,
     )
+
     tracer_provider = create_tracer_provider(
         exporter_endpoint=otel_endpoint,
         api_key=api_key,
         scope=scope,
     )
-    if integrations := kwargs.get("integrations"):
-        if not isinstance(integrations, list):
-            integrations = [integrations]
-
-        try:
-            from opentelemetry.instrumentation.instrumentor import BaseInstrumentor
-
-            for integration in integrations:
-                if isinstance(integration, BaseInstrumentor):
-                    integration.instrument(tracer_provider=tracer_provider)
-                else:
-                    warnings.warn(f"Integration {integration} not recognized.")
-        except ImportError:
-            warnings.warn("Opentelemetry instrumentation is not installed. Ignoring integrations.")
-
-    tracer = tracer_provider.get_tracer("patronus.sdk")
 
     eval_exporter = BatchEvaluationExporter(client=api)
-    return context.PatronusContext(
+    ctx = context.PatronusContext(
         scope=scope,
-        logger=std_logger,
-        pat_logger=eval_logger,
         tracer_provider=tracer_provider,
-        tracer=tracer,
+        logger_provider=logger_provider,
         api_client=api,
         exporter=eval_exporter,
     )
+    apply_integrations(ctx, integrations)
+    return ctx
+
+
+def apply_integrations(ctx: context.PatronusContext, integrations: list[BasePatronusIntegrator]):
+    for integration in integrations:
+        integration.apply(ctx=ctx)
+
+
+def prepare_integrations(integrations: Optional[list[typing.Any]]) -> list[BasePatronusIntegrator]:
+    if not integrations:
+        return []
+
+    def map_integration(integration: typing.Any):
+        if isinstance(integration, BasePatronusIntegrator):
+            return integration
+        try:
+            from opentelemetry.instrumentation.instrumentor import BaseInstrumentor
+
+            if isinstance(integration, BaseInstrumentor):
+                return OpenTelemetryIntegrator(integration)
+        except ImportError:
+            pass
+        raise ValueError(f"Unrecognized integration type: {integration!r}.")
+
+    return [map_integration(intg) for intg in integrations]

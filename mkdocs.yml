@@ -55,6 +55,9 @@ nav:
     - Observability:
         - Tracing: observability/tracing.md
         - Logging: observability/logging.md
+    - Integrations:
+        - Agent Integrations: integrations/agents.md
+        - LLM Integrations: integrations/llms.md
     - Evaluations:
         - Evaluators: evaluations/evaluators.md
         - Patronus Evaluators: evaluations/patronus-evaluators.md
@@ -75,6 +78,8 @@ nav:
       - Datasets: api_ref/datasets.md
       - API Client: api_ref/api_client.md
       - Patronus Client: api_ref/pat_client.md
+      - Context: api_ref/context.md
+      - Integrations: api_ref/integrations.md
       - Config: api_ref/config.md
 
 plugins:

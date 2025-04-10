@@ -261,6 +261,18 @@ def create_patronus_logger(
 __logger_count = ResourceMutex(0)
 
 
+def set_logger_handler(logger: logging.Logger, scope: context.PatronusScope, provider: LoggerProvider):
+    if any(isinstance(hdl, LoggingHandler) for hdl in logger.handlers):
+        return
+    scp = PatronusScope(
+        project_name=scope.project_name,
+        app=scope.app,
+        experiment_id=scope.experiment_id,
+        experiment_name=scope.experiment_name,
+    )
+    logger.addHandler(LoggingHandler(pat_scope=scp, level=logging.NOTSET, logger_provider=provider))
+
+
 @functools.lru_cache()
 def create_logger(
     scope: context.PatronusScope,
