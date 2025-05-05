@@ -456,7 +456,7 @@ def evaluator(
                 with start_span(prep.display_name(), attributes=attributes):
                     with _get_or_start_evaluation_log_group() as log_group:
                         log_id = log_group.log(
-                            logger=ctx.pat_logger,
+                            logger=context.get_pat_logger(ctx),
                             is_method=is_method,
                             self_key_name=prep.self_key_name,
                             bound_arguments=prep.arguments,
@@ -464,7 +464,7 @@ def evaluator(
                         )
                         ret = await fn(*fn_args, **fn_kwargs)
             except Exception as e:
-                ctx.logger.exception(f"Evaluator raised an exception: {e}")
+                context.get_logger(ctx).exception(f"Evaluator raised an exception: {e}")
                 raise e
             if prep.disable_export:
                 return ret
@@ -495,7 +495,7 @@ def evaluator(
                 with start_span(prep.display_name(), attributes=attributes):
                     with _get_or_start_evaluation_log_group() as log_group:
                         log_id = log_group.log(
-                            logger=ctx.pat_logger,
+                            logger=context.get_pat_logger(ctx),
                             is_method=is_method,
                             self_key_name=prep.self_key_name,
                             bound_arguments=prep.arguments,
@@ -503,7 +503,7 @@ def evaluator(
                         )
                         ret = fn(*fn_args, **fn_kwargs)
             except Exception as e:
-                ctx.logger.exception("Evaluation failed")
+                context.get_logger(ctx).exception(f"Evaluator raised an exception: {e}")
                 raise e
             if prep.disable_export:
                 return ret

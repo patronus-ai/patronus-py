@@ -8,7 +8,6 @@ from opentelemetry.util.types import Attributes
 from opentelemetry._logs import SeverityNumber
 
 from patronus.tracing.attributes import LogTypes
-from patronus.tracing.logger import Logger
 from patronus import context
 
 
@@ -43,11 +42,11 @@ def start_span(
         record_exception (bool): Whether to record exceptions that occur within the span. Default is True.
         attributes (Optional[Attributes]): Attributes to associate with the span, providing additional metadata.
     """
-    ctx = context.get_current_context_or_none()
-    if ctx is None:
+    tracer = context.get_tracer_or_none()
+    if tracer is None:
         yield
         return
-    with ctx.tracer.start_as_current_span(
+    with tracer.start_as_current_span(
         name,
         record_exception=record_exception,
         attributes=attributes,
@@ -101,10 +100,11 @@ def traced(
         sig = inspect.signature(func)
         record_exception = not disable_log and log_exceptions
 
-        def log_call(logger: Logger, fn_args: typing.Any, fn_kwargs: typing.Any, ret: typing.Any, exc: Exception):
+        def log_call(fn_args: typing.Any, fn_kwargs: typing.Any, ret: typing.Any, exc: Exception):
             if disable_log:
                 return
 
+            logger = context.get_pat_logger()
             severity = SeverityNumber.INFO
             body = {"function.name": name}
             if log_args:
@@ -123,39 +123,39 @@ def traced(
 
         @functools.wraps(func)
         def wrapper_sync(*f_args, **f_kwargs):
-            ctx = context.get_current_context_or_none()
-            if ctx is None:
+            tracer = context.get_tracer_or_none()
+            if tracer is None:
                 return func(*f_args, **f_kwargs)
 
             exc = None
             ret = None
-            with ctx.tracer.start_as_current_span(name, record_exception=record_exception, attributes=attributes):
+            with tracer.start_as_current_span(name, record_exception=record_exception, attributes=attributes):
                 try:
                     ret = func(*f_args, **f_kwargs)
                 except Exception as e:
                     exc = e
                     raise exc
                 finally:
-                    log_call(ctx.pat_logger, f_args, f_kwargs, ret, exc)
+                    log_call(f_args, f_kwargs, ret, exc)
 
                 return ret
 
         @functools.wraps(func)
         async def wrapper_async(*f_args, **f_kwargs):
-            ctx = context.get_current_context_or_none()
-            if ctx is None:
+            tracer = context.get_tracer_or_none()
+            if tracer is None:
                 return await func(*f_args, **f_kwargs)
 
             exc = None
             ret = None
-            with ctx.tracer.start_as_current_span(name, record_exception=record_exception, attributes=attributes):
+            with tracer.start_as_current_span(name, record_exception=record_exception, attributes=attributes):
                 try:
                     ret = await func(*f_args, **f_kwargs)
                 except Exception as e:
                     exc = e
                     raise exc
                 finally:
-                    log_call(ctx.pat_logger, f_args, f_kwargs, ret, exc)
+                    log_call(f_args, f_kwargs, ret, exc)
 
                 return ret
 
