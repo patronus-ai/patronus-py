@@ -1,6 +1,6 @@
 [project]
 name = "patronus"
-version = "0.1.4rc1"
+version = "0.1.4"
 description = "Patronus Python SDK"
 authors = [
     {name = "Jędrzej Rosłaniec", email = "jedrzej@patronus.ai"},
