@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://docs.patronus.ai/patronus-py/evaluations/patronus-evaluators/">
+        <link rel="canonical" href="https://docs.patronus.ai/patronus-py/integrations/llms/">
       
       
-        <link rel="prev" href="../evaluators/">
+        <link rel="prev" href="../agents/">
       
       
-        <link rel="next" href="../batching/">
+        <link rel="next" href="../../evaluations/evaluators/">
       
       
       <link rel="icon" href="../../assets/favicon-32x32.png">
@@ -24,7 +24,7 @@
     
     
       
-        <title>Patronus Evaluators - </title>
+        <title>LLM Integrations - </title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#patronus-evaluators" class="md-skip">
+        <a href="#llm-integrations" class="md-skip">
           Skip to content
         </a>
       
@@ -113,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Patronus Evaluators
+              LLM Integrations
             
           </span>
         </div>
@@ -611,118 +611,12 @@
                 
   
   
-  
-  
-    
-    
-      
-        
-      
-        
-      
-    
-    
-      
-      
-        
-          
-          
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_4" >
-        
-          
-          <label class="md-nav__link" for="__nav_1_4" id="__nav_1_4_label" tabindex="">
-            
-  
-  <span class="md-ellipsis">
-    Integrations
-    
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_1_4">
-            <span class="md-nav__icon md-icon"></span>
-            Integrations
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../integrations/agents/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Agent Integrations
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../integrations/llms/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    LLM Integrations
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
     
   
   
   
     
     
-      
-        
       
         
       
@@ -743,14 +637,14 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_5" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_4" checked>
         
           
-          <label class="md-nav__link" for="__nav_1_5" id="__nav_1_5_label" tabindex="">
+          <label class="md-nav__link" for="__nav_1_4" id="__nav_1_4_label" tabindex="">
             
   
   <span class="md-ellipsis">
-    Evaluations
+    Integrations
     
   </span>
   
@@ -758,10 +652,10 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_5_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_1_5">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_1_4">
             <span class="md-nav__icon md-icon"></span>
-            Evaluations
+            Integrations
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -772,11 +666,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../evaluators/" class="md-nav__link">
+      <a href="../agents/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Evaluators
+    Agent Integrations
     
   </span>
   
@@ -807,7 +701,7 @@
           
   
   <span class="md-ellipsis">
-    Patronus Evaluators
+    LLM Integrations
     
   </span>
   
@@ -819,7 +713,7 @@
         
   
   <span class="md-ellipsis">
-    Patronus Evaluators
+    LLM Integrations
     
   </span>
   
@@ -842,20 +736,44 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#using-patronus-evaluators" class="md-nav__link">
+  <a href="#opentelemetry-llm-instrumentors" class="md-nav__link">
     <span class="md-ellipsis">
-      Using Patronus Evaluators
+      OpenTelemetry LLM Instrumentors
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="OpenTelemetry LLM Instrumentors">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#anthropic-claude-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Anthropic Claude Integration
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#synchronous-and-asynchronous-versions" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#openai-integration" class="md-nav__link">
     <span class="md-ellipsis">
-      Synchronous and Asynchronous Versions
+      OpenAI Integration
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-multiple-llm-instrumentors" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using Multiple LLM Instrumentors
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -868,6 +786,68 @@
 
               
             
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_1_5" id="__nav_1_5_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Evaluations
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1_5">
+            <span class="md-nav__icon md-icon"></span>
+            Evaluations
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
               
                 
   
@@ -875,7 +855,51 @@
   
   
     <li class="md-nav__item">
-      <a href="../batching/" class="md-nav__link">
+      <a href="../../evaluations/evaluators/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Evaluators
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../evaluations/patronus-evaluators/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Patronus Evaluators
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../evaluations/batching/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1446,20 +1470,44 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#using-patronus-evaluators" class="md-nav__link">
+  <a href="#opentelemetry-llm-instrumentors" class="md-nav__link">
     <span class="md-ellipsis">
-      Using Patronus Evaluators
+      OpenTelemetry LLM Instrumentors
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="OpenTelemetry LLM Instrumentors">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#anthropic-claude-integration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Anthropic Claude Integration
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#synchronous-and-asynchronous-versions" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#openai-integration" class="md-nav__link">
     <span class="md-ellipsis">
-      Synchronous and Asynchronous Versions
+      OpenAI Integration
     </span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-multiple-llm-instrumentors" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using Multiple LLM Instrumentors
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1482,40 +1530,60 @@
   
 
 
-<h1 id="patronus-evaluators">Patronus Evaluators</h1>
-<p>Patronus provides a suite of evaluators that help you assess LLM outputs without writing complex evaluation logic.
-These managed evaluators run on Patronus infrastructure. Visit Patronus Platform console to define your own criteria.</p>
-<h2 id="using-patronus-evaluators">Using Patronus Evaluators</h2>
-<p>You can use Patronus evaluators through the <code>RemoteEvaluator</code> class:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">patronus</span><span class="w"> </span><span class="kn">import</span> <span class="n">init</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">patronus.evals</span><span class="w"> </span><span class="kn">import</span> <span class="n">RemoteEvaluator</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">init</span><span class="p">()</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">factual_accuracy</span> <span class="o">=</span> <span class="n">RemoteEvaluator</span><span class="p">(</span><span class="s2">&quot;judge&quot;</span><span class="p">,</span> <span class="s2">&quot;factual-accuracy&quot;</span><span class="p">)</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="c1"># Evaluate an LLM output</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="n">result</span> <span class="o">=</span> <span class="n">factual_accuracy</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">task_input</span><span class="o">=</span><span class="s2">&quot;What is the capital of France?&quot;</span><span class="p">,</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">task_output</span><span class="o">=</span><span class="s2">&quot;The capital of France is Paris, which is located on the Seine River.&quot;</span><span class="p">,</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">gold_answer</span><span class="o">=</span><span class="s2">&quot;Paris&quot;</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="p">)</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Passed: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">pass_</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Score: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">score</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Explanation: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">explanation</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<h1 id="llm-integrations">LLM Integrations</h1>
+<p>The Patronus SDK provides integrations with various LLM providers to enable observability, evaluation, and experimentation with LLM applications.</p>
+<h2 id="opentelemetry-llm-instrumentors">OpenTelemetry LLM Instrumentors</h2>
+<p>Patronus supports any OpenTelemetry-based LLM instrumentation. This allows you to easily capture telemetry data from your LLM interactions and send it to the Patronus platform for analysis.</p>
+<p>A popular option for LLM instrumentation is <a href="https://github.com/Arize-ai/openinference">OpenInference</a>, which provides instrumentors for multiple LLM providers.</p>
+<h3 id="anthropic-claude-integration">Anthropic Claude Integration</h3>
+<p>To instrument Anthropic's Claude API calls:</p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Install the required package</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>pip<span class="w"> </span>install<span class="w"> </span>openinference-instrumentation-anthropic
 </span></code></pre></div>
-<h2 id="synchronous-and-asynchronous-versions">Synchronous and Asynchronous Versions</h2>
-<p>Patronus evaluators are available in both synchronous and asynchronous versions:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Synchronous usage (as shown above)</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">factual_accuracy</span> <span class="o">=</span> <span class="n">RemoteEvaluator</span><span class="p">(</span><span class="s2">&quot;judge&quot;</span><span class="p">,</span> <span class="s2">&quot;factual-accuracy&quot;</span><span class="p">)</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">result</span> <span class="o">=</span> <span class="n">factual_accuracy</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1"># Asynchronous usage</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="kn">from</span><span class="w"> </span><span class="nn">patronus.evals</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncRemoteEvaluator</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="n">async_factual_accuracy</span> <span class="o">=</span> <span class="n">AsyncRemoteEvaluator</span><span class="p">(</span><span class="s2">&quot;judge&quot;</span><span class="p">,</span> <span class="s2">&quot;factual-accuracy&quot;</span><span class="p">)</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">async_factual_accuracy</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">patronus</span><span class="w"> </span><span class="kn">import</span> <span class="n">init</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">openinference.instrumentation.anthropic</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnthropicInstrumentor</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># Initialize Patronus with Anthropic instrumentation</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">patronus_ctx</span> <span class="o">=</span> <span class="n">init</span><span class="p">(</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="n">integrations</span><span class="o">=</span><span class="p">[</span><span class="n">AnthropicInstrumentor</span><span class="p">()]</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="p">)</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="c1"># Now all Claude API calls will be automatically instrumented</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="c1"># and the telemetry will be sent to Patronus</span>
+</span></code></pre></div>
+<h3 id="openai-integration">OpenAI Integration</h3>
+<p>To instrument OpenAI API calls:</p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Install the required package</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>pip<span class="w"> </span>install<span class="w"> </span>openinference-instrumentation-openai
+</span></code></pre></div>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">patronus</span><span class="w"> </span><span class="kn">import</span> <span class="n">init</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">openinference.instrumentation.openai</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenAIInstrumentor</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># Initialize Patronus with OpenAI instrumentation</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">patronus_ctx</span> <span class="o">=</span> <span class="n">init</span><span class="p">(</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>    <span class="n">integrations</span><span class="o">=</span><span class="p">[</span><span class="n">OpenAIInstrumentor</span><span class="p">()]</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="p">)</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="c1"># Now all OpenAI API calls will be automatically instrumented</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="c1"># and the telemetry will be sent to Patronus</span>
+</span></code></pre></div>
+<h3 id="using-multiple-llm-instrumentors">Using Multiple LLM Instrumentors</h3>
+<p>You can combine multiple instrumentors to capture telemetry from different LLM providers:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">patronus</span><span class="w"> </span><span class="kn">import</span> <span class="n">init</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">openinference.instrumentation.anthropic</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnthropicInstrumentor</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">openinference.instrumentation.openai</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenAIInstrumentor</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># Initialize Patronus with multiple LLM instrumentors</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">patronus_ctx</span> <span class="o">=</span> <span class="n">init</span><span class="p">(</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>    <span class="n">project_name</span><span class="o">=</span><span class="s2">&quot;my-multi-llm-project&quot;</span><span class="p">,</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>    <span class="n">app</span><span class="o">=</span><span class="s2">&quot;llm-application&quot;</span><span class="p">,</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>    <span class="n">integrations</span><span class="o">=</span><span class="p">[</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>        <span class="n">AnthropicInstrumentor</span><span class="p">(),</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>        <span class="n">OpenAIInstrumentor</span><span class="p">()</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>    <span class="p">]</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="p">)</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="c1"># Now both Anthropic and OpenAI API calls will be automatically instrumented</span>
 </span></code></pre></div>
 
 
@@ -1552,7 +1620,7 @@ These managed evaluators run on Patronus infrastructure. Visit Patronus Platform
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../evaluators/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Evaluators">
+          <a href="../agents/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Agent Integrations">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1562,20 +1630,20 @@ These managed evaluators run on Patronus infrastructure. Visit Patronus Platform
                 Previous
               </span>
               <div class="md-ellipsis">
-                Evaluators
+                Agent Integrations
               </div>
             </div>
           </a>
         
         
           
-          <a href="../batching/" class="md-footer__link md-footer__link--next" aria-label="Next: Batching Evaluations">
+          <a href="../../evaluations/evaluators/" class="md-footer__link md-footer__link--next" aria-label="Next: Evaluators">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Batching Evaluations
+                Evaluators
               </div>
             </div>
             <div class="md-footer__button md-icon">
