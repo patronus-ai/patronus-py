@@ -39,7 +39,6 @@ pip install patronus
 pip install smolagents[litellm]
 pip install openinference-instrumentation-smolagents
 pip install opentelemetry-instrumentation-threading
-pip install opentelemetry-instrumentation-asyncio
 ```
 
 ## Example overview

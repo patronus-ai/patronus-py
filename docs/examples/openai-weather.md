@@ -38,8 +38,6 @@ If you prefer to copy the example code to your own project, you'll need to insta
 pip install patronus
 pip install openai
 pip install openinference-instrumentation-openai
-pip install opentelemetry-instrumentation-threading
-pip install opentelemetry-instrumentation-asyncio
 ```
 
 ## Example overview
