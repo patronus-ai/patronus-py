@@ -1,0 +1,73 @@
+[build-system]
+requires = ["hatchling", "uv-dynamic-versioning>=0.7.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
+
+[tool.uv-dynamic-versioning]
+vcs = "git"
+style = "pep440"
+bump = true
+
+[project]
+name = "patronus-examples"
+dynamic = ["version", "dependencies", "optional-dependencies"]
+description = "Examples of how to use Patronus SDK"
+authors = [
+    { name = "Jędrzej Rosłaniec", email = "jedrzej@patronus.ai" },
+]
+requires-python = ">=3.10"
+readme = "README.md"
+license = "MIT"
+
+
+[tool.hatch.metadata.hooks.uv-dynamic-versioning]
+dependencies = [
+    "patronus[experiments]=={{ version }}",
+    "opentelemetry-instrumentation-threading>=0.54b0,<1.0",
+    "opentelemetry-instrumentation-asyncio>=0.54b0,<1.0"
+]
+
+[tool.hatch.metadata.hooks.uv-dynamic-versioning.optional-dependencies]
+transformers = ["transformers>=4.51.0,<5.0.0", "torch>=2.7.0,<3.0"]
+pydantic-ai = [
+    "pydantic-ai-slim[openai]",
+]
+smolagents = [
+    "smolagents[litellm]>=1.13.0,<2.0",
+    "openinference-instrumentation-smolagents>=0.1.11,<0.2.0",
+]
+crewai = [
+    "crewai>=0.119.0,<1.0.0",
+    "openinference.instrumentation.crewai>=0.1.9,<0.2.0",
+]
+langchain = [
+    "pydantic",
+    "langchain_openai",
+    "langgraph",
+    "langchain_core",
+    "openinference-instrumentation-langchain>=0.1.42,<0.2.0",
+]
+openai = [
+    "openai",
+    "openinference-instrumentation-openai>=0.1.28,<0.2.0",
+]
+openai-agents = [
+    "openai-agents",
+    "openinference-instrumentation-openai-agents>=0.1.11,<0.2.0",
+]
+anthropic = [
+    "anthropic",
+    "openinference-instrumentation-anthropic>=0.1.17,<0.2.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["patronus_examples"]
+
+[tool.uv.sources]
+patronus = { workspace = true }
+
+[tool.ruff]
+extend = "../pyproject.toml"
+line-length = 88

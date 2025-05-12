@@ -7,7 +7,9 @@ cli = Client()
 
 
 @task
-def call_gpt(evaluated_model_system_prompt: str, evaluated_model_input: str) -> TaskResult:
+def call_gpt(
+    evaluated_model_system_prompt: str, evaluated_model_input: str
+) -> TaskResult:
     model = "gpt-4o"
     params = {
         "temperature": 1,

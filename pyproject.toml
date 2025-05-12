@@ -1,59 +1,81 @@
+[build-system]
+requires = ["hatchling", "uv-dynamic-versioning>=0.7.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "uv-dynamic-versioning"
+
+[tool.uv-dynamic-versioning]
+vcs = "git"
+style = "pep440"
+bump = true
+
 [project]
 name = "patronus"
-version = "0.1.4"
+dynamic = ["version", "dependencies", "optional-dependencies"]
 description = "Patronus Python SDK"
 authors = [
-    {name = "Jędrzej Rosłaniec", email = "jedrzej@patronus.ai"},
-    {name = "Micheal Jaszczuk", email = "michael@patronus.ai"},
+    { name = "Jędrzej Rosłaniec", email = "jedrzej@patronus.ai" },
+    { name = "Micheal Jaszczuk", email = "michael@patronus.ai" },
 ]
-license = "MIT"
+requires-python = ">=3.9"
 readme = "README.md"
+license = "MIT"
 
-[tool.poetry]
-packages = [{include = "patronus", from="src"}]
+[tool.hatch.metadata.hooks.uv-dynamic-versioning]
+dependencies = [
+    "httpx>=0.27.0",
+    "pydantic>=2.8.2",
+    "tqdm>=4.66.5",
+    "pydantic-settings>=2.4.0",
+    "pyyaml>=6.0.2",
+    "typing-extensions>=4.12.2",
+    "opentelemetry-api>=1.31.0",
+    "opentelemetry-sdk>=1.31.0",
+    "opentelemetry-exporter-otlp>=1.31.0",
+]
 
-[tool.poetry.group.dev.dependencies]
-pytest = "^8.3.3"
-mypy = "^1.12.1"
-
-
-[tool.poetry.group.docs.dependencies]
-mkdocs-material = "^9.6.7"
-mkdocstrings-python = "^1.16.5"
+[tool.hatch.metadata.hooks.uv-dynamic-versioning.optional-dependencies]
+examples = [
+    "patronus-examples=={{ version }}",
+]
+experiments = ["pandas>=2.0.0"]
 
 [project.urls]
 Homepage = "https://www.patronus.ai"
 Documentation = "https://docs.patronus.ai"
 Repository = "https://github.com/patronus-ai/patronus-py"
 
-[tool.poetry.dependencies]
-python = ">=3.9"
-httpx = ">=0.27.0"
-pydantic = ">=2.8.2"
-tqdm = ">=4.66.5"
-pydantic-settings = ">=2.4.0"
-pyyaml = ">=6.0.2"
-typing-extensions = ">=4.12.2"
-opentelemetry-api = ">=1.31.0"
-opentelemetry-sdk = ">=1.31.0"
-opentelemetry-exporter-otlp = ">=1.31.0"
+[dependency-groups]
+docs = [
+    "mkdocs-material>=9.6.7,<10",
+    "mkdocstrings-python>=1.16.5,<2",
+]
+lint = [
+    "mypy>=1.15.0",
+    "pyright>=1.1.400",
+    "ruff>=0.11.8",
+]
 
-[tool.poetry.group.experiments]
-optional = true
 
-[tool.poetry.group.experiments.dependencies]
-pandas = ">=2.0.0"
+[tool.uv.workspace]
+members = [
+    "examples"
+]
 
-[tool.poetry.extras]
-experiments = ["pandas"]
-all = ["pandas"]
+[tool.uv.sources]
+patronus-examples = {workspace = true}
 
-[build-system]
-requires = ["poetry-core>=2.0"]
-build-backend = "poetry.core.masonry.api"
+[tool.ruff.lint]
+isort = { combine-as-imports = true, known-first-party = ["patronus"] }
+mccabe = { max-complexity = 15 }
 
 [tool.ruff]
 line-length = 120
+target-version = "py39"
 
-[tool.mypy]
-python_version = "3.9"
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.format]
+quote-style = "double"
