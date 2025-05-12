@@ -64,7 +64,7 @@ members = [
 ]
 
 [tool.uv.sources]
-examples-patronus = {workspace = true}
+patronus-examples = {workspace = true}
 
 [tool.ruff.lint]
 isort = { combine-as-imports = true, known-first-party = ["patronus"] }

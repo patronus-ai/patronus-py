@@ -2834,6 +2834,9 @@ dependencies = [
 ]
 
 [package.optional-dependencies]
+examples = [
+    { name = "patronus-examples" },
+]
 experiments = [
     { name = "pandas" },
 ]
@@ -2856,13 +2859,14 @@ requires-dist = [
     { name = "opentelemetry-exporter-otlp", specifier = ">=1.31.0" },
     { name = "opentelemetry-sdk", specifier = ">=1.31.0" },
     { name = "pandas", marker = "extra == 'experiments'", specifier = ">=2.0.0" },
+    { name = "patronus-examples", marker = "extra == 'examples'", editable = "examples" },
     { name = "pydantic", specifier = ">=2.8.2" },
     { name = "pydantic-settings", specifier = ">=2.4.0" },
     { name = "pyyaml", specifier = ">=6.0.2" },
     { name = "tqdm", specifier = ">=4.66.5" },
     { name = "typing-extensions", specifier = ">=4.12.2" },
 ]
-provides-extras = ["experiments"]
+provides-extras = ["examples", "experiments"]
 
 [package.metadata.requires-dev]
 docs = [
