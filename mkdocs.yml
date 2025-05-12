@@ -70,6 +70,17 @@ nav:
         - Using Evaluators: experiments/evaluators.md
         - Advanced Features: experiments/advanced.md
     - Configuration: configuration.md
+    - Examples:
+        - examples/index.md
+        - Direct LLM APIs:
+          - Trace OpenAI: examples/openai-weather.md
+          - Trace Anthropic: examples/anthropic-weather.md
+        - Agent Frameworks:
+          - Trace Smolagents: examples/smolagents-weather.md
+          - Trace PydanticAI: examples/pydanticai-weather.md
+          - Trace OpenAI Agents: examples/openai-agents-weather.md
+          - Trace LangChain: examples/langchain-weather.md
+          - Trace CrewAI: examples/crewai-weather.md
   - API Reference:
       - Init: api_ref/init.md
       - Tracing: api_ref/tracing.md
