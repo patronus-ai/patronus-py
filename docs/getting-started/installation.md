@@ -39,7 +39,7 @@ pip install "patronus[experiments]"
 
 ## Quick Start with Examples
 
-If you'd like to see Patronus in action quickly, check out our [examples](../../examples/). These examples demonstrate how to use Patronus with various LLM frameworks and APIs.
+If you'd like to see Patronus in action quickly, check out our [examples](../examples/index.md). These examples demonstrate how to use Patronus with various LLM frameworks and APIs.
 
 For instance, to run the Smolagents weather example:
 
@@ -53,4 +53,4 @@ uv run --no-cache --with "patronus-examples[smolagents]" \
     -m patronus_examples.tracking.smolagents_weather
 ```
 
-See the [examples documentation](../../examples/) for more detailed information on running and understanding the available examples.
+See the [examples documentation](../examples/index.md) for more detailed information on running and understanding the available examples.
