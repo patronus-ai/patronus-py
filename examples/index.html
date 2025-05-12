@@ -10,28 +10,28 @@
       
       
       
-        <link rel="canonical" href="https://docs.patronus.ai/patronus-py/integrations/agents/">
+        <link rel="canonical" href="https://docs.patronus.ai/patronus-py/examples/">
       
       
-        <link rel="prev" href="../../observability/logging/">
+        <link rel="prev" href="../configuration/">
       
       
-        <link rel="next" href="../llms/">
+        <link rel="next" href="openai-weather/">
       
       
-      <link rel="icon" href="../../assets/favicon-32x32.png">
+      <link rel="icon" href="../assets/favicon-32x32.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.13">
     
     
       
-        <title>Agent Integrations - </title>
+        <title>Examples - </title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.342714a4.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.342714a4.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -50,11 +50,11 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="../../stylesheets/extra.css">
+      <link rel="stylesheet" href="../stylesheets/extra.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#agent-integrations" class="md-skip">
+        <a href="#examples" class="md-skip">
           Skip to content
         </a>
       
@@ -94,9 +94,9 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="" class="md-header__button md-logo" aria-label="" data-md-component="logo">
+    <a href=".." title="" class="md-header__button md-logo" aria-label="" data-md-component="logo">
       
-  <img src="../../assets/patronus.webp" alt="logo">
+  <img src="../assets/patronus.webp" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -113,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Agent Integrations
+              Examples
             
           </span>
         </div>
@@ -228,7 +228,7 @@
     
     
       <li class="md-tabs__item md-tabs__item--active">
-        <a href="../.." class="md-tabs__link">
+        <a href=".." class="md-tabs__link">
           
   
   
@@ -250,7 +250,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../api_ref/init/" class="md-tabs__link">
+        <a href="../api_ref/init/" class="md-tabs__link">
           
   
   
@@ -286,9 +286,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="" class="md-nav__button md-logo" aria-label="" data-md-component="logo">
+    <a href=".." title="" class="md-nav__button md-logo" aria-label="" data-md-component="logo">
       
-  <img src="../../assets/patronus.webp" alt="logo">
+  <img src="../assets/patronus.webp" alt="logo">
 
     </a>
     
@@ -357,7 +357,7 @@
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../.." class="md-nav__link ">
+            <a href=".." class="md-nav__link ">
               
   
   
@@ -448,7 +448,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting-started/installation/" class="md-nav__link">
+      <a href="../getting-started/installation/" class="md-nav__link">
         
   
   
@@ -471,7 +471,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting-started/initialization/" class="md-nav__link">
+      <a href="../getting-started/initialization/" class="md-nav__link">
         
   
   
@@ -494,7 +494,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../getting-started/quickstart/" class="md-nav__link">
+      <a href="../getting-started/quickstart/" class="md-nav__link">
         
   
   
@@ -579,7 +579,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../observability/tracing/" class="md-nav__link">
+      <a href="../observability/tracing/" class="md-nav__link">
         
   
   
@@ -602,7 +602,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../observability/logging/" class="md-nav__link">
+      <a href="../observability/logging/" class="md-nav__link">
         
   
   
@@ -630,8 +630,6 @@
                 
   
   
-    
-  
   
   
     
@@ -653,11 +651,13 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_4" checked>
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_4" >
         
           
           <label class="md-nav__link" for="__nav_1_4" id="__nav_1_4_label" tabindex="">
@@ -673,7 +673,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_4_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_1_4">
             <span class="md-nav__icon md-icon"></span>
             Integrations
@@ -684,32 +684,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    Agent Integrations
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../integrations/agents/" class="md-nav__link">
         
   
   
@@ -720,68 +698,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#pydantic-ai" class="md-nav__link">
-    <span class="md-ellipsis">
-      Pydantic AI
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Pydantic AI">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    <span class="md-ellipsis">
-      Installation
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#usage" class="md-nav__link">
-    <span class="md-ellipsis">
-      Usage
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#configuration-options" class="md-nav__link">
-    <span class="md-ellipsis">
-      Configuration Options
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -794,7 +710,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../llms/" class="md-nav__link">
+      <a href="../integrations/llms/" class="md-nav__link">
         
   
   
@@ -881,7 +797,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../evaluations/evaluators/" class="md-nav__link">
+      <a href="../evaluations/evaluators/" class="md-nav__link">
         
   
   
@@ -904,7 +820,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../evaluations/patronus-evaluators/" class="md-nav__link">
+      <a href="../evaluations/patronus-evaluators/" class="md-nav__link">
         
   
   
@@ -927,7 +843,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../evaluations/batching/" class="md-nav__link">
+      <a href="../evaluations/batching/" class="md-nav__link">
         
   
   
@@ -1020,7 +936,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../experiments/introduction/" class="md-nav__link">
+      <a href="../experiments/introduction/" class="md-nav__link">
         
   
   
@@ -1043,7 +959,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../experiments/running/" class="md-nav__link">
+      <a href="../experiments/running/" class="md-nav__link">
         
   
   
@@ -1066,7 +982,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../experiments/datasets/" class="md-nav__link">
+      <a href="../experiments/datasets/" class="md-nav__link">
         
   
   
@@ -1089,7 +1005,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../experiments/tasks/" class="md-nav__link">
+      <a href="../experiments/tasks/" class="md-nav__link">
         
   
   
@@ -1112,7 +1028,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../experiments/evaluators/" class="md-nav__link">
+      <a href="../experiments/evaluators/" class="md-nav__link">
         
   
   
@@ -1135,7 +1051,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../experiments/advanced/" class="md-nav__link">
+      <a href="../experiments/advanced/" class="md-nav__link">
         
   
   
@@ -1166,7 +1082,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../configuration/" class="md-nav__link">
+      <a href="../configuration/" class="md-nav__link">
         
   
   
@@ -1186,8 +1102,10 @@
                 
   
   
+    
   
   
+  
     
     
       
@@ -1211,17 +1129,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_8" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../examples/" class="md-nav__link ">
+            <a href="./" class="md-nav__link md-nav__link--active">
               
   
   
@@ -1234,13 +1150,13 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_1_8" id="__nav_1_8_label" tabindex="">
+              <label class="md-nav__link md-nav__link--active" for="__nav_1_8" id="__nav_1_8_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_8_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_8_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_1_8">
             <span class="md-nav__icon md-icon"></span>
             Examples
@@ -1307,7 +1223,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/openai-weather/" class="md-nav__link">
+      <a href="openai-weather/" class="md-nav__link">
         
   
   
@@ -1330,7 +1246,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/anthropic-weather/" class="md-nav__link">
+      <a href="anthropic-weather/" class="md-nav__link">
         
   
   
@@ -1418,7 +1334,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/smolagents-weather/" class="md-nav__link">
+      <a href="smolagents-weather/" class="md-nav__link">
         
   
   
@@ -1441,7 +1357,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/pydanticai-weather/" class="md-nav__link">
+      <a href="pydanticai-weather/" class="md-nav__link">
         
   
   
@@ -1464,7 +1380,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/openai-agents-weather/" class="md-nav__link">
+      <a href="openai-agents-weather/" class="md-nav__link">
         
   
   
@@ -1487,7 +1403,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/langchain-weather/" class="md-nav__link">
+      <a href="langchain-weather/" class="md-nav__link">
         
   
   
@@ -1510,7 +1426,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/crewai-weather/" class="md-nav__link">
+      <a href="crewai-weather/" class="md-nav__link">
         
   
   
@@ -1623,7 +1539,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_ref/init/" class="md-nav__link">
+      <a href="../api_ref/init/" class="md-nav__link">
         
   
   
@@ -1646,7 +1562,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_ref/tracing/" class="md-nav__link">
+      <a href="../api_ref/tracing/" class="md-nav__link">
         
   
   
@@ -1669,7 +1585,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_ref/evals/" class="md-nav__link">
+      <a href="../api_ref/evals/" class="md-nav__link">
         
   
   
@@ -1692,7 +1608,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_ref/experiments/" class="md-nav__link">
+      <a href="../api_ref/experiments/" class="md-nav__link">
         
   
   
@@ -1715,7 +1631,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_ref/datasets/" class="md-nav__link">
+      <a href="../api_ref/datasets/" class="md-nav__link">
         
   
   
@@ -1738,7 +1654,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_ref/api_client/" class="md-nav__link">
+      <a href="../api_ref/api_client/" class="md-nav__link">
         
   
   
@@ -1761,7 +1677,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_ref/pat_client/" class="md-nav__link">
+      <a href="../api_ref/pat_client/" class="md-nav__link">
         
   
   
@@ -1784,7 +1700,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_ref/context/" class="md-nav__link">
+      <a href="../api_ref/context/" class="md-nav__link">
         
   
   
@@ -1807,7 +1723,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_ref/integrations/" class="md-nav__link">
+      <a href="../api_ref/integrations/" class="md-nav__link">
         
   
   
@@ -1830,7 +1746,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../api_ref/config/" class="md-nav__link">
+      <a href="../api_ref/config/" class="md-nav__link">
         
   
   
@@ -1880,37 +1796,94 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#pydantic-ai" class="md-nav__link">
-    <span class="md-ellipsis">
-      Pydantic AI
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Pydantic AI">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    <span class="md-ellipsis">
-      Installation
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#usage" class="md-nav__link">
     <span class="md-ellipsis">
       Usage
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Usage">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setting-required-environment-variables" class="md-nav__link">
+    <span class="md-ellipsis">
+      Setting required environment variables
+    </span>
+  </a>
+  
 </li>
         
           <li class="md-nav__item">
-  <a href="#configuration-options" class="md-nav__link">
+  <a href="#running-examples" class="md-nav__link">
     <span class="md-ellipsis">
-      Configuration Options
+      Running Examples
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Running Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-running-with-uv" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Running with uv
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-pulling-the-repository-and-executing-the-scripts-directly" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Pulling the repository and executing the scripts directly
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-copy-and-paste-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Copy and paste example
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#available-examples" class="md-nav__link">
+    <span class="md-ellipsis">
+      Available Examples
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Available Examples">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#direct-llm-api-integrations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Direct LLM API Integrations
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-frameworks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Agent Frameworks
     </span>
   </a>
   
@@ -1940,43 +1913,57 @@
   
 
 
-<h1 id="agent-integrations">Agent Integrations</h1>
-<p>The Patronus SDK provides integrations with various agent frameworks to enable observability, evaluation, and experimentation with agent-based LLM applications.</p>
-<h2 id="pydantic-ai">Pydantic AI</h2>
-<p><a href="https://ai.pydantic.dev/">Pydantic AI</a> is a framework for building AI agents with type-safe tools and structured outputs. The Patronus SDK provides a dedicated integration that automatically instruments all Pydantic AI agents for observability.</p>
-<h3 id="installation">Installation</h3>
-<p>Make sure you have both the Patronus SDK and Pydantic AI installed:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>patronus<span class="w"> </span>pydantic-ai
+<h1 id="examples">Examples</h1>
+<p>Examples of how to use Patronus and what it can do.</p>
+<h2 id="usage">Usage</h2>
+<p>These examples demonstrate common use cases and integration patterns for Patronus.</p>
+<h3 id="setting-required-environment-variables">Setting required environment variables</h3>
+<p>Most examples require you to set up authentication with Patronus and other services. In most cases, you'll need to set the following environment variables:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">PATRONUS_API_KEY</span><span class="o">=</span>your-api-key
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">OPENAI_API_KEY</span><span class="o">=</span>your-api-key
 </span></code></pre></div>
-<h3 id="usage">Usage</h3>
-<p>To enable Pydantic AI integration with Patronus:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">patronus</span><span class="w"> </span><span class="kn">import</span> <span class="n">init</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">patronus.integrations.pydantic_ai</span><span class="w"> </span><span class="kn">import</span> <span class="n">PydanticAIIntegrator</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># Initialize Patronus with the Pydantic AI integration</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">patronus_ctx</span> <span class="o">=</span> <span class="n">init</span><span class="p">(</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="n">integrations</span><span class="o">=</span><span class="p">[</span><span class="n">PydanticAIIntegrator</span><span class="p">()]</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="p">)</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="c1"># Now all Pydantic AI agents will automatically send telemetry to Patronus</span>
+<p>Some examples may require additional API keys (like <code>ANTHROPIC_API_KEY</code>).</p>
+<h3 id="running-examples">Running Examples</h3>
+<p>There are three ways to run the examples:</p>
+<h4 id="1-running-with-uv">1. Running with <code>uv</code></h4>
+<p>You can run examples with <code>uv</code>, which automatically installs the required dependencies:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Remember to export environment variables before running the example.</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>uv<span class="w"> </span>run<span class="w"> </span>--no-cache<span class="w"> </span>--with<span class="w"> </span><span class="s2">&quot;patronus-examples[smolagents]&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span>-m<span class="w"> </span>patronus_examples.tracking.smolagents_weather
 </span></code></pre></div>
-<h3 id="configuration-options">Configuration Options</h3>
-<p>The <code>PydanticAIIntegrator</code> accepts the following parameters:</p>
+<p>This installs the <code>patronus-examples</code> package with the necessary optional dependencies.</p>
+<h4 id="2-pulling-the-repository-and-executing-the-scripts-directly">2. Pulling the repository and executing the scripts directly</h4>
+<p>You can clone the repository and run the scripts directly:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Clone the repository</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/patronus-ai/patronus-py.git
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="nb">cd</span><span class="w"> </span>patronus-py
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># Run the example script (requires uv)</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>./examples/patronus_examples/tracking/smolagents_weather.py
+</span></code></pre></div>
+<p>See the script files for more information. They use uv script annotations to handle dependencies.</p>
+<h4 id="3-copy-and-paste-example">3. Copy and paste example</h4>
+<p>You can copy the example code into your own project and install the dependencies with any package manager of your choice. Each example file includes a list of required dependencies at the top of the document.</p>
+<h2 id="available-examples">Available Examples</h2>
+<p>Patronus provides examples for various LLM frameworks and direct API integrations:</p>
+<h3 id="direct-llm-api-integrations">Direct LLM API Integrations</h3>
 <ul>
-<li><code>event_mode</code>: Controls how agent events are captured<ul>
-<li><code>"logs"</code> (default): Captures events as logs, which works best with the Patronus Platform</li>
-<li><code>"attributes"</code>: Captures events as span attributes</li>
+<li><a href="openai-weather/">OpenAI Weather Example</a> - Simple example of tracing OpenAI API calls</li>
+<li><a href="anthropic-weather/">Anthropic Weather Example</a> - Simple example of tracing Anthropic API calls</li>
 </ul>
-</li>
+<h3 id="agent-frameworks">Agent Frameworks</h3>
+<ul>
+<li><a href="smolagents-weather/">Smolagents Weather</a> - Using Patronus with Smolagents</li>
+<li><a href="pydanticai-weather/">PydanticAI Weather</a> - Using Patronus with PydanticAI</li>
+<li><a href="openai-agents-weather/">OpenAI Agents Weather</a> - Using Patronus with OpenAI Agents</li>
+<li><a href="langchain-weather/">LangChain Weather</a> - Using Patronus with LangChain and LangGraph</li>
+<li><a href="crewai-weather/">CrewAI Weather</a> - Using Patronus with CrewAI</li>
 </ul>
-<p>Example with custom configuration:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">patronus</span><span class="w"> </span><span class="kn">import</span> <span class="n">init</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">patronus.integrations.pydantic_ai</span><span class="w"> </span><span class="kn">import</span> <span class="n">PydanticAIIntegrator</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">patronus_ctx</span> <span class="o">=</span> <span class="n">init</span><span class="p">(</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">integrations</span><span class="o">=</span><span class="p">[</span><span class="n">PydanticAIIntegrator</span><span class="p">(</span><span class="n">event_mode</span><span class="o">=</span><span class="s2">&quot;logs&quot;</span><span class="p">)]</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="p">)</span>
-</span></code></pre></div>
+<p>Each example demonstrates:
+- How to set up Patronus integrations with the specific framework
+- How to trace LLM calls and tool usage
+- How to analyze the execution flow of your application</p>
+<p>All examples follow a similar pattern using a weather application to make it easy to compare the different frameworks.</p>
 
 
 
@@ -2012,7 +1999,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../../observability/logging/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Logging">
+          <a href="../configuration/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Configuration">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2022,20 +2009,20 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                Logging
+                Configuration
               </div>
             </div>
           </a>
         
         
           
-          <a href="../llms/" class="md-footer__link md-footer__link--next" aria-label="Next: LLM Integrations">
+          <a href="openai-weather/" class="md-footer__link md-footer__link--next" aria-label="Next: Trace OpenAI">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                LLM Integrations
+                Trace OpenAI
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -2071,10 +2058,10 @@
     
     
       
-      <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy", "navigation.indexes", "navigation.expand", "navigation.footer", "navigation.sections", "navigation.tabs", "navigation.top"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "..", "features": ["content.code.copy", "navigation.indexes", "navigation.expand", "navigation.footer", "navigation.sections", "navigation.tabs", "navigation.top"], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      <script src="../assets/javascripts/bundle.13a4f30d.min.js"></script>
       
     
   </body>

@@ -10,13 +10,13 @@
       
       
       
-        <link rel="canonical" href="https://docs.patronus.ai/patronus-py/integrations/agents/">
+        <link rel="canonical" href="https://docs.patronus.ai/patronus-py/examples/smolagents-weather/">
       
       
-        <link rel="prev" href="../../observability/logging/">
+        <link rel="prev" href="../anthropic-weather/">
       
       
-        <link rel="next" href="../llms/">
+        <link rel="next" href="../pydanticai-weather/">
       
       
       <link rel="icon" href="../../assets/favicon-32x32.png">
@@ -24,7 +24,7 @@
     
     
       
-        <title>Agent Integrations - </title>
+        <title>Trace Smolagents - </title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#agent-integrations" class="md-skip">
+        <a href="#running-the-example" class="md-skip">
           Skip to content
         </a>
       
@@ -113,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Agent Integrations
+              Trace Smolagents
             
           </span>
         </div>
@@ -630,8 +630,6 @@
                 
   
   
-    
-  
   
   
     
@@ -653,11 +651,13 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_4" checked>
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_4" >
         
           
           <label class="md-nav__link" for="__nav_1_4" id="__nav_1_4_label" tabindex="">
@@ -673,7 +673,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_4_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_4_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_1_4">
             <span class="md-nav__icon md-icon"></span>
             Integrations
@@ -684,32 +684,10 @@
                 
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    Agent Integrations
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../../integrations/agents/" class="md-nav__link">
         
   
   
@@ -720,68 +698,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#pydantic-ai" class="md-nav__link">
-    <span class="md-ellipsis">
-      Pydantic AI
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Pydantic AI">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    <span class="md-ellipsis">
-      Installation
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#usage" class="md-nav__link">
-    <span class="md-ellipsis">
-      Usage
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#configuration-options" class="md-nav__link">
-    <span class="md-ellipsis">
-      Configuration Options
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -794,7 +710,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../llms/" class="md-nav__link">
+      <a href="../../integrations/llms/" class="md-nav__link">
         
   
   
@@ -1186,8 +1102,10 @@
                 
   
   
+    
   
   
+  
     
     
       
@@ -1211,17 +1129,15 @@
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_8" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_8" checked>
         
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../examples/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   
@@ -1240,7 +1156,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_8_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_1_8_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_1_8">
             <span class="md-nav__icon md-icon"></span>
             Examples
@@ -1307,7 +1223,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/openai-weather/" class="md-nav__link">
+      <a href="../openai-weather/" class="md-nav__link">
         
   
   
@@ -1330,7 +1246,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/anthropic-weather/" class="md-nav__link">
+      <a href="../anthropic-weather/" class="md-nav__link">
         
   
   
@@ -1358,8 +1274,10 @@
                 
   
   
+    
   
   
+  
     
     
       
@@ -1382,13 +1300,11 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
-          
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_1_8_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1_8_3" checked>
         
           
           <label class="md-nav__link" for="__nav_1_8_3" id="__nav_1_8_3_label" tabindex="0">
@@ -1404,7 +1320,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_1_8_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_1_8_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_1_8_3">
             <span class="md-nav__icon md-icon"></span>
             Agent Frameworks
@@ -1415,10 +1331,30 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../../examples/smolagents-weather/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Trace Smolagents
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -1429,6 +1365,84 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#running-the-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Running the example
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Running the example">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#running-with-uv" class="md-nav__link">
+    <span class="md-ellipsis">
+      Running with uv
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#running-the-script-directly" class="md-nav__link">
+    <span class="md-ellipsis">
+      Running the script directly
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#manual-installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Manual installation
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example code
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -1441,7 +1455,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/pydanticai-weather/" class="md-nav__link">
+      <a href="../pydanticai-weather/" class="md-nav__link">
         
   
   
@@ -1464,7 +1478,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/openai-agents-weather/" class="md-nav__link">
+      <a href="../openai-agents-weather/" class="md-nav__link">
         
   
   
@@ -1487,7 +1501,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/langchain-weather/" class="md-nav__link">
+      <a href="../langchain-weather/" class="md-nav__link">
         
   
   
@@ -1510,7 +1524,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/crewai-weather/" class="md-nav__link">
+      <a href="../crewai-weather/" class="md-nav__link">
         
   
   
@@ -1870,8 +1884,6 @@
   
   
   
-    
-  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -1880,37 +1892,37 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#pydantic-ai" class="md-nav__link">
+  <a href="#running-the-example" class="md-nav__link">
     <span class="md-ellipsis">
-      Pydantic AI
+      Running the example
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Pydantic AI">
+    <nav class="md-nav" aria-label="Running the example">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
+  <a href="#running-with-uv" class="md-nav__link">
     <span class="md-ellipsis">
-      Installation
+      Running with uv
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#usage" class="md-nav__link">
+  <a href="#running-the-script-directly" class="md-nav__link">
     <span class="md-ellipsis">
-      Usage
+      Running the script directly
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#configuration-options" class="md-nav__link">
+  <a href="#manual-installation" class="md-nav__link">
     <span class="md-ellipsis">
-      Configuration Options
+      Manual installation
     </span>
   </a>
   
@@ -1918,6 +1930,24 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example overview
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example code
+    </span>
+  </a>
   
 </li>
       
@@ -1940,42 +1970,114 @@
   
 
 
-<h1 id="agent-integrations">Agent Integrations</h1>
-<p>The Patronus SDK provides integrations with various agent frameworks to enable observability, evaluation, and experimentation with agent-based LLM applications.</p>
-<h2 id="pydantic-ai">Pydantic AI</h2>
-<p><a href="https://ai.pydantic.dev/">Pydantic AI</a> is a framework for building AI agents with type-safe tools and structured outputs. The Patronus SDK provides a dedicated integration that automatically instruments all Pydantic AI agents for observability.</p>
-<h3 id="installation">Installation</h3>
-<p>Make sure you have both the Patronus SDK and Pydantic AI installed:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>patronus<span class="w"> </span>pydantic-ai
+  <h1>Trace Smolagents</h1>
+
+<h2 id="running-the-example">Running the example</h2>
+<p>To run this example, you need to add API keys to your environment:</p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">PATRONUS_API_KEY</span><span class="o">=</span>your-api-key
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">OPENAI_API_KEY</span><span class="o">=</span>your-api-key
 </span></code></pre></div>
-<h3 id="usage">Usage</h3>
-<p>To enable Pydantic AI integration with Patronus:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">patronus</span><span class="w"> </span><span class="kn">import</span> <span class="n">init</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">patronus.integrations.pydantic_ai</span><span class="w"> </span><span class="kn">import</span> <span class="n">PydanticAIIntegrator</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># Initialize Patronus with the Pydantic AI integration</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">patronus_ctx</span> <span class="o">=</span> <span class="n">init</span><span class="p">(</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="n">integrations</span><span class="o">=</span><span class="p">[</span><span class="n">PydanticAIIntegrator</span><span class="p">()]</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="p">)</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="c1"># Now all Pydantic AI agents will automatically send telemetry to Patronus</span>
+<h3 id="running-with-uv">Running with <code>uv</code></h3>
+<p>You can run the example as a one-liner with zero setup:</p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Remember to export environment variables before running the example.</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>uv<span class="w"> </span>run<span class="w"> </span>--no-cache<span class="w"> </span>--with<span class="w"> </span><span class="s2">&quot;patronus-examples[smolagents]&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span>-m<span class="w"> </span>patronus_examples.tracking.smolagents_weather
 </span></code></pre></div>
-<h3 id="configuration-options">Configuration Options</h3>
-<p>The <code>PydanticAIIntegrator</code> accepts the following parameters:</p>
-<ul>
-<li><code>event_mode</code>: Controls how agent events are captured<ul>
-<li><code>"logs"</code> (default): Captures events as logs, which works best with the Patronus Platform</li>
-<li><code>"attributes"</code>: Captures events as span attributes</li>
-</ul>
-</li>
-</ul>
-<p>Example with custom configuration:</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">patronus</span><span class="w"> </span><span class="kn">import</span> <span class="n">init</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">patronus.integrations.pydantic_ai</span><span class="w"> </span><span class="kn">import</span> <span class="n">PydanticAIIntegrator</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">patronus_ctx</span> <span class="o">=</span> <span class="n">init</span><span class="p">(</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">integrations</span><span class="o">=</span><span class="p">[</span><span class="n">PydanticAIIntegrator</span><span class="p">(</span><span class="n">event_mode</span><span class="o">=</span><span class="s2">&quot;logs&quot;</span><span class="p">)]</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="p">)</span>
+<h3 id="running-the-script-directly">Running the script directly</h3>
+<p>If you've cloned the repository, you can run the script directly:</p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Clone the repository</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/patronus-ai/patronus-py.git
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="nb">cd</span><span class="w"> </span>patronus-py
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># Run the example script (requires uv)</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>./examples/patronus_examples/tracking/smolagents_weather.py
+</span></code></pre></div>
+<h3 id="manual-installation">Manual installation</h3>
+<p>If you prefer to copy the example code to your own project, you'll need to install these dependencies:</p>
+<div class="language-shell highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>pip<span class="w"> </span>install<span class="w"> </span>patronus
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>pip<span class="w"> </span>install<span class="w"> </span>smolagents<span class="o">[</span>litellm<span class="o">]</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>pip<span class="w"> </span>install<span class="w"> </span>openinference-instrumentation-smolagents
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>pip<span class="w"> </span>install<span class="w"> </span>opentelemetry-instrumentation-threading
+</span></code></pre></div>
+<h2 id="example-overview">Example overview</h2>
+<p>This example demonstrates how to use Patronus to trace Smolagents tool calls and LLM interactions. The application:</p>
+<ol>
+<li>Sets up a Smolagents agent with a weather tool</li>
+<li>Configures a hierarchical agent structure with subagents</li>
+<li>Processes a user query about weather in Paris</li>
+<li>Handles the tool calling workflow automatically</li>
+</ol>
+<p>The example shows how Patronus provides visibility into the agent's decision-making process, tool usage, and interaction between different agent layers.</p>
+<h2 id="example-code">Example code</h2>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># examples/patronus_examples/tracking/smolagents_weather.py</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="kn">from</span><span class="w"> </span><span class="nn">openinference.instrumentation.smolagents</span><span class="w"> </span><span class="kn">import</span> <span class="n">SmolagentsInstrumentor</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="kn">from</span><span class="w"> </span><span class="nn">opentelemetry.instrumentation.threading</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThreadingInstrumentor</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="kn">from</span><span class="w"> </span><span class="nn">smolagents</span><span class="w"> </span><span class="kn">import</span> <span class="n">LiteLLMModel</span><span class="p">,</span> <span class="n">ToolCallingAgent</span><span class="p">,</span> <span class="n">tool</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="kn">import</span><span class="w"> </span><span class="nn">patronus</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="n">patronus</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">integrations</span><span class="o">=</span><span class="p">[</span><span class="n">SmolagentsInstrumentor</span><span class="p">(),</span> <span class="n">ThreadingInstrumentor</span><span class="p">()])</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="nd">@tool</span>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_weather_api</span><span class="p">(</span><span class="n">location</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">date_time</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a><span class="sd">    Returns the weather report.</span>
+</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a>
+</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a><span class="sd">    Args:</span>
+</span><span id="__span-4-20"><a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a><span class="sd">        location: the name of the place that you want the weather for.</span>
+</span><span id="__span-4-21"><a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a><span class="sd">            Should be a place name, followed by possibly a city name, then a country,</span>
+</span><span id="__span-4-22"><a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a><span class="sd">            like &quot;Anchor Point, Taghazout, Morocco&quot;.</span>
+</span><span id="__span-4-23"><a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a><span class="sd">        date_time: the date and time for which you want the report, formatted as &#39;%m/%d/%y %H:%M:%S&#39;.</span>
+</span><span id="__span-4-24"><a id="__codelineno-4-24" name="__codelineno-4-24" href="#__codelineno-4-24"></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="__span-4-25"><a id="__codelineno-4-25" name="__codelineno-4-25" href="#__codelineno-4-25"></a>    <span class="k">try</span><span class="p">:</span>
+</span><span id="__span-4-26"><a id="__codelineno-4-26" name="__codelineno-4-26" href="#__codelineno-4-26"></a>        <span class="n">date_time</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date_time</span><span class="p">,</span> <span class="s2">&quot;%m/</span><span class="si">%d</span><span class="s2">/%y %H:%M:%S&quot;</span><span class="p">)</span>
+</span><span id="__span-4-27"><a id="__codelineno-4-27" name="__codelineno-4-27" href="#__codelineno-4-27"></a>    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span id="__span-4-28"><a id="__codelineno-4-28" name="__codelineno-4-28" href="#__codelineno-4-28"></a>        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+</span><span id="__span-4-29"><a id="__codelineno-4-29" name="__codelineno-4-29" href="#__codelineno-4-29"></a>            <span class="s2">&quot;Conversion of `date_time` to datetime format failed, &quot;</span>
+</span><span id="__span-4-30"><a id="__codelineno-4-30" name="__codelineno-4-30" href="#__codelineno-4-30"></a>            <span class="sa">f</span><span class="s2">&quot;make sure to provide a string in format &#39;%m/%d/%y %H:%M:%S&#39;: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="__span-4-31"><a id="__codelineno-4-31" name="__codelineno-4-31" href="#__codelineno-4-31"></a>        <span class="p">)</span>
+</span><span id="__span-4-32"><a id="__codelineno-4-32" name="__codelineno-4-32" href="#__codelineno-4-32"></a>    <span class="n">temperature_celsius</span><span class="p">,</span> <span class="n">risk_of_rain</span><span class="p">,</span> <span class="n">wave_height</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">4</span>  <span class="c1"># mock outputs</span>
+</span><span id="__span-4-33"><a id="__codelineno-4-33" name="__codelineno-4-33" href="#__codelineno-4-33"></a>    <span class="k">return</span> <span class="p">(</span>
+</span><span id="__span-4-34"><a id="__codelineno-4-34" name="__codelineno-4-34" href="#__codelineno-4-34"></a>        <span class="sa">f</span><span class="s2">&quot;Weather report for </span><span class="si">{</span><span class="n">location</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">date_time</span><span class="si">}</span><span class="s2">: &quot;</span>
+</span><span id="__span-4-35"><a id="__codelineno-4-35" name="__codelineno-4-35" href="#__codelineno-4-35"></a>        <span class="sa">f</span><span class="s2">&quot;Temperature will be </span><span class="si">{</span><span class="n">temperature_celsius</span><span class="si">}</span><span class="s2">°C, &quot;</span>
+</span><span id="__span-4-36"><a id="__codelineno-4-36" name="__codelineno-4-36" href="#__codelineno-4-36"></a>        <span class="sa">f</span><span class="s2">&quot;risk of rain is </span><span class="si">{</span><span class="n">risk_of_rain</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">%, wave height is </span><span class="si">{</span><span class="n">wave_height</span><span class="si">}</span><span class="s2">m.&quot;</span>
+</span><span id="__span-4-37"><a id="__codelineno-4-37" name="__codelineno-4-37" href="#__codelineno-4-37"></a>    <span class="p">)</span>
+</span><span id="__span-4-38"><a id="__codelineno-4-38" name="__codelineno-4-38" href="#__codelineno-4-38"></a>
+</span><span id="__span-4-39"><a id="__codelineno-4-39" name="__codelineno-4-39" href="#__codelineno-4-39"></a>
+</span><span id="__span-4-40"><a id="__codelineno-4-40" name="__codelineno-4-40" href="#__codelineno-4-40"></a><span class="k">def</span><span class="w"> </span><span class="nf">create_agent</span><span class="p">(</span><span class="n">model_id</span><span class="p">):</span>
+</span><span id="__span-4-41"><a id="__codelineno-4-41" name="__codelineno-4-41" href="#__codelineno-4-41"></a>    <span class="c1"># Create weather agent</span>
+</span><span id="__span-4-42"><a id="__codelineno-4-42" name="__codelineno-4-42" href="#__codelineno-4-42"></a>    <span class="n">weather_model</span> <span class="o">=</span> <span class="n">LiteLLMModel</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">top_p</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+</span><span id="__span-4-43"><a id="__codelineno-4-43" name="__codelineno-4-43" href="#__codelineno-4-43"></a>    <span class="n">weather_subagent</span> <span class="o">=</span> <span class="n">ToolCallingAgent</span><span class="p">(</span>
+</span><span id="__span-4-44"><a id="__codelineno-4-44" name="__codelineno-4-44" href="#__codelineno-4-44"></a>        <span class="n">tools</span><span class="o">=</span><span class="p">[</span><span class="n">get_weather_api</span><span class="p">],</span>
+</span><span id="__span-4-45"><a id="__codelineno-4-45" name="__codelineno-4-45" href="#__codelineno-4-45"></a>        <span class="n">model</span><span class="o">=</span><span class="n">weather_model</span><span class="p">,</span>
+</span><span id="__span-4-46"><a id="__codelineno-4-46" name="__codelineno-4-46" href="#__codelineno-4-46"></a>        <span class="n">max_steps</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+</span><span id="__span-4-47"><a id="__codelineno-4-47" name="__codelineno-4-47" href="#__codelineno-4-47"></a>        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;weather_agent&quot;</span><span class="p">,</span>
+</span><span id="__span-4-48"><a id="__codelineno-4-48" name="__codelineno-4-48" href="#__codelineno-4-48"></a>        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;This agent can provide information about the weather at a certain location&quot;</span><span class="p">,</span>
+</span><span id="__span-4-49"><a id="__codelineno-4-49" name="__codelineno-4-49" href="#__codelineno-4-49"></a>    <span class="p">)</span>
+</span><span id="__span-4-50"><a id="__codelineno-4-50" name="__codelineno-4-50" href="#__codelineno-4-50"></a>
+</span><span id="__span-4-51"><a id="__codelineno-4-51" name="__codelineno-4-51" href="#__codelineno-4-51"></a>    <span class="c1"># Create manager agent and add weather agent as subordinate</span>
+</span><span id="__span-4-52"><a id="__codelineno-4-52" name="__codelineno-4-52" href="#__codelineno-4-52"></a>    <span class="n">manager_model</span> <span class="o">=</span> <span class="n">LiteLLMModel</span><span class="p">(</span><span class="n">model_id</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">top_p</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+</span><span id="__span-4-53"><a id="__codelineno-4-53" name="__codelineno-4-53" href="#__codelineno-4-53"></a>    <span class="n">agent</span> <span class="o">=</span> <span class="n">ToolCallingAgent</span><span class="p">(</span>
+</span><span id="__span-4-54"><a id="__codelineno-4-54" name="__codelineno-4-54" href="#__codelineno-4-54"></a>        <span class="n">model</span><span class="o">=</span><span class="n">manager_model</span><span class="p">,</span>
+</span><span id="__span-4-55"><a id="__codelineno-4-55" name="__codelineno-4-55" href="#__codelineno-4-55"></a>        <span class="n">managed_agents</span><span class="o">=</span><span class="p">[</span><span class="n">weather_subagent</span><span class="p">],</span>
+</span><span id="__span-4-56"><a id="__codelineno-4-56" name="__codelineno-4-56" href="#__codelineno-4-56"></a>        <span class="n">tools</span><span class="o">=</span><span class="p">[],</span>
+</span><span id="__span-4-57"><a id="__codelineno-4-57" name="__codelineno-4-57" href="#__codelineno-4-57"></a>        <span class="n">add_base_tools</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="__span-4-58"><a id="__codelineno-4-58" name="__codelineno-4-58" href="#__codelineno-4-58"></a>    <span class="p">)</span>
+</span><span id="__span-4-59"><a id="__codelineno-4-59" name="__codelineno-4-59" href="#__codelineno-4-59"></a>    <span class="k">return</span> <span class="n">agent</span>
+</span><span id="__span-4-60"><a id="__codelineno-4-60" name="__codelineno-4-60" href="#__codelineno-4-60"></a>
+</span><span id="__span-4-61"><a id="__codelineno-4-61" name="__codelineno-4-61" href="#__codelineno-4-61"></a>
+</span><span id="__span-4-62"><a id="__codelineno-4-62" name="__codelineno-4-62" href="#__codelineno-4-62"></a><span class="nd">@patronus</span><span class="o">.</span><span class="n">traced</span><span class="p">(</span><span class="s2">&quot;weather-smolagents&quot;</span><span class="p">)</span>
+</span><span id="__span-4-63"><a id="__codelineno-4-63" name="__codelineno-4-63" href="#__codelineno-4-63"></a><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+</span><span id="__span-4-64"><a id="__codelineno-4-64" name="__codelineno-4-64" href="#__codelineno-4-64"></a>    <span class="n">agent</span> <span class="o">=</span> <span class="n">create_agent</span><span class="p">(</span><span class="s2">&quot;openai/gpt-4o&quot;</span><span class="p">)</span>
+</span><span id="__span-4-65"><a id="__codelineno-4-65" name="__codelineno-4-65" href="#__codelineno-4-65"></a>    <span class="n">agent</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">&quot;What is the weather in Paris, France?&quot;</span><span class="p">)</span>
+</span><span id="__span-4-66"><a id="__codelineno-4-66" name="__codelineno-4-66" href="#__codelineno-4-66"></a>
+</span><span id="__span-4-67"><a id="__codelineno-4-67" name="__codelineno-4-67" href="#__codelineno-4-67"></a>
+</span><span id="__span-4-68"><a id="__codelineno-4-68" name="__codelineno-4-68" href="#__codelineno-4-68"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+</span><span id="__span-4-69"><a id="__codelineno-4-69" name="__codelineno-4-69" href="#__codelineno-4-69"></a>    <span class="n">main</span><span class="p">()</span>
 </span></code></pre></div>
 
 
@@ -2012,7 +2114,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../../observability/logging/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Logging">
+          <a href="../anthropic-weather/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Trace Anthropic">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -2022,20 +2124,20 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                Logging
+                Trace Anthropic
               </div>
             </div>
           </a>
         
         
           
-          <a href="../llms/" class="md-footer__link md-footer__link--next" aria-label="Next: LLM Integrations">
+          <a href="../pydanticai-weather/" class="md-footer__link md-footer__link--next" aria-label="Next: Trace PydanticAI">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                LLM Integrations
+                Trace PydanticAI
               </div>
             </div>
             <div class="md-footer__button md-icon">
