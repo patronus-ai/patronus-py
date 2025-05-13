@@ -75,3 +75,7 @@ Each example demonstrates:
 - How to analyze the execution flow of your application
 
 All examples follow a similar pattern using a weather application to make it easy to compare the different frameworks.
+
+### Advanced Examples
+
+- [Manual OpenTelemetry with OpenAI](otel-openai-weather.md) - An example showing how to use OpenTelemetry directly without Patronus SDK
