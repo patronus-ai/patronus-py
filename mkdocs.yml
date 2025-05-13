@@ -81,6 +81,8 @@ nav:
           - Trace OpenAI Agents: examples/openai-agents-weather.md
           - Trace LangChain: examples/langchain-weather.md
           - Trace CrewAI: examples/crewai-weather.md
+        - Advanced Examples:
+          - Manual OTel with OpenAI: examples/otel-openai-weather.md
   - API Reference:
       - Init: api_ref/init.md
       - Tracing: api_ref/tracing.md
