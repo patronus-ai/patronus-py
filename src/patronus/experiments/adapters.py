@@ -39,7 +39,7 @@ class BaseEvaluatorAdapter(abc.ABC):
 
     @property
     def canonical_name(self) -> str:
-        return f"{self.evaluator_id}:{self.evaluator_id or ''}"
+        return f"{self.evaluator_id}:{self.criteria or ''}"
 
     @abc.abstractmethod
     async def evaluate(
@@ -200,9 +200,7 @@ class StructuredEvaluatorAdapter(EvaluatorAdapter):
         self,
         evaluator: Union[evals.StructuredEvaluator, evals.AsyncStructuredEvaluator],
     ):
-        if not isinstance(
-            evaluator, (evals.StructuredEvaluator, evals.AsyncStructuredEvaluator)
-        ):
+        if not isinstance(evaluator, (evals.StructuredEvaluator, evals.AsyncStructuredEvaluator)):
             raise TypeError(
                 f"{type(evaluator)} is not "
                 f"{evals.AsyncStructuredEvaluator.__name__} nor {evals.StructuredEvaluator.__name__}."
