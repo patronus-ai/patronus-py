@@ -1,7 +1,8 @@
 import abc
 import asyncio
+import threading
 from collections.abc import Callable, Mapping, Sequence
-from typing import Dict, List, Optional, Type, Union, Literal, NamedTuple, cast
+from typing import Optional, Type, Union, Literal, NamedTuple, cast
 
 import patronus_api
 
@@ -72,25 +73,8 @@ class LocalPromptProvider(PromptProvider):
 
 
 class APIPromptProvider(PromptProvider):
-    def get_prompt(
-        self, name: str, revision: Optional[int], label: Optional[str], project: str, engine: TemplateEngine
-    ) -> Optional[LoadedPrompt]:
-        cli = context.get_api_client().prompts
-        resp = cli.list_revisions(
-            prompt_name=name,
-            revision=revision or patronus_api.NOT_GIVEN,
-            label=label or patronus_api.NOT_GIVEN,
-            project_name=project,
-        )
-        if not resp.prompt_revisions:
-            return None
-        prompt_revision = resp.prompt_revisions[0]
-        resp_pd = cli.list_definitions(prompt_id=prompt_revision.prompt_definition_id, limit=1)
-        if not resp_pd.prompt_definitions:
-            raise PromptProviderError(
-                "Prompt revision has been found but prompt definition was not found. This should not happen"
-            )
-        prompt_def = resp_pd.prompt_definitions[0]
+    @staticmethod
+    def _create_loaded_prompt(prompt_revision, prompt_def, engine: TemplateEngine) -> LoadedPrompt:
         return LoadedPrompt(
             prompt_definition_id=prompt_revision.id,
             project_id=prompt_revision.project_id,
@@ -106,46 +90,60 @@ class APIPromptProvider(PromptProvider):
             created_at=prompt_revision.created_at,
             _engine=engine,
         )
+
+    @staticmethod
+    def _prepare_params(name: str, revision: Optional[int], label: Optional[str], project: str) -> dict:
+        return {
+            "prompt_name": name,
+            "revision": revision or patronus_api.NOT_GIVEN,
+            "label": label or patronus_api.NOT_GIVEN,
+            "project_name": project,
+        }
+
+    def get_prompt(
+        self, name: str, revision: Optional[int], label: Optional[str], project: str, engine: TemplateEngine
+    ) -> Optional[LoadedPrompt]:
+        cli = context.get_api_client().prompts
+        params = self._prepare_params(name, revision, label, project)
+
+        resp = cli.list_revisions(**params)
+        if not resp.prompt_revisions:
+            return None
+
+        prompt_revision = resp.prompt_revisions[0]
+        resp_pd = cli.list_definitions(prompt_id=prompt_revision.prompt_definition_id, limit=1)
+
+        if not resp_pd.prompt_definitions:
+            raise PromptProviderError(
+                "Prompt revision has been found but prompt definition was not found. This should not happen"
+            )
+
+        return self._create_loaded_prompt(prompt_revision, resp_pd.prompt_definitions[0], engine)
 
     async def aget_prompt(
         self, name: str, revision: Optional[int], label: Optional[str], project: str, engine: TemplateEngine
     ) -> Optional[LoadedPrompt]:
         cli = context.get_async_api_client().prompts
-        resp = await cli.list_revisions(
-            prompt_name=name,
-            revision=revision or patronus_api.NOT_GIVEN,
-            label=label or patronus_api.NOT_GIVEN,
-            project_name=project,
-        )
+        params = self._prepare_params(name, revision, label, project)
+
+        resp = await cli.list_revisions(**params)
         if not resp.prompt_revisions:
             return None
+
         prompt_revision = resp.prompt_revisions[0]
         resp_pd = await cli.list_definitions(prompt_id=prompt_revision.prompt_definition_id, limit=1)
+
         if not resp_pd.prompt_definitions:
             raise PromptProviderError(
                 "Prompt revision has been found but prompt definition was not found. This should not happen"
             )
-        prompt_def = resp_pd.prompt_definitions[0]
-        return LoadedPrompt(
-            prompt_definition_id=prompt_revision.id,
-            project_id=prompt_revision.project_id,
-            project_name=prompt_revision.project_name,
-            name=prompt_revision.prompt_definition_name,
-            description=prompt_def.description,
-            revision_id=prompt_revision.id,
-            revision=prompt_revision.revision,
-            body=prompt_revision.body,
-            normalized_body_sha256=prompt_revision.normalized_body_sha256,
-            metadata=prompt_revision.metadata,
-            labels=prompt_revision.labels,
-            created_at=prompt_revision.created_at,
-            _engine=engine,
-        )
+
+        return self._create_loaded_prompt(prompt_revision, resp_pd.prompt_definitions[0], engine)
 
 
 _DefaultProviders = Literal["local", "api"]
 _DefaultTemplateEngines = Literal["f-string", "mustache", "jinja2"]
-ProviderFactory = Dict[str, Callable[[], PromptProvider]]
+ProviderFactory = dict[str, Callable[[], PromptProvider]]
 
 
 class _CacheKey(NamedTuple):
@@ -159,21 +157,18 @@ class PromptCache:
     """Thread-safe cache for prompt objects."""
 
     def __init__(self) -> None:
-        self._cache: Dict[_CacheKey, LoadedPrompt] = {}
-        self._mutex = __import__("threading").Lock()
+        self._cache: dict[_CacheKey, LoadedPrompt] = {}
+        self._mutex = threading.Lock()
 
     def get(self, key: _CacheKey) -> Optional[LoadedPrompt]:
-        """Get a prompt from the cache."""
         with self._mutex:
             return self._cache.get(key)
 
     def put(self, key: _CacheKey, prompt: LoadedPrompt) -> None:
-        """Store a prompt in the cache."""
         with self._mutex:
             self._cache[key] = prompt
 
     def clear(self) -> None:
-        """Clear the cache."""
         with self._mutex:
             self._cache.clear()
 
@@ -182,21 +177,18 @@ class AsyncPromptCache:
     """Async-compatible cache for prompt objects."""
 
     def __init__(self) -> None:
-        self._cache: Dict[_CacheKey, LoadedPrompt] = {}
+        self._cache: dict[_CacheKey, LoadedPrompt] = {}
         self._lock = asyncio.Lock()
 
     async def get(self, key: _CacheKey) -> Optional[LoadedPrompt]:
-        """Get a prompt from the cache."""
         async with self._lock:
             return self._cache.get(key)
 
     async def put(self, key: _CacheKey, prompt: LoadedPrompt) -> None:
-        """Store a prompt in the cache."""
         async with self._lock:
             self._cache[key] = prompt
 
     async def clear(self) -> None:
-        """Clear the cache."""
         async with self._lock:
             self._cache.clear()
 
@@ -247,7 +239,7 @@ class PromptClientMixin:
             PromptProvider, _DefaultProviders, Sequence[Union[PromptProvider, _DefaultProviders]], Type[NOT_GIVEN]
         ],
         provider_factory: Mapping[str, Callable[[], PromptProvider]],
-    ) -> List[PromptProvider]:
+    ) -> list[PromptProvider]:
         """
         Resolve provider(s) from input or config.
 
@@ -262,7 +254,7 @@ class PromptClientMixin:
         if isinstance(provider, (str, PromptProvider)):
             provider = [provider]
 
-        resolved_providers: List[PromptProvider] = []
+        resolved_providers: list[PromptProvider] = []
         for prompt_provider in provider:
             if isinstance(prompt_provider, str) and prompt_provider in provider_factory:
                 prompt_provider = provider_factory[prompt_provider]()
@@ -272,7 +264,7 @@ class PromptClientMixin:
 
         return resolved_providers
 
-    def _format_provider_errors(self, provider_errors: List[str]) -> str:
+    def _format_provider_errors(self, provider_errors: list[str]) -> str:
         """Format provider errors for error messages."""
         if not provider_errors:
             return ""
@@ -281,8 +273,6 @@ class PromptClientMixin:
 
 
 class PromptClient(PromptClientMixin):
-    """Synchronous prompt client."""
-
     def __init__(self, provider_factory: Optional[ProviderFactory] = None) -> None:
         self._cache: PromptCache = PromptCache()
         self._provider_factory: ProviderFactory = provider_factory or {
@@ -332,7 +322,7 @@ class PromptClient(PromptClientMixin):
         """
         # Resolve parameters using mixin methods
         project_name: str = self._resolve_project(project)
-        resolved_providers: List[PromptProvider] = self._resolve_providers(provider, self._provider_factory)
+        resolved_providers: list[PromptProvider] = self._resolve_providers(provider, self._provider_factory)
         resolved_engine: TemplateEngine = self._resolve_engine(engine)
 
         # Check cache
@@ -344,7 +334,7 @@ class PromptClient(PromptClientMixin):
 
         # Try each provider
         prompt: Optional[LoadedPrompt] = None
-        provider_errors: List[str] = []
+        provider_errors: list[str] = []
 
         for prompt_provider in resolved_providers:
             try:
@@ -379,8 +369,6 @@ class PromptClient(PromptClientMixin):
 
 
 class AsyncPromptClient(PromptClientMixin):
-    """Asynchronous prompt client."""
-
     def __init__(self, provider_factory: Optional[ProviderFactory] = None) -> None:
         self._cache: AsyncPromptCache = AsyncPromptCache()
         self._provider_factory: ProviderFactory = provider_factory or {
@@ -430,7 +418,7 @@ class AsyncPromptClient(PromptClientMixin):
         """
         # Resolve parameters using mixin methods
         project_name: str = self._resolve_project(project)
-        resolved_providers: List[PromptProvider] = self._resolve_providers(provider, self._provider_factory)
+        resolved_providers: list[PromptProvider] = self._resolve_providers(provider, self._provider_factory)
         resolved_engine: TemplateEngine = self._resolve_engine(engine)
 
         # Check cache - async version
@@ -442,7 +430,7 @@ class AsyncPromptClient(PromptClientMixin):
 
         # Try each provider - async version
         prompt: Optional[LoadedPrompt] = None
-        provider_errors: List[str] = []
+        provider_errors: list[str] = []
 
         for prompt_provider in resolved_providers:
             try:
@@ -476,7 +464,6 @@ class AsyncPromptClient(PromptClientMixin):
         return prompt
 
 
-# Create default clients
 _default_client: PromptClient = PromptClient()
 _default_async_client: AsyncPromptClient = AsyncPromptClient()
 
