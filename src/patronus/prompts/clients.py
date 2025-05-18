@@ -1,20 +1,25 @@
 import abc
 import asyncio
+import json
+import logging
 import threading
+import warnings
 from collections.abc import Callable, Mapping, Sequence
 from typing import Optional, Type, Union, Literal, NamedTuple, cast
 
 import patronus_api
 
-from patronus.prompts.models import LoadedPrompt
+from patronus import config
+from patronus import context
+from patronus.prompts.models import LoadedPrompt, Prompt, calculate_normalized_body_hash
 from patronus.prompts.templating import (
     TemplateEngine,
     DefaultTemplateEngines,
     get_template_engine,
 )
 from patronus.utils import NOT_GIVEN
-from patronus import config
-from patronus import context
+
+log = logging.getLogger("patronus.core")
 
 
 class PromptNotFoundError(Exception):
@@ -429,8 +434,134 @@ class AsyncPromptClient(PromptClientMixin):
         return prompt
 
 
+class PromptPushClient(PromptClientMixin):
+    def __init__(self) -> None:
+        self._api_provider = APIPromptProvider()
+
+    def push(
+        self,
+        prompt: Prompt,
+        project: Union[str, Type[NOT_GIVEN]] = NOT_GIVEN,
+        engine: Union[TemplateEngine, DefaultTemplateEngines, Type[NOT_GIVEN]] = NOT_GIVEN,
+    ) -> LoadedPrompt:
+        """
+        Push a prompt to the API, creating a new revision only if needed.
+
+        If a prompt revision with the same normalized body and metadata already exists,
+        the existing revision will be returned. If the metadata differs, a new revision will be created.
+
+        The engine parameter is only used to set property on output LoadedPrompt object.
+        It is not persisted in any way and doesn't affect how the prompt is stored in Patronus AI Platform.
+
+        Note that when a new prompt definition is created, the description is used as provided.
+        However, when creating a new revision for an existing prompt definition, the
+        description parameter doesn't update the existing prompt definition's description.
+
+        Args:
+            prompt: The prompt to push
+            project: Optional project name override. If not specified, the project name from config is used.
+            engine: The template engine to use for rendering the returned prompt. If not specified, defaults to config setting.
+
+        Returns:
+            LoadedPrompt: The created or existing prompt revision
+
+        Raises:
+            PromptProviderError: If there was an error communicating with the prompt provider.
+        """
+        project_name: str = self._resolve_project(project)
+        resolved_engine: TemplateEngine = self._resolve_engine(engine)
+
+        # Calculate the normalized body hash
+        normalized_body_sha256 = calculate_normalized_body_hash(prompt.body)
+
+        # Check if a revision with the same hash already exists
+        cli = context.get_api_client().prompts
+
+        # Try to find existing revision with same hash
+        resp = cli.list_revisions(
+            prompt_name=prompt.name,
+            project_name=project_name,
+            normalized_body_sha256=normalized_body_sha256,
+        )
+
+        # Variables for create_revision parameters
+        prompt_id = patronus_api.NOT_GIVEN
+        prompt_name = prompt.name
+        create_new_prompt = True
+        prompt_def = None
+
+        # If we found a matching revision, check if metadata is the same
+        if resp.prompt_revisions:
+            log.debug("Found %d revisions with matching body hash", len(resp.prompt_revisions))
+            prompt_id = resp.prompt_revisions[0].prompt_definition_id
+            create_new_prompt = False
+
+            resp_pd = cli.list_definitions(prompt_id=prompt_id, limit=1)
+            if not resp_pd.prompt_definitions:
+                raise PromptProviderError(
+                    "Prompt revision has been found but prompt definition was not found. This should not happen"
+                )
+            prompt_def = resp_pd.prompt_definitions[0]
+
+            # Check if the provided description is different from existing one and warn if so
+            if prompt.description is not None and prompt.description != prompt_def.description:
+                warnings.warn(
+                    f"Prompt description ({prompt.description!r}) differs from the existing one "
+                    f"({prompt_def.description!r}). The description won't be updated."
+                )
+
+            new_metadata_cmp = json.dumps(prompt.metadata, sort_keys=True)
+            for rev in resp.prompt_revisions:
+                metadata_cmp = json.dumps(rev.metadata, sort_keys=True)
+                if new_metadata_cmp == metadata_cmp:
+                    log.debug("Found existing revision with matching metadata, returning revision %d", rev.revision)
+                    return self._api_provider._create_loaded_prompt(
+                        prompt_revision=rev,
+                        prompt_def=prompt_def,
+                        engine=resolved_engine,
+                    )
+
+            # For existing prompt, don't need name/project
+            prompt_name = patronus_api.NOT_GIVEN
+            project_name = patronus_api.NOT_GIVEN
+        else:
+            # No matching revisions found, will create new prompt
+            log.debug("No revisions with matching body hash found, creating new prompt and revision")
+
+        # Create a new revision with appropriate parameters
+        log.debug(
+            "Creating new revision (new_prompt=%s, prompt_id=%s, prompt_name=%s)",
+            create_new_prompt,
+            prompt_id if prompt_id != patronus_api.NOT_GIVEN else "NOT_GIVEN",
+            prompt_name if prompt_name != patronus_api.NOT_GIVEN else "NOT_GIVEN",
+        )
+        resp = cli.create_revision(
+            body=prompt.body,
+            prompt_id=prompt_id,
+            prompt_name=prompt_name,
+            project_name=project_name if create_new_prompt else patronus_api.NOT_GIVEN,
+            prompt_description=prompt.description,
+            metadata=prompt.metadata,
+        )
+
+        prompt_revision = resp.prompt_revision
+
+        # If we created a new prompt, we need to fetch the definition
+        if create_new_prompt:
+            resp_pd = cli.list_definitions(prompt_id=prompt_revision.prompt_definition_id, limit=1)
+            if not resp_pd.prompt_definitions:
+                raise PromptProviderError(
+                    "Prompt revision has been created but prompt definition was not found. This should not happen"
+                )
+            prompt_def = resp_pd.prompt_definitions[0]
+
+        return self._api_provider._create_loaded_prompt(prompt_revision, prompt_def, resolved_engine)
+
+
 _default_client: PromptClient = PromptClient()
 _default_async_client: AsyncPromptClient = AsyncPromptClient()
+_default_push_client: PromptPushClient = PromptPushClient()
 
 load_prompt = _default_client.get
 aload_prompt = _default_async_client.get
+push_prompt = _default_push_client.push

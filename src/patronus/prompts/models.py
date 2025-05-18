@@ -1,5 +1,6 @@
 import dataclasses
 import datetime
+import hashlib
 import typing
 from typing import Any, Optional, Union
 
@@ -11,7 +12,7 @@ class BasePrompt:
     name: str
     body: str
     description: Optional[str]
-    metadata: Optional[str]
+    metadata: Optional[dict[str, Any]]
 
     _engine: Optional[TemplateEngine] = None
 
@@ -58,7 +59,7 @@ class Prompt(BasePrompt):
     name: str
     body: str
     description: Optional[str] = None
-    metadata: Optional[str] = None
+    metadata: Optional[dict[str, Any]] = None
 
     _engine: Optional[TemplateEngine] = None
 
@@ -81,3 +82,18 @@ class LoadedPrompt(BasePrompt):
     created_at: datetime.datetime
 
     _engine: Optional[TemplateEngine] = None
+
+
+def calculate_normalized_body_hash(body: str) -> str:
+    """Calculate the SHA-256 hash of normalized prompt body.
+
+    Normalization is done by stripping whitespace from the start and end of the body.
+
+    Args:
+        body: The prompt body
+
+    Returns:
+        SHA-256 hash of the normalized body
+    """
+    normalized_body = body.strip()
+    return hashlib.sha256(normalized_body.encode()).hexdigest()
