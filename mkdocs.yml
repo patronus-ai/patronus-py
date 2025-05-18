@@ -58,6 +58,7 @@ nav:
     - Integrations:
         - Agent Integrations: integrations/agents.md
         - LLM Integrations: integrations/llms.md
+    - Prompts: prompts/index.md
     - Evaluations:
         - Evaluators: evaluations/evaluators.md
         - Patronus Evaluators: evaluations/patronus-evaluators.md
@@ -93,6 +94,7 @@ nav:
       - Patronus Client: api_ref/pat_client.md
       - Context: api_ref/context.md
       - Integrations: api_ref/integrations.md
+      - Prompts: api_ref/prompts.md
       - Config: api_ref/config.md
 
 plugins:

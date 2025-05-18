@@ -726,6 +726,13 @@ _default_client: PromptClient = PromptClient()
 _default_async_client: AsyncPromptClient = AsyncPromptClient()
 
 load_prompt = _default_client.get
+"""Alias for [PromptClient.get][patronus.prompts.clients.PromptClient.get]."""
+
 aload_prompt = _default_async_client.get
+"""Alias for [AsyncPromptClient.get][patronus.prompts.clients.AsyncPromptClient.get]."""
+
 push_prompt = _default_client.push
+"""Alias for [PromptClient.push][patronus.prompts.clients.PromptClient.push]."""
+
 apush_prompt = _default_async_client.push
+"""Alias for [AsyncPromptClient.push][patronus.prompts.clients.AsyncPromptClient.push]."""
