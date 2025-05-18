@@ -1,4 +1,8 @@
 import abc
+from typing import Literal, Union
+
+
+DefaultTemplateEngines = Literal["f-string", "mustache", "jinja2"]
 
 
 class TemplateEngine(abc.ABC):
@@ -44,3 +48,33 @@ class Jinja2TemplateEngine(TemplateEngine):
     def render(self, template: str, **kwargs) -> str:
         template_obj = self.environment.from_string(template)
         return template_obj.render(**kwargs)
+
+
+def get_template_engine(engine: Union[TemplateEngine, DefaultTemplateEngines]) -> TemplateEngine:
+    """
+    Convert a template engine name to an actual engine instance.
+
+    Args:
+        engine: Either a template engine instance or a string identifier ('f-string', 'mustache', 'jinja2')
+
+    Returns:
+        A template engine instance
+
+    Raises:
+        ValueError: If the provided engine string is not recognized
+    """
+    if isinstance(engine, TemplateEngine):
+        return engine
+
+    if engine == "f-string":
+        return FStringTemplateEngine()
+    elif engine == "mustache":
+        return MustacheTemplateEngine()
+    elif engine == "jinja2":
+        return Jinja2TemplateEngine()
+
+    raise ValueError(
+        "Provided engine must be an instance of TemplateEngine or "
+        "one of the default engines ('f-string', 'mustache', 'jinja2'). "
+        f"Instead got {engine!r}"
+    )

@@ -1,9 +1,10 @@
 import dataclasses
 import datetime
 import typing
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
-from patronus.prompts.templating import TemplateEngine, FStringTemplateEngine
+from patronus import context
+from patronus.prompts.templating import TemplateEngine, DefaultTemplateEngines, get_template_engine
 
 
 class BasePrompt:
@@ -12,15 +13,44 @@ class BasePrompt:
     description: Optional[str]
     metadata: Optional[str]
 
-    _engine: TemplateEngine = FStringTemplateEngine()
+    _engine: Optional[TemplateEngine] = None
 
-    def with_engine(self, engine: TemplateEngine) -> typing.Self:
-        return dataclasses.replace(self, _engine=engine)
+    def with_engine(self, engine: Union[TemplateEngine, DefaultTemplateEngines]) -> typing.Self:
+        """
+        Create a new prompt with the specified template engine.
+
+        Args:
+            engine: Either a TemplateEngine instance or a string identifier ('f-string', 'mustache', 'jinja2')
+
+        Returns:
+            A new prompt instance with the specified engine
+        """
+        resolved_engine = get_template_engine(engine)
+        return dataclasses.replace(self, _engine=resolved_engine)
 
     def render(self, **kwargs) -> str:
+        """
+        Render the prompt template with the provided arguments.
+
+        If no engine is set on the prompt, the default engine from context/config will be used.
+        If no arguments are provided, the template body is returned as-is.
+
+        Args:
+            **kwargs: Template arguments to be rendered in the prompt body
+
+        Returns:
+            The rendered prompt
+        """
         if not kwargs:
             return self.body
-        return self._engine.render(self.body, **kwargs)
+
+        engine = self._engine
+        if engine is None:
+            # Get default engine from context
+            engine_name = context.get_prompts_config().templating_engine
+            engine = get_template_engine(engine_name)
+
+        return engine.render(self.body, **kwargs)
 
 
 @dataclasses.dataclass
@@ -30,7 +60,7 @@ class Prompt(BasePrompt):
     description: Optional[str] = None
     metadata: Optional[str] = None
 
-    _engine: TemplateEngine = FStringTemplateEngine()
+    _engine: Optional[TemplateEngine] = None
 
 
 @dataclasses.dataclass
@@ -50,4 +80,4 @@ class LoadedPrompt(BasePrompt):
     labels: list[str]
     created_at: datetime.datetime
 
-    _engine: TemplateEngine = FStringTemplateEngine()
+    _engine: Optional[TemplateEngine] = None

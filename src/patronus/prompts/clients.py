@@ -9,9 +9,8 @@ import patronus_api
 from patronus.prompts.models import LoadedPrompt
 from patronus.prompts.templating import (
     TemplateEngine,
-    FStringTemplateEngine,
-    MustacheTemplateEngine,
-    Jinja2TemplateEngine,
+    DefaultTemplateEngines,
+    get_template_engine,
 )
 from patronus.utils import NOT_GIVEN
 from patronus import config
@@ -73,33 +72,6 @@ class LocalPromptProvider(PromptProvider):
 
 
 class APIPromptProvider(PromptProvider):
-    @staticmethod
-    def _create_loaded_prompt(prompt_revision, prompt_def, engine: TemplateEngine) -> LoadedPrompt:
-        return LoadedPrompt(
-            prompt_definition_id=prompt_revision.id,
-            project_id=prompt_revision.project_id,
-            project_name=prompt_revision.project_name,
-            name=prompt_revision.prompt_definition_name,
-            description=prompt_def.description,
-            revision_id=prompt_revision.id,
-            revision=prompt_revision.revision,
-            body=prompt_revision.body,
-            normalized_body_sha256=prompt_revision.normalized_body_sha256,
-            metadata=prompt_revision.metadata,
-            labels=prompt_revision.labels,
-            created_at=prompt_revision.created_at,
-            _engine=engine,
-        )
-
-    @staticmethod
-    def _prepare_params(name: str, revision: Optional[int], label: Optional[str], project: str) -> dict:
-        return {
-            "prompt_name": name,
-            "revision": revision or patronus_api.NOT_GIVEN,
-            "label": label or patronus_api.NOT_GIVEN,
-            "project_name": project,
-        }
-
     def get_prompt(
         self, name: str, revision: Optional[int], label: Optional[str], project: str, engine: TemplateEngine
     ) -> Optional[LoadedPrompt]:
@@ -140,9 +112,35 @@ class APIPromptProvider(PromptProvider):
 
         return self._create_loaded_prompt(prompt_revision, resp_pd.prompt_definitions[0], engine)
 
+    @staticmethod
+    def _prepare_params(name: str, revision: Optional[int], label: Optional[str], project: str) -> dict:
+        return {
+            "prompt_name": name,
+            "revision": revision or patronus_api.NOT_GIVEN,
+            "label": label or patronus_api.NOT_GIVEN,
+            "project_name": project,
+        }
+
+    @staticmethod
+    def _create_loaded_prompt(prompt_revision, prompt_def, engine: TemplateEngine) -> LoadedPrompt:
+        return LoadedPrompt(
+            prompt_definition_id=prompt_revision.id,
+            project_id=prompt_revision.project_id,
+            project_name=prompt_revision.project_name,
+            name=prompt_revision.prompt_definition_name,
+            description=prompt_def.description,
+            revision_id=prompt_revision.id,
+            revision=prompt_revision.revision,
+            body=prompt_revision.body,
+            normalized_body_sha256=prompt_revision.normalized_body_sha256,
+            metadata=prompt_revision.metadata,
+            labels=prompt_revision.labels,
+            created_at=prompt_revision.created_at,
+            _engine=engine,
+        )
+
 
 _DefaultProviders = Literal["local", "api"]
-_DefaultTemplateEngines = Literal["f-string", "mustache", "jinja2"]
 ProviderFactory = dict[str, Callable[[], PromptProvider]]
 
 
@@ -154,8 +152,6 @@ class _CacheKey(NamedTuple):
 
 
 class PromptCache:
-    """Thread-safe cache for prompt objects."""
-
     def __init__(self) -> None:
         self._cache: dict[_CacheKey, LoadedPrompt] = {}
         self._mutex = threading.Lock()
@@ -174,8 +170,6 @@ class PromptCache:
 
 
 class AsyncPromptCache:
-    """Async-compatible cache for prompt objects."""
-
     def __init__(self) -> None:
         self._cache: dict[_CacheKey, LoadedPrompt] = {}
         self._lock = asyncio.Lock()
@@ -194,9 +188,8 @@ class AsyncPromptCache:
 
 
 class PromptClientMixin:
-    """Mixin providing shared functionality for prompt clients."""
-
-    def _resolve_project(self, project: Union[str, Type[NOT_GIVEN]]) -> str:
+    @staticmethod
+    def _resolve_project(project: Union[str, Type[NOT_GIVEN]]) -> str:
         """Resolve project name from input or config."""
         if project is not NOT_GIVEN:
             return cast(str, project)
@@ -210,44 +203,22 @@ class PromptClientMixin:
 
         return project_name
 
-    def _resolve_engine(
-        self, engine: Union[TemplateEngine, _DefaultTemplateEngines, Type[NOT_GIVEN]]
-    ) -> TemplateEngine:
+    @staticmethod
+    def _resolve_engine(engine: Union[TemplateEngine, DefaultTemplateEngines, Type[NOT_GIVEN]]) -> TemplateEngine:
         """Resolve template engine from input or config."""
         if engine is NOT_GIVEN:
             engine = context.get_prompts_config().templating_engine
 
-        if engine == "f-string":
-            return FStringTemplateEngine()
-        elif engine == "mustache":
-            return MustacheTemplateEngine()
-        elif engine == "jinja2":
-            return Jinja2TemplateEngine()
+        return get_template_engine(engine)
 
-        if not isinstance(engine, TemplateEngine):
-            raise ValueError(
-                "Provided engine must be an instance of TemplateEngine or "
-                "one of the default engines ('f-string', 'mustache', 'jinja2'). "
-                f"Instead got {engine!r}"
-            )
-
-        return engine
-
+    @staticmethod
     def _resolve_providers(
-        self,
         provider: Union[
             PromptProvider, _DefaultProviders, Sequence[Union[PromptProvider, _DefaultProviders]], Type[NOT_GIVEN]
         ],
         provider_factory: Mapping[str, Callable[[], PromptProvider]],
     ) -> list[PromptProvider]:
-        """
-        Resolve provider(s) from input or config.
-
-        Args:
-            provider: The provider specification from the user
-            provider_factory: A dict mapping provider names to factory functions
-                             that produce the appropriate provider instances
-        """
+        """Resolve provider(s) from input or config."""
         if provider is NOT_GIVEN:
             provider = context.get_prompts_config().providers
 
@@ -264,7 +235,8 @@ class PromptClientMixin:
 
         return resolved_providers
 
-    def _format_provider_errors(self, provider_errors: list[str]) -> str:
+    @staticmethod
+    def _format_provider_errors(provider_errors: list[str]) -> str:
         """Format provider errors for error messages."""
         if not provider_errors:
             return ""
@@ -288,9 +260,12 @@ class PromptClient(PromptClientMixin):
         project: Union[str, Type[NOT_GIVEN]] = NOT_GIVEN,
         disable_cache: bool = False,
         provider: Union[
-            PromptProvider, _DefaultProviders, Sequence[Union[PromptProvider, _DefaultProviders]], Type[NOT_GIVEN]
+            PromptProvider,
+            _DefaultProviders,
+            Sequence[Union[PromptProvider, _DefaultProviders]],
+            Type[NOT_GIVEN],
         ] = NOT_GIVEN,
-        engine: Union[TemplateEngine, _DefaultTemplateEngines, Type[NOT_GIVEN]] = NOT_GIVEN,
+        engine: Union[TemplateEngine, DefaultTemplateEngines, Type[NOT_GIVEN]] = NOT_GIVEN,
     ) -> LoadedPrompt:
         """
         Get the prompt.
@@ -320,19 +295,16 @@ class PromptClient(PromptClientMixin):
             ValueError: If the provided provider or engine is invalid.
             PromptProviderError: If there was an error communicating with the prompt provider.
         """
-        # Resolve parameters using mixin methods
         project_name: str = self._resolve_project(project)
         resolved_providers: list[PromptProvider] = self._resolve_providers(provider, self._provider_factory)
         resolved_engine: TemplateEngine = self._resolve_engine(engine)
 
-        # Check cache
         cache_key: _CacheKey = _CacheKey(project_name=project_name, prompt_name=name, revision=revision, label=label)
         if not disable_cache:
             cached_prompt: Optional[LoadedPrompt] = self._cache.get(cache_key)
             if cached_prompt is not None:
                 return cached_prompt
 
-        # Try each provider
         prompt: Optional[LoadedPrompt] = None
         provider_errors: list[str] = []
 
@@ -351,7 +323,6 @@ class PromptClient(PromptClientMixin):
                 provider_errors.append(f"Unexpected error from provider {prompt_provider.__class__.__name__}: {str(e)}")
                 continue
 
-        # Handle result
         if prompt is None:
             if provider_errors:
                 error_msg: str = self._format_provider_errors(provider_errors)
@@ -361,7 +332,6 @@ class PromptClient(PromptClientMixin):
             else:
                 raise PromptNotFoundError(name=name, project=project_name, revision=revision, label=label)
 
-        # Update cache
         if not disable_cache:
             self._cache.put(cache_key, prompt)
 
@@ -386,7 +356,7 @@ class AsyncPromptClient(PromptClientMixin):
         provider: Union[
             PromptProvider, _DefaultProviders, Sequence[Union[PromptProvider, _DefaultProviders]], Type[NOT_GIVEN]
         ] = NOT_GIVEN,
-        engine: Union[TemplateEngine, _DefaultTemplateEngines, Type[NOT_GIVEN]] = NOT_GIVEN,
+        engine: Union[TemplateEngine, DefaultTemplateEngines, Type[NOT_GIVEN]] = NOT_GIVEN,
     ) -> LoadedPrompt:
         """
         Get the prompt asynchronously.
@@ -416,19 +386,16 @@ class AsyncPromptClient(PromptClientMixin):
             ValueError: If the provided provider or engine is invalid.
             PromptProviderError: If there was an error communicating with the prompt provider.
         """
-        # Resolve parameters using mixin methods
         project_name: str = self._resolve_project(project)
         resolved_providers: list[PromptProvider] = self._resolve_providers(provider, self._provider_factory)
         resolved_engine: TemplateEngine = self._resolve_engine(engine)
 
-        # Check cache - async version
         cache_key: _CacheKey = _CacheKey(project_name=project_name, prompt_name=name, revision=revision, label=label)
         if not disable_cache:
             cached_prompt: Optional[LoadedPrompt] = await self._cache.get(cache_key)
             if cached_prompt is not None:
                 return cached_prompt
 
-        # Try each provider - async version
         prompt: Optional[LoadedPrompt] = None
         provider_errors: list[str] = []
 
@@ -447,7 +414,6 @@ class AsyncPromptClient(PromptClientMixin):
                 provider_errors.append(f"Unexpected error from provider {prompt_provider.__class__.__name__}: {str(e)}")
                 continue
 
-        # Handle result - same logic as sync
         if prompt is None:
             if provider_errors:
                 error_msg: str = self._format_provider_errors(provider_errors)
@@ -457,7 +423,6 @@ class AsyncPromptClient(PromptClientMixin):
             else:
                 raise PromptNotFoundError(name=name, project=project_name, revision=revision, label=label)
 
-        # Update cache - async version
         if not disable_cache:
             await self._cache.put(cache_key, prompt)
 
@@ -467,6 +432,5 @@ class AsyncPromptClient(PromptClientMixin):
 _default_client: PromptClient = PromptClient()
 _default_async_client: AsyncPromptClient = AsyncPromptClient()
 
-# Export functions
 load_prompt = _default_client.get
 aload_prompt = _default_async_client.get
