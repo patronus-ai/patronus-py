@@ -33,6 +33,7 @@ dependencies = [
     "opentelemetry-api>=1.31.0",
     "opentelemetry-sdk>=1.31.0",
     "opentelemetry-exporter-otlp>=1.31.0",
+    "patronus-api"
 ]
 
 [tool.hatch.metadata.hooks.uv-dynamic-versioning.optional-dependencies]
@@ -65,6 +66,7 @@ members = [
 
 [tool.uv.sources]
 patronus-examples = {workspace = true}
+patronus-api = { path = "../stainless-sdks/patronus-api-python/", editable = true }
 
 [tool.ruff.lint]
 isort = { combine-as-imports = true, known-first-party = ["patronus"] }
