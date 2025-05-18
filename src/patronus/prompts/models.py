@@ -33,8 +33,6 @@ class Prompt(BasePrompt):
     _engine: TemplateEngine = FStringTemplateEngine()
 
 
-# TODO name could be improved, especially since the prompt can be loaded from local resources too
-# TODO but it can stay the same if there is not clearly better name.
 @dataclasses.dataclass
 class LoadedPrompt(BasePrompt):
     prompt_definition_id: str
