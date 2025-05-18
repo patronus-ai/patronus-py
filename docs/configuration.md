@@ -107,7 +107,7 @@ When determining the value for a configuration option, Patronus follows this ord
 3. YAML configuration file
 4. Default values (lowest priority)
 
-For example, if you provide `project_name` as a function parameter and also have it defined in your environment  variables and YAML file, the function parameter value will be used.
+For example, if you provide `project_name` as a function parameter and also have it defined in your environment variables and YAML file, the function parameter value will be used.
 
 ## Programmatic Configuration Access
 

@@ -347,3 +347,10 @@ response = client.messages.create(
     ]
 )
 ```
+
+## Additional Resources
+
+While the SDK provides high-level, convenient access to Patronus functionality, you can also use the lower-level APIs for more direct control:
+
+- [REST API documentation](https://docs.patronus.ai/docs/api_ref) - For direct HTTP access to the Patronus platform
+- [Patronus API Python library](https://github.com/patronus-ai/patronus-api-python) - A typed Python client for the REST API with both synchronous and asynchronous support

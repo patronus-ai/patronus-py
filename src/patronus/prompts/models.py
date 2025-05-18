@@ -29,7 +29,7 @@ class BasePrompt:
         resolved_engine = get_template_engine(engine)
         return dataclasses.replace(self, _engine=resolved_engine)
 
-    def render(self, **kwargs) -> str:
+    def render(self, **kwargs: Any) -> str:
         """
         Render the prompt template with the provided arguments.
 
