@@ -10,16 +10,19 @@ Configuration options are prioritized in the order listed above, meaning that if
 
 ## Configuration Options
 
-| Config name   | Environment Variable   | Default Value                                                                      |
-|---------------|------------------------|------------------------------------------------------------------------------------|
-| service       | PATRONUS_SERVICE       | Defaults to value retrieved from `OTEL_SERVICE_NAME` env var or `platform.node()`. |
-| project_name  | PATRONUS_PROJECT_NAME  | `Global`                                                                           |
-| app           | PATRONUS_APP           | `default`                                                                          |
-| api_key       | PATRONUS_API_KEY       |                                                                                    |
-| api_url       | PATRONUS_API_URL       | `https://api.patronus.ai`                                                          |
-| ui_url        | PATRONUS_UI_URL        | `https://app.patronus.ai`                                                          |
-| otel_endpoint | PATRONUS_OTEL_ENDPOINT | `https://otel.patronus.ai:4317`                                                    |
-| timeout_s     | PATRONUS_TIMEOUT_S     | `300`                                                                              |
+| Config name              | Environment Variable              | Default Value                                                                      |
+|--------------------------|-----------------------------------|------------------------------------------------------------------------------------|
+| service                  | PATRONUS_SERVICE                  | Defaults to value retrieved from `OTEL_SERVICE_NAME` env var or `platform.node()`. |
+| project_name             | PATRONUS_PROJECT_NAME             | `Global`                                                                           |
+| app                      | PATRONUS_APP                      | `default`                                                                          |
+| api_key                  | PATRONUS_API_KEY                  |                                                                                    |
+| api_url                  | PATRONUS_API_URL                  | `https://api.patronus.ai`                                                          |
+| ui_url                   | PATRONUS_UI_URL                   | `https://app.patronus.ai`                                                          |
+| otel_endpoint            | PATRONUS_OTEL_ENDPOINT            | `https://otel.patronus.ai:4317`                                                    |
+| timeout_s                | PATRONUS_TIMEOUT_S                | `300`                                                                              |
+| prompt_templating_engine | PATRONUS_PROMPT_TEMPLATING_ENGINE | `f-string`                                                                         |
+| prompt_providers         | PATRONUS_PROMPT_PROVIDERS         | `["local", "api"]`                                                                 |
+| resource_dir             | PATRONUS_RESOURCE_DIR             | `./patronus`
 
 ## Configuration Methods
 
@@ -40,7 +43,8 @@ patronus.init(
     app="recommendation-service",
     api_key="your-api-key",
     api_url="https://api.patronus.ai",
-    service="my-service"
+    service="my-service",
+    prompt_templating_engine="mustache"
 )
 ```
 
@@ -87,6 +91,11 @@ api_url: "https://api.patronus.ai"
 ui_url: "https://app.patronus.ai"
 otel_endpoint: "https://otel.patronus.ai:4317"
 timeout_s: 300
+
+# Prompt management configuration
+prompt_templating_engine: "mustache"
+prompt_providers: [ "local", "api" ]
+resource_dir: "./my-resources"
 ```
 
 ## Configuration Precedence

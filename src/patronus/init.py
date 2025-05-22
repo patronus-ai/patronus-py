@@ -1,3 +1,4 @@
+import pathlib
 import typing
 
 import warnings
@@ -5,6 +6,7 @@ import warnings
 from typing import Optional
 
 import httpx
+import patronus_api
 
 from . import config
 from . import context
@@ -26,6 +28,9 @@ def init(
     otel_endpoint: Optional[str] = None,
     api_key: Optional[str] = None,
     service: Optional[str] = None,
+    resource_dir: Optional[str] = None,
+    prompt_providers: Optional[list[str]] = None,
+    prompt_templating_engine: Optional[str] = None,
     integrations: Optional[list[typing.Any]] = None,
     **kwargs: typing.Any,
 ) -> context.PatronusContext:
@@ -93,6 +98,9 @@ def init(
             api_url=api_url or cfg.api_url,
             otel_endpoint=otel_endpoint or cfg.otel_endpoint,
             api_key=api_key or cfg.api_key,
+            resource_dir=resource_dir or cfg.resource_dir,
+            prompt_providers=prompt_providers or cfg.prompt_providers,
+            prompt_templating_engine=cfg.prompt_templating_engine,
             timeout_s=cfg.timeout_s,
             integrations=integrations,
             **kwargs,
@@ -102,7 +110,7 @@ def init(
     inited_now = _INIT_ONCE.do_once(build_and_set)
     if not inited_now:
         warnings.warn(
-            ("The Patronus SDK has already been initialized. " "Duplicate initialization attempts are ignored."),
+            ("The Patronus SDK has already been initialized. Duplicate initialization attempts are ignored."),
             UserWarning,
             stacklevel=2,
         )
@@ -118,6 +126,9 @@ def build_context(
     api_url: Optional[str],
     otel_endpoint: str,
     api_key: str,
+    resource_dir: Optional[str] = None,
+    prompt_providers: Optional[list[str]] = None,
+    prompt_templating_engine: Optional[str] = None,
     client_http: Optional[httpx.Client] = None,
     client_http_async: Optional[httpx.AsyncClient] = None,
     timeout_s: int = 60,
@@ -168,12 +179,15 @@ def build_context(
         experiment_id=experiment_id,
         experiment_name=experiment_name,
     )
-    api = PatronusAPIClient(
+    api_deprecated = PatronusAPIClient(
         client_http_async=client_http_async,
         client_http=client_http,
         base_url=api_url,
         api_key=api_key,
     )
+    api_client = patronus_api.Client(api_key=api_key, base_url=api_url)
+    async_api_client = patronus_api.AsyncClient(api_key=api_key, base_url=api_url)
+
     logger_provider = create_logger_provider(
         exporter_endpoint=otel_endpoint,
         api_key=api_key,
@@ -186,13 +200,20 @@ def build_context(
         scope=scope,
     )
 
-    eval_exporter = BatchEvaluationExporter(client=api)
+    eval_exporter = BatchEvaluationExporter(client=api_deprecated)
     ctx = context.PatronusContext(
         scope=scope,
         tracer_provider=tracer_provider,
         logger_provider=logger_provider,
-        api_client=api,
+        api_client_deprecated=api_deprecated,
+        api_client=api_client,
+        async_api_client=async_api_client,
         exporter=eval_exporter,
+        prompts=context.PromptsConfig(
+            directory=pathlib.Path(resource_dir, "prompts"),
+            providers=prompt_providers,
+            templating_engine=prompt_templating_engine,
+        ),
     )
     apply_integrations(ctx, integrations)
     return ctx

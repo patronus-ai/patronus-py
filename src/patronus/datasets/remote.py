@@ -1,7 +1,7 @@
 from typing import Optional
 
 from .datasets import Dataset, DatasetLoader
-from patronus.context import get_api_client
+from patronus.context import get_api_client_deprecated
 
 
 class DatasetNotFoundError(Exception):
@@ -36,7 +36,7 @@ class RemoteDatasetLoader(DatasetLoader):
         super().__init__(self._load)
 
     async def _load(self) -> Dataset:
-        api = get_api_client()
+        api = get_api_client_deprecated()
 
         # If we're loading by name, first find the dataset ID by listing datasets
         dataset_id = self._dataset_id
@@ -48,7 +48,7 @@ class RemoteDatasetLoader(DatasetLoader):
                 raise DatasetNotFoundError(f"No dataset found with name '{self._dataset_name}'")
             if len(matching_datasets) > 1:
                 raise ValueError(
-                    f"Multiple datasets found with name '{self._dataset_name}'. " f"Please use a dataset ID instead."
+                    f"Multiple datasets found with name '{self._dataset_name}'. Please use a dataset ID instead."
                 )
 
             dataset_id = matching_datasets[0].id

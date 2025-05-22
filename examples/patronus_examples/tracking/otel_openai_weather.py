@@ -67,7 +67,11 @@ def get_weather(latitude, longitude):
     """Get weather data from the Open Meteo API using httpx"""
     with tracer.start_as_current_span(
         "get_weather",
-        attributes={"service.name": "weather_api", "weather.latitude": latitude, "weather.longitude": longitude},
+        attributes={
+            "service.name": "weather_api",
+            "weather.latitude": latitude,
+            "weather.longitude": longitude,
+        },
     ) as span:
         try:
             # Create the URL with parameters
@@ -81,7 +85,12 @@ def get_weather(latitude, longitude):
 
             # Trace the HTTP request using httpx
             with tracer.start_as_current_span(
-                "http_request", attributes={"http.method": "GET", "http.url": url, "http.request.query": str(params)}
+                "http_request",
+                attributes={
+                    "http.method": "GET",
+                    "http.url": url,
+                    "http.request.query": str(params),
+                },
             ):
                 # Use httpx client for the request
                 with httpx.Client() as client:
@@ -91,7 +100,9 @@ def get_weather(latitude, longitude):
                 span.set_attribute("http.status_code", response.status_code)
 
                 if response.status_code != 200:
-                    span.record_exception(Exception(f"Weather API returned status {response.status_code}"))
+                    span.record_exception(
+                        Exception(f"Weather API returned status {response.status_code}")
+                    )
                     span.set_status(trace.StatusCode.ERROR)
                     return None
 
@@ -123,7 +134,11 @@ def call_llm(client, user_prompt):
     for demonstration purposes.
     """
     with tracer.start_as_current_span(
-        "call_llm", attributes={"ai.prompt.text": user_prompt, "ai.prompt.tokens": len(user_prompt.split())}
+        "call_llm",
+        attributes={
+            "ai.prompt.text": user_prompt,
+            "ai.prompt.tokens": len(user_prompt.split()),
+        },
     ) as span:
         try:
             # Define tools available to the model
@@ -189,10 +204,16 @@ def main():
                 output = response.output[0]
                 if output.type == "function_call" and output.name == "get_weather":
                     # Parse the arguments from the function call
-                    with tracer.start_as_current_span("parse_function_call", attributes={"function_name": output.name}):
+                    with tracer.start_as_current_span(
+                        "parse_function_call", attributes={"function_name": output.name}
+                    ):
                         kwargs = json.loads(output.arguments)
-                        root_span.set_attribute("weather.latitude", kwargs.get("latitude"))
-                        root_span.set_attribute("weather.longitude", kwargs.get("longitude"))
+                        root_span.set_attribute(
+                            "weather.latitude", kwargs.get("latitude")
+                        )
+                        root_span.set_attribute(
+                            "weather.longitude", kwargs.get("longitude")
+                        )
 
                     print("Weather API Response")
                     weather_response = get_weather(**kwargs)

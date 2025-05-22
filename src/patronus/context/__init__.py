@@ -7,10 +7,13 @@ context and accessing different components of the SDK like logging, tracing, and
 
 import dataclasses
 import logging
+import pathlib
+
 from opentelemetry import trace
 from typing import Optional
 from typing import TYPE_CHECKING
 
+import patronus_api
 from patronus.context.context_utils import ContextObject
 from patronus.exceptions import UninitializedError
 
@@ -45,6 +48,16 @@ class PatronusScope:
 
 
 @dataclasses.dataclass(frozen=True)
+class PromptsConfig:
+    directory: pathlib.Path
+    """The absolute path to a directory where prompts are stored locally."""
+    providers: list[str]
+    """List of default prompt providers."""
+    templating_engine: str
+    """Default prompt templating engine."""
+
+
+@dataclasses.dataclass(frozen=True)
 class PatronusContext:
     """
     Context object for Patronus SDK.
@@ -55,15 +68,21 @@ class PatronusContext:
         scope: Scope information for this context.
         tracer_provider: The OpenTelemetry tracer provider.
         logger_provider: The OpenTelemetry logger provider.
-        api_client: Client for Patronus API communication.
+        api_client_deprecated: Client for Patronus API communication (deprecated).
+        api_client: Client for Patronus API communication using the modern client.
+        async_api_client: Asynchronous client for Patronus API communication.
         exporter: Exporter for batch evaluation results.
+        prompts: Configuration for prompt management.
     """
 
     scope: PatronusScope
     tracer_provider: "TracerProvider"
     logger_provider: "LoggerProvider"
-    api_client: "PatronusAPIClient"
+    api_client_deprecated: "PatronusAPIClient"
+    api_client: patronus_api.Client
+    async_api_client: patronus_api.AsyncClient
     exporter: "BatchEvaluationExporter"
+    prompts: "PromptsConfig"
 
 
 _CTX_PAT = ContextObject[PatronusContext]("ctx.pat")
@@ -199,7 +218,31 @@ def get_tracer_or_none() -> Optional[trace.Tracer]:
     return ctx.tracer_provider.get_tracer("patronus.sdk")
 
 
-def get_api_client(ctx: Optional[PatronusContext] = None) -> "PatronusAPIClient":
+def get_api_client_deprecated(ctx: Optional[PatronusContext] = None) -> "PatronusAPIClient":
+    """
+    Get the Patronus API client.
+
+    Args:
+        ctx: The Patronus context to use. If None, uses the current context.
+
+    Returns:
+        The Patronus API client.
+    """
+    ctx = ctx or get_current_context()
+    return ctx.api_client_deprecated
+
+
+def get_api_client_deprecated_or_none() -> Optional["PatronusAPIClient"]:
+    """
+    Get the Patronus API client or None if context is not initialized.
+
+    Returns:
+        The Patronus API client if context is available, otherwise None.
+    """
+    return (ctx := get_current_context_or_none()) and ctx.api_client_deprecated
+
+
+def get_api_client(ctx: Optional[PatronusContext] = None) -> patronus_api.Client:
     """
     Get the Patronus API client.
 
@@ -213,7 +256,7 @@ def get_api_client(ctx: Optional[PatronusContext] = None) -> "PatronusAPIClient"
     return ctx.api_client
 
 
-def get_api_client_or_none() -> Optional["PatronusAPIClient"]:
+def get_api_client_or_none() -> Optional[patronus_api.Client]:
     """
     Get the Patronus API client or None if context is not initialized.
 
@@ -221,6 +264,30 @@ def get_api_client_or_none() -> Optional["PatronusAPIClient"]:
         The Patronus API client if context is available, otherwise None.
     """
     return (ctx := get_current_context_or_none()) and ctx.api_client
+
+
+def get_async_api_client(ctx: Optional[PatronusContext] = None) -> patronus_api.AsyncClient:
+    """
+    Get the asynchronous Patronus API client.
+
+    Args:
+        ctx: The Patronus context to use. If None, uses the current context.
+
+    Returns:
+        The asynchronous Patronus API client.
+    """
+    ctx = ctx or get_current_context()
+    return ctx.async_api_client
+
+
+def get_async_api_client_or_none() -> Optional[patronus_api.AsyncClient]:
+    """
+    Get the asynchronous Patronus API client or None if context is not initialized.
+
+    Returns:
+        The asynchronous Patronus API client if context is available, otherwise None.
+    """
+    return (ctx := get_current_context_or_none()) and ctx.async_api_client
 
 
 def get_exporter(ctx: Optional[PatronusContext] = None) -> "BatchEvaluationExporter":
@@ -269,3 +336,27 @@ def get_scope_or_none() -> Optional[PatronusScope]:
         The Patronus scope if context is available, otherwise None.
     """
     return (ctx := get_current_context_or_none()) and ctx.scope
+
+
+def get_prompts_config(ctx: Optional[PatronusContext] = None) -> PromptsConfig:
+    """
+    Get the Patronus prompts configuration.
+
+    Args:
+        ctx: The Patronus context to use. If None, uses the current context.
+
+    Returns:
+        The Patronus prompts configuration.
+    """
+    ctx = ctx or get_current_context()
+    return ctx.prompts
+
+
+def get_prompts_config_or_none() -> Optional[PromptsConfig]:
+    """
+    Get the Patronus prompts configuration or None if context is not initialized.
+
+    Returns:
+        The Patronus prompts configuration if context is available, otherwise None.
+    """
+    return (ctx := get_current_context_or_none()) and ctx.prompts

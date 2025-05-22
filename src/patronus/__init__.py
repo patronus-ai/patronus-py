@@ -1,5 +1,4 @@
 from .api.api_types import EvaluateRequest as EvaluateRequest
-from .context import get_api_client as get_api_client
 from .context import get_logger as get_logger
 
 from .evals import AsyncStructuredEvaluator as AsyncStructuredEvaluator
