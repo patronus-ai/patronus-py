@@ -136,6 +136,9 @@ def run_experiment(
     otel_endpoint: Optional[str] = None,
     ui_url: Optional[str] = None,
     timeout_s: Optional[int] = None,
+    resource_dir: Optional[str] = None,
+    prompt_providers: Optional[list[str]] = None,
+    prompt_templating_engine: Optional[str] = None,
     integrations: Optional[list[typing.Any]] = None,
     **kwargs,
 ) -> Union["Experiment", typing.Awaitable["Experiment"]]:
@@ -202,6 +205,9 @@ def run_experiment(
             otel_endpoint=otel_endpoint,
             ui_url=ui_url,
             timeout_s=timeout_s,
+            resource_dir=resource_dir,
+            prompt_providers=prompt_providers,
+            prompt_templating_engine=prompt_templating_engine,
             integrations=integrations,
             **kwargs,
         )
@@ -245,6 +251,9 @@ class Experiment:
     _otel_endpoint: Optional[str]
     _ui_url: Optional[str]
     _timeout_s: Optional[int]
+    _resource_dir: Optional[str]
+    _prompt_providers: Optional[list[str]]
+    _prompt_templating_engine: Optional[str]
 
     _ctx: Optional[context.PatronusContext] = None
 
@@ -265,6 +274,9 @@ class Experiment:
         otel_endpoint: Optional[str] = None,
         ui_url: Optional[str] = None,
         timeout_s: Optional[int] = None,
+        resource_dir: Optional[str] = None,
+        prompt_providers: Optional[list[str]] = None,
+        prompt_templating_engine: Optional[str] = None,
         integrations: Optional[list[typing.Any]] = None,
         **kwargs,
     ):
@@ -297,6 +309,9 @@ class Experiment:
         self._otel_endpoint = otel_endpoint
         self._ui_url = ui_url
         self._timeout_s = timeout_s
+        self._resource_dir = resource_dir
+        self._prompt_providers = prompt_providers
+        self._prompt_templating_engine = prompt_templating_engine
 
         self._prepared = False
 
@@ -321,6 +336,9 @@ class Experiment:
         otel_endpoint: Optional[str] = None,
         ui_url: Optional[str] = None,
         timeout_s: Optional[int] = None,
+        resource_dir: Optional[str] = None,
+        prompt_providers: Optional[list[str]] = None,
+        prompt_templating_engine: Optional[str] = None,
         integrations: Optional[list[typing.Any]] = None,
         **kwargs: typing.Any,
     ) -> te.Self:
@@ -358,6 +376,17 @@ class Experiment:
                 variables if not provided.
             timeout_s: Timeout in seconds for API operations. Falls back to configuration or
                 environment variables if not provided.
+            resource_dir: Base directory where all Patronus resources are stored locally.
+                This serves as the root for various resource types, with prompts being stored
+                at `<resource_dir>/prompts/`. Falls back to configuration or environment
+                variables if not provided.
+            prompt_providers: Ordered list of prompt providers that determines the lookup strategy.
+                When retrieving a prompt, providers are tried in sequence until one succeeds.
+                Available providers: 'local', 'api', 'cache'. Falls back to configuration or
+                environment variables if not provided.
+            prompt_templating_engine: Default templating engine used for rendering prompts
+                with variables. Options include: 'f-string', 'mustache', 'jinja2'. Falls back
+                to configuration or environment variables if not provided.
             integrations: A list of OpenTelemetry instrumentors for additional tracing capabilities.
             **kwargs: Additional keyword arguments passed to the experiment.
 
@@ -485,6 +514,9 @@ class Experiment:
             api_url=self._api_url or cfg.api_url,
             otel_endpoint=self._otel_endpoint or cfg.otel_endpoint,
             api_key=self._api_key or cfg.api_key,
+            resource_dir=self._resource_dir or cfg.resource_dir,
+            prompt_providers=self._prompt_providers or cfg.prompt_providers,
+            prompt_templating_engine=cfg.prompt_templating_engine,
             client_http=client_http,
             client_http_async=client_http_async,
             timeout_s=self._timeout_s or cfg.timeout_s,
