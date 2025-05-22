@@ -2,150 +2,158 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://docs.patronus.ai/patronus-py/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/configuration/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/api_ref/api_client/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/api_ref/config/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/api_ref/context/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/api_ref/datasets/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/api_ref/evals/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/api_ref/experiments/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/api_ref/init/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/api_ref/integrations/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/api_ref/pat_client/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
+    </url>
+    <url>
+         <loc>https://docs.patronus.ai/patronus-py/api_ref/prompts/</loc>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/api_ref/tracing/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/evaluations/batching/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/evaluations/evaluators/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/evaluations/patronus-evaluators/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/examples/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/examples/anthropic-weather/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/examples/crewai-weather/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/examples/langchain-weather/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/examples/openai-agents-weather/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/examples/openai-weather/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/examples/otel-openai-weather/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/examples/pydanticai-weather/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/examples/smolagents-weather/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/experiments/advanced/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/experiments/datasets/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/experiments/evaluators/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/experiments/introduction/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/experiments/running/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/experiments/tasks/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/getting-started/initialization/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/getting-started/installation/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/getting-started/quickstart/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/integrations/agents/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/integrations/llms/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/observability/logging/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
     </url>
     <url>
          <loc>https://docs.patronus.ai/patronus-py/observability/tracing/</loc>
-         <lastmod>2025-05-13</lastmod>
+         <lastmod>2025-05-22</lastmod>
+    </url>
+    <url>
+         <loc>https://docs.patronus.ai/patronus-py/prompts/</loc>
+         <lastmod>2025-05-22</lastmod>
     </url>
 </urlset>
