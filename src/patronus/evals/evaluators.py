@@ -661,7 +661,7 @@ class RemoteEvaluatorMixin:
         return self.criteria
 
     def _get_api(self) -> PatronusAPIClient:
-        api_client = self._api or context.get_api_client_or_none()
+        api_client = self._api or context.get_api_client_deprecated_or_none()
         if api_client is None:
             raise UninitializedError(
                 "Failed to get API client. Either initialize the library by calling patronus.init() or "

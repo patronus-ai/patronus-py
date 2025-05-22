@@ -58,6 +58,7 @@ nav:
     - Integrations:
         - Agent Integrations: integrations/agents.md
         - LLM Integrations: integrations/llms.md
+    - Prompts: prompts/index.md
     - Evaluations:
         - Evaluators: evaluations/evaluators.md
         - Patronus Evaluators: evaluations/patronus-evaluators.md
@@ -81,6 +82,8 @@ nav:
           - Trace OpenAI Agents: examples/openai-agents-weather.md
           - Trace LangChain: examples/langchain-weather.md
           - Trace CrewAI: examples/crewai-weather.md
+        - Advanced Examples:
+          - Manual OTel with OpenAI: examples/otel-openai-weather.md
   - API Reference:
       - Init: api_ref/init.md
       - Tracing: api_ref/tracing.md
@@ -91,6 +94,7 @@ nav:
       - Patronus Client: api_ref/pat_client.md
       - Context: api_ref/context.md
       - Integrations: api_ref/integrations.md
+      - Prompts: api_ref/prompts.md
       - Config: api_ref/config.md
 
 plugins:

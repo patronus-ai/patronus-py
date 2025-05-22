@@ -33,6 +33,7 @@ dependencies = [
     "opentelemetry-api>=1.31.0",
     "opentelemetry-sdk>=1.31.0",
     "opentelemetry-exporter-otlp>=1.31.0",
+    "patronus-api>=0.2.0"
 ]
 
 [tool.hatch.metadata.hooks.uv-dynamic-versioning.optional-dependencies]

@@ -88,6 +88,40 @@ class Config(pydantic_settings.BaseSettings):
     project_name: str = pydantic.Field(default=DEFAULT_PROJECT_NAME)
     app: str = pydantic.Field(default=DEFAULT_APP_NAME)
 
+    resource_dir: str = pydantic.Field(
+        default="./patronus",
+        description=(
+            "Base directory where all Patronus resources are stored locally. "
+            "This serves as the root for various resource types, with prompts being stored "
+            "at `<resource_dir>/prompts/`. Other resource types may be added in the future. "
+            "By default, it's set to './patronus' in the current working directory."
+        ),
+    )
+    prompt_providers: list[str] = pydantic.Field(
+        default_factory=lambda: ["local", "api"],
+        description=(
+            "Ordered list of prompt providers that determines the lookup strategy. "
+            "When retrieving a prompt, providers are tried in sequence until one succeeds.\n\n"
+            "Available providers:\n"
+            "- 'local': Uses prompts stored in `<resource_dir>/prompts/`\n"
+            "- 'api': Fetches prompts from the Patronus API\n"
+            "- 'cache': In-memory cache that wraps another provider\n\n"
+            "The default ['local', 'api'] checks for local files first, then falls back to the API. "
+            "The SDK doesn't update prompt resources automatically - use the CLI for syncing."
+        ),
+    )
+    prompt_templating_engine: typing.Literal["f-string", "mustache", "jinja2"] = pydantic.Field(
+        default="f-string",
+        description=(
+            "Default templating engine used for rendering prompts with variables.\n\n"
+            "Options include:\n"
+            "- 'f-string': Python-style format strings using {variable_name} syntax\n"
+            "- 'mustache': Logic-less templates using {{variable_name}} syntax\n"
+            "- 'jinja2': Feature-rich templating with {% logic %} and {{ variables }}\n\n"
+            "This setting can be overridden when rendering individual prompts."
+        ),
+    )
+
     @pydantic.model_validator(mode="after")
     def validate_otel_endpoint(self) -> "Config":
         if self.api_url != DEFAULT_API_URL and self.otel_endpoint == DEFAULT_OTEL_ENDPOINT:

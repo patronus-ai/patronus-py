@@ -2,6 +2,7 @@
 # /// script
 # requires-python = ">=3.10"
 # dependencies = [
+#     "patronus",
 #     "crewai>=0.119.0,<1.0.0",
 #     "openinference.instrumentation.crewai>=0.1.9,<0.2.0",
 #     "opentelemetry-instrumentation-threading>=0.54b0,<1.0",

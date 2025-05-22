@@ -3,6 +3,8 @@ from threading import Lock
 from typing import Optional, Callable
 import warnings
 
+NOT_GIVEN = object()
+
 
 def merge_tags(tags: Optional[dict], new_tags: Optional[dict], experiment_tags: Optional[dict]) -> dict:
     tags = tags or {}
