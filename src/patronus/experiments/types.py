@@ -25,6 +25,10 @@ class TaskResult(pydantic.BaseModel):
     metadata: Optional[dict[str, typing.Any]] = None
     tags: Optional[dict[str, str]] = None
 
+    def _pat_dump(self):
+        """Convert task result to JSON-compatible dictionary for serialization."""
+        return self.model_dump(mode="json")
+
 
 MaybeEvaluationResult = typing.Union[EvaluationResult, api_types.EvaluationResult, None]
 
@@ -91,6 +95,13 @@ class _EvalParent(pydantic.BaseModel):
         if evaluator_or_name in self.evals:
             return self.evals[evaluator_or_name]
         return None
+
+    def _pat_dump(self):
+        """Return simplified representation for serialization, excluding parent references."""
+        # We don't want to expose the parent.
+        # Since this is an experiment type, the previous task/evaluations
+        # are already logged.
+        return "_EvalParent(...)"
 
 
 _EvalParent.model_rebuild()

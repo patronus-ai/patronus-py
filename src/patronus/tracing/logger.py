@@ -7,6 +7,7 @@ from time import time_ns
 from types import MappingProxyType
 from typing import Optional, Union
 
+import pydantic
 from opentelemetry._logs import SeverityNumber
 from opentelemetry.exporter.otlp.proto.grpc._log_exporter import OTLPLogExporter as OTLPLogExporterTCP
 from opentelemetry.sdk._logs import LogRecord
@@ -134,8 +135,18 @@ def encode_attrs(v):
 
 
 def transform_body(v: typing.Any):
+    # We check for the private method first since it may do overridding of the types checked later
+    if hasattr(v, "_pat_dump"):
+        v = v._pat_dump()
     if v is None:
         return None
+    if isinstance(v, pydantic.BaseModel):
+        try:
+            v = v.model_dump(mode="json")
+        except Exception:
+            # If we fail to dump the model, we will get the `str` reperesentation later
+            # We don't want to raise since the model could be defined by the user
+            pass
     if isinstance(v, MappingProxyType):
         v = dict(v)
     if isinstance(v, list):

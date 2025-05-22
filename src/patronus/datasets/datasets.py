@@ -134,6 +134,10 @@ class Row:
             return self._row.tags
         return None
 
+    def _pat_dump(self):
+        """Convert row data to dictionary format for serialization."""
+        return self._row.to_dict()
+
 
 @dataclasses.dataclass
 class Dataset:
