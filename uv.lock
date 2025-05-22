@@ -2864,7 +2864,7 @@ requires-dist = [
     { name = "opentelemetry-exporter-otlp", specifier = ">=1.31.0" },
     { name = "opentelemetry-sdk", specifier = ">=1.31.0" },
     { name = "pandas", marker = "extra == 'experiments'", specifier = ">=2.0.0" },
-    { name = "patronus-api", editable = "../stainless-sdks/patronus-api-python" },
+    { name = "patronus-api", specifier = ">=0.2.0" },
     { name = "patronus-examples", marker = "extra == 'examples'", editable = "examples" },
     { name = "pydantic", specifier = ">=2.8.2" },
     { name = "pydantic-settings", specifier = ">=2.4.0" },
@@ -2887,8 +2887,8 @@ lint = [
 
 [[package]]
 name = "patronus-api"
-version = "0.1.0"
-source = { editable = "../stainless-sdks/patronus-api-python" }
+version = "0.2.0"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anyio" },
     { name = "distro" },
@@ -2897,15 +2897,9 @@ dependencies = [
     { name = "sniffio" },
     { name = "typing-extensions" },
 ]
-
-[package.metadata]
-requires-dist = [
-    { name = "anyio", specifier = ">=3.5.0,<5" },
-    { name = "distro", specifier = ">=1.7.0,<2" },
-    { name = "httpx", specifier = ">=0.23.0,<1" },
-    { name = "pydantic", specifier = ">=1.9.0,<3" },
-    { name = "sniffio" },
-    { name = "typing-extensions", specifier = ">=4.10,<5" },
+sdist = { url = "https://files.pythonhosted.org/packages/be/11/3ca942219c0d16f65131c0df33c84a4c34f3a29c6152516900fc8813038a/patronus_api-0.2.0.tar.gz", hash = "sha256:91b33922eab97558ac1b7579aad7f7d7474c40e6eb6033a0fb8ee21b0e613b68", size = 121114 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f7/a3/890dd30f0cbd7b0675a56769ae766812c8e1464af1c1562082f8757ac57f/patronus_api-0.2.0-py3-none-any.whl", hash = "sha256:27dedba70370c1bcc36aa4dea0bb8af416b6f839f8c03c85cd4d1eb311d3cd2e", size = 123017 },
 ]
 
 [[package]]
