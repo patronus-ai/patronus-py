@@ -79,7 +79,7 @@ class PatronusAPIClient(BaseAPIClient):
 
 
     async def update_experiment(self, experiment_id: str, request: api_types.UpdateExperimentRequest) -> api_types.Experiment:
-        """Creates a new experiment based on the given request."""
+        """Updates an existing experiment based on the given request."""
         resp = await self.call(
             "POST",
             f"/v1/experiments/{experiment_id}",
@@ -90,7 +90,7 @@ class PatronusAPIClient(BaseAPIClient):
         return resp.data.experiment
 
     def update_experiment_sync(self, experiment_id: str, request: api_types.UpdateExperimentRequest) -> api_types.Experiment:
-        """Creates a new experiment based on the given request."""
+        """Updates an existing experiment based on the given request."""
         resp = self.call_sync(
             "POST",
             f"/v1/experiments{experiment_id}",
