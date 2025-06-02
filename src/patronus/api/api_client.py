@@ -77,6 +77,29 @@ class PatronusAPIClient(BaseAPIClient):
         resp.raise_for_status()
         return resp.data.experiment
 
+
+    async def update_experiment(self, experiment_id: str, request: api_types.UpdateExperimentRequest) -> api_types.Experiment:
+        """Creates a new experiment based on the given request."""
+        resp = await self.call(
+            "POST",
+            f"/v1/experiments/{experiment_id}",
+            body=request,
+            response_cls=api_types.UpdateExperimentResponse,
+        )
+        resp.raise_for_status()
+        return resp.data.experiment
+
+    def update_experiment_sync(self, experiment_id: str, request: api_types.UpdateExperimentRequest) -> api_types.Experiment:
+        """Creates a new experiment based on the given request."""
+        resp = self.call_sync(
+            "POST",
+            f"/v1/experiments{experiment_id}",
+            body=request,
+            response_cls=api_types.UpdateExperimentResponse,
+        )
+        resp.raise_for_status()
+        return resp.data.experiment
+
     async def get_experiment(self, experiment_id: str) -> Optional[api_types.Experiment]:
         """Fetches an experiment by its ID or returns None if not found."""
         resp = await self.call(

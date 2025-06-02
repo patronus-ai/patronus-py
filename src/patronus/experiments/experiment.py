@@ -235,6 +235,7 @@ class Experiment:
 
     _chain: list[_ChainLink]
     _started: bool
+    _prepared: bool
 
     _sem_tasks: asyncio.Semaphore
     _sem_evals: asyncio.Semaphore
@@ -245,6 +246,7 @@ class Experiment:
     _otel_endpoint: Optional[str]
     _ui_url: Optional[str]
     _timeout_s: Optional[int]
+    _api: Optional[PatronusAPIClient]
 
     _ctx: Optional[context.PatronusContext] = None
 
@@ -266,6 +268,7 @@ class Experiment:
         ui_url: Optional[str] = None,
         timeout_s: Optional[int] = None,
         integrations: Optional[list[typing.Any]] = None,
+        api: Optional[PatronusAPIClient] = None,
         **kwargs,
     ):
         if chain and evaluators:
@@ -297,6 +300,7 @@ class Experiment:
         self._otel_endpoint = otel_endpoint
         self._ui_url = ui_url
         self._timeout_s = timeout_s
+        self._api = api
 
         self._prepared = False
 
@@ -417,6 +421,29 @@ class Experiment:
 
         return self
 
+    async def update(self, metadata: dict[str, Any]) -> te.Self:
+        """
+        Updates the experiment with the given metadata.
+
+        Returns:
+            The experiment instance.
+        """
+        if self._prepared is False:
+            raise RuntimeError(
+                "Experiment has to be prepared before updating. "
+                "Seems that Experiment was not created using Experiment.create() classmethod."
+            )
+
+        self.experiment = await self._api.update_experiment(
+            experiment_id=self.experiment.id,
+            request=api_types.UpdateExperimentRequest(
+                metadata=metadata,
+            )
+        )
+
+        return self
+
+
     def to_dataframe(self) -> pd.DataFrame:
         """
         Converts experiment results to a pandas DataFrame.
@@ -463,7 +490,7 @@ class Experiment:
         client_http = httpx.Client(timeout=cfg.timeout_s)
         client_http_async = httpx.AsyncClient(timeout=cfg.timeout_s)
 
-        api = PatronusAPIClient(
+        self._api = PatronusAPIClient(
             client_http_async=client_http_async,
             client_http=client_http,
             base_url=self._api_url or cfg.api_url,

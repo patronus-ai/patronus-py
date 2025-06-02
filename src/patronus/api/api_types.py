@@ -89,6 +89,14 @@ class CreateExperimentResponse(pydantic.BaseModel):
     experiment: Experiment
 
 
+class UpdateExperimentRequest(pydantic.BaseModel):
+    metadata: dict[str, typing.Any]
+
+
+class UpdateExperimentResponse(pydantic.BaseModel):
+    experiment: Experiment
+
+
 class GetExperimentResponse(pydantic.BaseModel):
     experiment: Experiment
 
