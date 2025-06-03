@@ -1,3 +1,5 @@
+from importlib.metadata import metadata
+
 from patronus.experiments import run_experiment
 from patronus.evals import RemoteEvaluator
 
@@ -17,4 +19,9 @@ run_experiment(
     ],
     evaluators=[detect_pii],
     experiment_name="Detect PII",
+    metadata={
+        "evaluator_weights": {
+            detect_pii.canonical_name: "0.4"
+        }
+    }
 )

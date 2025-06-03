@@ -258,6 +258,7 @@ class Experiment:
         evaluators: Optional[list[AdaptableEvaluators]] = None,
         chain: Optional[list[ChainLink]] = None,
         tags: Optional[dict[str, str]] = None,
+        metadata: Optional[dict[str, Any]] = None,
         max_concurrency: int = 10,
         project_name: Optional[str] = None,
         experiment_name: Optional[str] = None,
@@ -268,7 +269,6 @@ class Experiment:
         ui_url: Optional[str] = None,
         timeout_s: Optional[int] = None,
         integrations: Optional[list[typing.Any]] = None,
-        api: Optional[PatronusAPIClient] = None,
         **kwargs,
     ):
         if chain and evaluators:
@@ -291,6 +291,7 @@ class Experiment:
         self.experiment = None
 
         self.tags = tags or {}
+        self.metadata = metadata
 
         self.max_concurrency = max_concurrency
 
@@ -300,7 +301,6 @@ class Experiment:
         self._otel_endpoint = otel_endpoint
         self._ui_url = ui_url
         self._timeout_s = timeout_s
-        self._api = api
 
         self._prepared = False
 
@@ -316,6 +316,7 @@ class Experiment:
         evaluators: Optional[list[AdaptableEvaluators]] = None,
         chain: Optional[list[ChainLink]] = None,
         tags: Optional[Tags] = None,
+        metadata: Optional[dict[str, Any]] = None,
         max_concurrency: int = 10,
         project_name: Optional[str] = None,
         experiment_name: Optional[str] = None,
@@ -346,6 +347,8 @@ class Experiment:
                 Use this for multi-stage evaluation pipelines.
             tags: Key-value pairs.
                 All evaluations created by the experiment will contain these tags.
+            metadata: Arbitrary dict.
+                Metadata associated with the experiment.
             max_concurrency: Maximum number of concurrent task and evaluation operations.
             project_name: Name of the project to create or use. Falls back to configuration or
                 environment variables if not provided.
@@ -375,6 +378,7 @@ class Experiment:
             evaluators=evaluators,
             chain=chain,
             tags=tags,
+            metadata=metadata,
             max_concurrency=max_concurrency,
             project_name=project_name,
             experiment_name=experiment_name,
@@ -420,29 +424,6 @@ class Experiment:
         await asyncio.to_thread(self._ctx.tracer_provider.force_flush)
 
         return self
-
-    async def update(self, metadata: dict[str, Any]) -> te.Self:
-        """
-        Updates the experiment with the given metadata.
-
-        Returns:
-            The experiment instance.
-        """
-        if self._prepared is False:
-            raise RuntimeError(
-                "Experiment has to be prepared before updating. "
-                "Seems that Experiment was not created using Experiment.create() classmethod."
-            )
-
-        self.experiment = await self._api.update_experiment(
-            experiment_id=self.experiment.id,
-            request=api_types.UpdateExperimentRequest(
-                metadata=metadata,
-            )
-        )
-
-        return self
-
 
     def to_dataframe(self) -> pd.DataFrame:
         """
@@ -490,7 +471,7 @@ class Experiment:
         client_http = httpx.Client(timeout=cfg.timeout_s)
         client_http_async = httpx.AsyncClient(timeout=cfg.timeout_s)
 
-        self._api = PatronusAPIClient(
+        api = PatronusAPIClient(
             client_http_async=client_http_async,
             client_http=client_http,
             base_url=self._api_url or cfg.api_url,
@@ -500,7 +481,7 @@ class Experiment:
         self.project = await self._get_or_create_project(api, self._project_name or cfg.project_name)
         self._project_name = None
 
-        self.experiment = await self._create_experiment(api, self.project.id, self._experiment_name, self.tags)
+        self.experiment = await self._create_experiment(api, self.project.id, self._experiment_name, self.tags, self.metadata)
         self._experiment_name = None
 
         ctx = build_context(
@@ -564,7 +545,7 @@ class Experiment:
 
     @staticmethod
     async def _create_experiment(
-        api: PatronusAPIClient, project_id: str, experiment_name: str, tags: Tags
+        api: PatronusAPIClient, project_id: str, experiment_name: str, tags: Tags, metadata: Optional[dict[str, Any]]
     ) -> api_types.Experiment:
         name = generate_experiment_name(experiment_name)
         return await api.create_experiment(
@@ -572,6 +553,7 @@ class Experiment:
                 project_id=project_id,
                 name=name,
                 tags=tags,
+                metadata=metadata
             )
         )
 

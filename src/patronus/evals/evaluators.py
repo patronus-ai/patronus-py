@@ -583,6 +583,10 @@ class Evaluator(metaclass=_EvaluatorMeta):
         Return type should stay unchanged.
         """
 
+    @property
+    def canonical_name(self) -> str:
+        return f"{self.get_evaluator_id()}:{self.get_criteria() or ''}"
+
 
 class AsyncEvaluator(Evaluator):
     @abc.abstractmethod

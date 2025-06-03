@@ -77,12 +77,14 @@ class Experiment(pydantic.BaseModel):
     id: str
     name: str
     tags: Optional[dict[str, str]] = None
+    metadata: Optional[dict[str, typing.Any]] = None
 
 
 class CreateExperimentRequest(pydantic.BaseModel):
     project_id: str
     name: str
     tags: dict[str, str] = pydantic.Field(default_factory=dict)
+    metadata: Optional[dict[str, typing.Any]] = None
 
 
 class CreateExperimentResponse(pydantic.BaseModel):

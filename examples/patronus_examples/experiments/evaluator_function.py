@@ -6,6 +6,7 @@ from patronus.experiments import run_experiment, Row, FuncEvaluatorAdapter
 def iexact_match(row: Row, **kwargs) -> bool:
     return row.task_output.lower().strip() == row.gold_answer.lower().strip()
 
+iexact_match_evaluator = FuncEvaluatorAdapter(iexact_match)
 
 run_experiment(
     project_name="Tutorial",
@@ -21,6 +22,11 @@ run_experiment(
             "gold_answer": "AI improves efficiency",
         },
     ],
-    evaluators=[FuncEvaluatorAdapter(iexact_match)],
+    evaluators=[iexact_match_evaluator],
     experiment_name="Case Insensitive Match",
+    metadata={
+        "evaluator_weights": {
+            iexact_match_evaluator.canonical_name: "1.0"
+        }
+    }
 )
