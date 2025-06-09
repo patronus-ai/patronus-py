@@ -33,7 +33,9 @@ dependencies = [
     "opentelemetry-api>=1.31.0",
     "opentelemetry-sdk>=1.31.0",
     "opentelemetry-exporter-otlp>=1.31.0",
-    "patronus-api>=0.2.0"
+    "patronus-api>=0.2.0",
+    "click>=8.2.1",
+    "rich>=13.7.0",
 ]
 
 [tool.hatch.metadata.hooks.uv-dynamic-versioning.optional-dependencies]
@@ -42,6 +44,9 @@ examples = [
 ]
 experiments = ["pandas>=2.0.0"]
 
+[project.scripts]
+patronus = "patronus.cli.main:main"
+
 [project.urls]
 Homepage = "https://www.patronus.ai"
 Documentation = "https://docs.patronus.ai"
@@ -49,6 +54,7 @@ Repository = "https://github.com/patronus-ai/patronus-py"
 
 [dependency-groups]
 docs = [
+    "mkdocs-click>=0.9.0",
     "mkdocs-material>=9.6.7,<10",
     "mkdocstrings-python>=1.16.5,<2",
 ]
