@@ -89,12 +89,12 @@ class Config(pydantic_settings.BaseSettings):
     app: str = pydantic.Field(default=DEFAULT_APP_NAME)
 
     resource_dir: str = pydantic.Field(
-        default="./patronus",
+        default="./.patronus",
         description=(
             "Base directory where all Patronus resources are stored locally. "
             "This serves as the root for various resource types, with prompts being stored "
             "at `<resource_dir>/prompts/`. Other resource types may be added in the future. "
-            "By default, it's set to './patronus' in the current working directory."
+            "By default, it's set to './.patronus' in the current working directory."
         ),
     )
     prompt_providers: list[str] = pydantic.Field(
