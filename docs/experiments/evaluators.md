@@ -253,6 +253,145 @@ def final_aggregate_evaluator(row, task_result, parent, **kwargs):
     avg_score = ((conciseness.score or 0) + (coherence.score or 0)) / 2
     return EvaluationResult(score=avg_score, pass_=avg_score > 0.7)
 ```
+## Evaluator Weights (Experiments Only)
+
+!!! note "Experiments Feature"
+    Evaluator weights are only supported when using evaluators within the experiment framework. This feature is not available for standalone evaluator usage.
+
+You can assign weights to evaluators to indicate their relative importance in your evaluation strategy. Weights must be valid decimal numbers (as strings) and are stored as experiment metadata.
+
+### Weight Support by Evaluator Type
+
+**Remote Evaluators**: Pass the `weight` parameter directly to the constructor:
+
+```python
+from patronus.evals import RemoteEvaluator
+from patronus.experiments import run_experiment
+
+# Remote evaluator with weight
+pii_evaluator = RemoteEvaluator("pii", "patronus:pii:1", weight="0.4")
+conciseness_evaluator = RemoteEvaluator("judge", "patronus:is-concise", weight="0.3")
+
+experiment = run_experiment(
+    dataset=dataset,
+    task=my_task,
+    evaluators=[pii_evaluator, conciseness_evaluator]
+)
+```
+
+**Function-Based Evaluators**: Pass the `weight` parameter to `FuncEvaluatorAdapter`:
+
+```python
+from patronus import evaluator
+from patronus.experiments import FuncEvaluatorAdapter, run_experiment
+from patronus.datasets import Row
+
+@evaluator()
+def exact_match(row: Row, **kwargs) -> bool:
+    return row.task_output.lower().strip() == row.gold_answer.lower().strip()
+
+# Function evaluator with weight
+exact_match_weighted = FuncEvaluatorAdapter(exact_match, weight="0.3")
+
+experiment = run_experiment(
+    dataset=dataset,
+    task=my_task,
+    evaluators=[exact_match_weighted]
+)
+```
+
+**Class-Based Evaluators**: Pass the `weight` parameter to the evaluator constructor:
+
+```python
+from patronus import StructuredEvaluator, EvaluationResult
+from patronus.experiments import run_experiment
+
+class CustomEvaluator(StructuredEvaluator):
+    def __init__(self, threshold: float, weight: str = None):
+        super().__init__(weight=weight)  # Pass to parent class
+        self.threshold = threshold
+    
+    def evaluate(self, *, task_output: str, **kwargs) -> EvaluationResult:
+        score = len(task_output) / 100  # Simple length-based scoring
+        return EvaluationResult(
+            score=score,
+            pass_=score >= self.threshold
+        )
+
+# Class-based evaluator with weight
+custom_evaluator = CustomEvaluator(threshold=0.5, weight="0.3")
+
+experiment = run_experiment(
+    dataset=dataset,
+    task=my_task,
+    evaluators=[custom_evaluator]
+)
+```
+
+### Complete Example
+
+Here's a comprehensive example showing weighted evaluators of different types:
+
+```python
+from patronus.experiments import FuncEvaluatorAdapter, run_experiment
+from patronus import RemoteEvaluator, EvaluationResult, StructuredEvaluator, evaluator
+from patronus.datasets import Row
+
+class DummyEvaluator(StructuredEvaluator):
+    def evaluate(self, task_output: str, gold_answer: str, **kwargs) -> EvaluationResult:
+        return EvaluationResult(score_raw=1, pass_=True)
+
+@evaluator
+def exact_match(row: Row, **kwargs) -> bool:
+    return row.task_output.lower().strip() == row.gold_answer.lower().strip()
+
+experiment = run_experiment(
+    project_name="Weighted Evaluation Example",
+    dataset=[
+        {
+            "task_input": "Please provide your contact details.",
+            "task_output": "My email is john.doe@example.com and my phone number is 123-456-7890.",
+            "gold_answer": "My email is john.doe@example.com and my phone number is 123-456-7890.",
+        },
+        {
+            "task_input": "Share your personal information.",
+            "task_output": "My name is Jane Doe and I live at 123 Elm Street.",
+            "gold_answer": "My name is Jane Doe and I live at 123 Elm Street.",
+        },
+    ],
+    evaluators=[
+        RemoteEvaluator("pii", "patronus:pii:1", weight="0.3"),           # Remote evaluator
+        FuncEvaluatorAdapter(exact_match, weight="0.3"),                   # Function evaluator
+        DummyEvaluator(weight="0.3"),                                       # Class evaluator
+    ],
+    experiment_name="Weighted Evaluators Demo"
+)
+```
+
+### Weight Validation and Rules
+
+1. **Valid Format**: Weights must be valid decimal numbers passed as strings (e.g., "0.3", "1.0", "0.75")
+2. **Consistency**: The same evaluator (identified by its canonical name) cannot have different weights within the same experiment
+3. **Storage**: Weights are automatically stored in the experiment's metadata under the "evaluator_weights" key
+4. **Optional**: Weights are optional - evaluators without weights will simply not have weight metadata
+
+### Error Examples
+
+```python
+# Invalid weight format - will raise TypeError
+RemoteEvaluator("judge", "patronus:is-concise", weight="invalid")
+
+# Inconsistent weights for same evaluator - will raise TypeError during experiment
+run_experiment(
+    dataset=dataset,
+    task=my_task,
+    evaluators=[
+        RemoteEvaluator("judge", "patronus:is-concise", weight="0.3"),
+        RemoteEvaluator("judge", "patronus:is-concise", weight="0.5"),  # Different weight!
+    ]
+)
+```
+
 ## Best Practices
 
 When using evaluators in experiments:
@@ -263,5 +402,7 @@ When using evaluators in experiments:
 4. **Create custom adapters when needed**: Don't force your evaluator functions to match the standard interface if there's a more natural way to express them
 5. **Handle edge cases gracefully**: Consider what happens with empty inputs, very long texts, etc.
 6. **Reuse evaluators across experiments**: Create a library of evaluators for consistent assessment
+7. **Use consistent weights**: When using evaluator weights, maintain consistency across experiments for the same evaluators
+8. **Document weight rationale**: Consider documenting why specific weights were chosen for your evaluation strategy
 
 Next, we'll explore advanced features of the Patronus Experimentation Framework.
