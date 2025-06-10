@@ -9,6 +9,8 @@ import threading
 import time
 import typing
 import uuid
+from decimal import Decimal
+
 from opentelemetry.trace import get_current_span, SpanContext
 from typing import Any, Optional, Union
 
@@ -568,6 +570,14 @@ class Evaluator(metaclass=_EvaluatorMeta):
 
     evaluator_id: Optional[str] = None
     criteria: Optional[str] = None
+    weight: Optional[str] = None
+
+    def __init__(self, weight: Optional[str] = None):
+        try:
+            Decimal(weight)
+        except Decimal.Invalid:
+            raise TypeError(f"{weight} is not a valid weight.")
+        self.weight = weight
 
     def get_evaluator_id(self) -> str:
         return self.evaluator_id or self.__class__.__qualname__
@@ -636,6 +646,7 @@ class AsyncStructuredEvaluator(AsyncEvaluator):
 
 class RemoteEvaluatorMixin:
     _disable_export = True
+    _resolved = False
 
     def __init__(
         self,
@@ -648,8 +659,10 @@ class RemoteEvaluatorMixin:
         allow_update: bool = False,
         max_attempts: int = 3,
         api_: Optional[PatronusAPIClient] = None,
+        weight: Optional[str] = None,
     ):
         self.evaluator_id_or_alias = evaluator_id_or_alias
+        self.evaluator_id = None
         self.criteria = criteria
         self.tags = tags or {}
         self.explain_strategy = explain_strategy
@@ -657,12 +670,51 @@ class RemoteEvaluatorMixin:
         self.allow_update = allow_update
         self.max_attempts = max_attempts
         self._api = api_
+        self._resolved = False
+        self.weight = weight
 
     def get_evaluator_id(self) -> str:
-        return self.evaluator_id_or_alias
+        if not self._resolved:
+            self.resolve_evaluator()
+        return self.evaluator_id
 
     def get_criteria(self) -> str:
+        if not self._resolved:
+            self.resolve_evaluator()
         return self.criteria
+
+    def resolve_evaluator(self):
+        api = self._get_api()
+
+        # Get evaluator id by aliases
+        evaluators = api.list_evaluators_sync(by_alias_or_id=self.evaluator_id_or_alias)
+        if evaluators is not None:
+            self.evaluator_id = evaluators[0].id
+
+        # Get criteria with revision if revision is not provided
+        if self.criteria and not self.criteria.find(':'):
+            criteria = api.list_criteria_sync(
+                api_types.ListCriteriaRequest(
+                    name=self.criteria,
+                    get_last_revision=True
+                )
+            )
+            if not criteria:
+                raise RuntimeError(f"Criteria {self.criteria} not found")
+            self.criteria = f"{criteria[0].evaluator_criteria.name}:{criteria[0].evaluator_criteria.revision}"
+
+        # Get default criteria from evaluator if criteraia not provided
+        elif not self.criteria:
+            criteria = api.list_criteria_sync(
+                api_types.ListCriteriaRequest(
+                    name=evaluators[0].default_criteria,
+                    get_last_revision=True
+                )
+            )
+            if not criteria:
+                raise RuntimeError(f"Default criteria not found")
+            self.criteria = f"{criteria[0].evaluator_criteria.name}:{criteria[0].evaluator_criteria.revision}"
+        self._resolved = True
 
     def _get_api(self) -> PatronusAPIClient:
         api_client = self._api or context.get_api_client_deprecated_or_none()

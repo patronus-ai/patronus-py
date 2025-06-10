@@ -19,7 +19,7 @@ from patronus.context import get_tracer
 from patronus.datasets import Dataset, DatasetLoader
 from patronus.evals import StructuredEvaluator, AsyncStructuredEvaluator, bundled_eval, EvaluationResult
 from patronus.evals.context import evaluation_attributes
-from patronus.experiments.adapters import BaseEvaluatorAdapter, StructuredEvaluatorAdapter
+from patronus.experiments.adapters import BaseEvaluatorAdapter, StructuredEvaluatorAdapter, EvaluatorAdapter
 from patronus.experiments.async_utils import run_until_complete
 from patronus.experiments.reporter import Reporter
 from patronus.experiments.tqdm import AsyncTQDMWithHandle
@@ -478,10 +478,12 @@ class Experiment:
             api_key=self._api_key or cfg.api_key,
         )
 
+        weights = await self._prepare_eval_weights()
+
         self.project = await self._get_or_create_project(api, self._project_name or cfg.project_name)
         self._project_name = None
 
-        self.experiment = await self._create_experiment(api, self.project.id, self._experiment_name, self.tags, self.metadata)
+        self.experiment = await self._create_experiment(api, self.project.id, self._experiment_name, self.tags, weights)
         self._experiment_name = None
 
         ctx = build_context(
@@ -506,6 +508,17 @@ class Experiment:
 
         self._prepared = True
         return ctx
+
+    async def _prepare_eval_weights(self):
+        weights = {}
+        for link_dict in self._chain:
+            for evaluator in link_dict.get("evaluators", []):
+                if weights.setdefault(evaluator.canonical_name, evaluator.weight) != evaluator.weight:
+                    raise TypeError(f'You cannot set different weights for the same evaluator: `{evaluator.canonical_name}`')
+
+        return {
+            "evaluator_weights": weights
+        }
 
     async def _run(self):
         title = f"Experiment  {self.project.name}/{self.experiment.name}"
