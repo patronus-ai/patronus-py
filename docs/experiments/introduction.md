@@ -51,7 +51,7 @@ Evaluators assess the quality of task outputs based on specific criteria. Patron
 
 Each evaluator produces an `EvaluationResult` containing scores, pass/fail status, explanations, and other metadata.
 
-**Evaluator Weights**: You can assign weights to evaluators to indicate their relative importance in your evaluation strategy. Weights are stored as experiment metadata and must be valid decimal numbers passed as strings. See the [Using Evaluators](evaluators.md#evaluator-weights-experiments-only) page for detailed information.
+**Evaluator Weights**: You can assign weights to evaluators to indicate their relative importance in your evaluation strategy. Weights are stored as experiment metadata and can be provided as either strings or floats representing valid decimal numbers. See the [Using Evaluators](evaluators.md#evaluator-weights-experiments-only) page for detailed information.
 
 ### Chains
 

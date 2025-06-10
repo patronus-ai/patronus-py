@@ -197,16 +197,16 @@ experiment = run_experiment(
     task=my_task,
     evaluators=[
         # Remote evaluator
-        RemoteEvaluator("judge", "factual-accuracy"),
+        RemoteEvaluator("judge", "factual-accuracy", weight=0.4),
 
         # Class-based evaluator
-        BERTScore(pass_threshold=0.7),
+        BERTScore(pass_threshold=0.7, weight=0.3),
 
         # Function evaluator with standard adapter
-        FuncEvaluatorAdapter(standard_evaluator),
+        FuncEvaluatorAdapter(standard_evaluator, weight=0.2),
 
         # Function evaluator with custom adapter
-        ExactMatchAdapter(case_sensitive=False)
+        ExactMatchAdapter(case_sensitive=False, weight=0.1)
     ]
 )
 ```
@@ -258,7 +258,7 @@ def final_aggregate_evaluator(row, task_result, parent, **kwargs):
 !!! note "Experiments Feature"
     Evaluator weights are only supported when using evaluators within the experiment framework. This feature is not available for standalone evaluator usage.
 
-You can assign weights to evaluators to indicate their relative importance in your evaluation strategy. Weights must be valid decimal numbers (as strings) and are stored as experiment metadata.
+You can assign weights to evaluators to indicate their relative importance in your evaluation strategy. Weights can be provided as either strings or floats representing valid decimal numbers and are stored as experiment metadata.
 
 ### Weight Support by Evaluator Type
 
@@ -268,9 +268,9 @@ You can assign weights to evaluators to indicate their relative importance in yo
 from patronus.evals import RemoteEvaluator
 from patronus.experiments import run_experiment
 
-# Remote evaluator with weight
-pii_evaluator = RemoteEvaluator("pii", "patronus:pii:1", weight="0.4")
-conciseness_evaluator = RemoteEvaluator("judge", "patronus:is-concise", weight="0.3")
+# Remote evaluator with weight (string or float)
+pii_evaluator = RemoteEvaluator("pii", "patronus:pii:1", weight="0.6")
+conciseness_evaluator = RemoteEvaluator("judge", "patronus:is-concise", weight=0.4)
 
 experiment = run_experiment(
     dataset=dataset,
@@ -290,8 +290,8 @@ from patronus.datasets import Row
 def exact_match(row: Row, **kwargs) -> bool:
     return row.task_output.lower().strip() == row.gold_answer.lower().strip()
 
-# Function evaluator with weight
-exact_match_weighted = FuncEvaluatorAdapter(exact_match, weight="0.3")
+# Function evaluator with weight (string or float)
+exact_match_weighted = FuncEvaluatorAdapter(exact_match, weight=0.7)
 
 experiment = run_experiment(
     dataset=dataset,
@@ -303,11 +303,12 @@ experiment = run_experiment(
 **Class-Based Evaluators**: Pass the `weight` parameter to the evaluator constructor:
 
 ```python
+from typing import Union
 from patronus import StructuredEvaluator, EvaluationResult
 from patronus.experiments import run_experiment
 
 class CustomEvaluator(StructuredEvaluator):
-    def __init__(self, threshold: float, weight: str = None):
+    def __init__(self, threshold: float, weight: Union[str, float] = None):
         super().__init__(weight=weight)  # Pass to parent class
         self.threshold = threshold
     
@@ -318,8 +319,8 @@ class CustomEvaluator(StructuredEvaluator):
             pass_=score >= self.threshold
         )
 
-# Class-based evaluator with weight
-custom_evaluator = CustomEvaluator(threshold=0.5, weight="0.3")
+# Class-based evaluator with weight (string or float)
+custom_evaluator = CustomEvaluator(threshold=0.5, weight=0.3)
 
 experiment = run_experiment(
     dataset=dataset,
@@ -360,9 +361,9 @@ experiment = run_experiment(
         },
     ],
     evaluators=[
-        RemoteEvaluator("pii", "patronus:pii:1", weight="0.3"),           # Remote evaluator
-        FuncEvaluatorAdapter(exact_match, weight="0.3"),                   # Function evaluator
-        DummyEvaluator(weight="0.3"),                                       # Class evaluator
+        RemoteEvaluator("pii", "patronus:pii:1", weight=0.4),             # Remote evaluator
+        FuncEvaluatorAdapter(exact_match, weight=0.3),                     # Function evaluator  
+        DummyEvaluator(weight=0.3),                                        # Class evaluator
     ],
     experiment_name="Weighted Evaluators Demo"
 )
@@ -370,24 +371,26 @@ experiment = run_experiment(
 
 ### Weight Validation and Rules
 
-1. **Valid Format**: Weights must be valid decimal numbers passed as strings (e.g., "0.3", "1.0", "0.75")
+1. **Valid Format**: Weights must be valid decimal numbers provided as either strings or floats (e.g., "0.3", 1.0, 0.7)
 2. **Consistency**: The same evaluator (identified by its canonical name) cannot have different weights within the same experiment
 3. **Storage**: Weights are automatically stored in the experiment's metadata under the "evaluator_weights" key
 4. **Optional**: Weights are optional - evaluators without weights will simply not have weight metadata
+5. **Best Practice**: Consider making weights sum to 1.0 for clearer interpretation of relative importance
 
 ### Error Examples
 
 ```python
 # Invalid weight format - will raise TypeError
 RemoteEvaluator("judge", "patronus:is-concise", weight="invalid")
+RemoteEvaluator("judge", "patronus:is-concise", weight=[1, 2, 3])  # Lists not supported
 
 # Inconsistent weights for same evaluator - will raise TypeError during experiment
 run_experiment(
     dataset=dataset,
     task=my_task,
     evaluators=[
-        RemoteEvaluator("judge", "patronus:is-concise", weight="0.3"),
-        RemoteEvaluator("judge", "patronus:is-concise", weight="0.5"),  # Different weight!
+        RemoteEvaluator("judge", "patronus:is-concise", weight=0.7),
+        RemoteEvaluator("judge", "patronus:is-concise", weight="0.3"),  # Different weight!
     ]
 )
 ```
@@ -403,6 +406,7 @@ When using evaluators in experiments:
 5. **Handle edge cases gracefully**: Consider what happens with empty inputs, very long texts, etc.
 6. **Reuse evaluators across experiments**: Create a library of evaluators for consistent assessment
 7. **Use consistent weights**: When using evaluator weights, maintain consistency across experiments for the same evaluators
-8. **Document weight rationale**: Consider documenting why specific weights were chosen for your evaluation strategy
+8. **Consider weight distribution**: When using weights, consider making them sum to 1.0 for clearer interpretation of relative importance (e.g., 0.4, 0.3, 0.3 rather than 0.1, 0.1, 0.1)
+9. **Document weight rationale**: Consider documenting why specific weights were chosen for your evaluation strategy
 
 Next, we'll explore advanced features of the Patronus Experimentation Framework.

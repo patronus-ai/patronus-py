@@ -181,15 +181,15 @@ experiment = run_experiment(
     dataset=dataset,
     task=my_task,
     evaluators=[
-        RemoteEvaluator("judge", "patronus:is-concise", weight="0.4"),
-        FuncEvaluatorAdapter(custom_check, weight="0.6")
+        RemoteEvaluator("judge", "patronus:is-concise", weight=0.6),
+        FuncEvaluatorAdapter(custom_check, weight="0.4")
     ]
 )
 
 # Weights are automatically stored in experiment metadata
 # as "evaluator_weights": {
-#     "judge:patronus:is-concise": "0.4",
-#     "custom_check:": "0.6"
+#     "judge:patronus:is-concise": "0.6",
+#     "custom_check:": "0.4"
 # }
 ```
 
