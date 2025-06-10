@@ -17,7 +17,8 @@ from patronus import context, datasets
 from patronus.api import PatronusAPIClient, api_types
 from patronus.context import get_tracer
 from patronus.datasets import Dataset, DatasetLoader
-from patronus.evals import StructuredEvaluator, AsyncStructuredEvaluator, bundled_eval, EvaluationResult
+from patronus.evals import AsyncRemoteEvaluator, StructuredEvaluator, AsyncStructuredEvaluator, bundled_eval, EvaluationResult
+from patronus.evals.evaluators import  RemoteEvaluator
 from patronus.evals.context import evaluation_attributes
 from patronus.experiments.adapters import BaseEvaluatorAdapter, StructuredEvaluatorAdapter, EvaluatorAdapter
 from patronus.experiments.async_utils import run_until_complete
@@ -476,7 +477,7 @@ class Experiment:
             base_url=self._api_url or cfg.api_url,
             api_key=self._api_key or cfg.api_key,
         )
-
+        await self._load_remote_evaluators(api)
         weights = await self._prepare_eval_weights()
 
         self.project = await self._get_or_create_project(api, self._project_name or cfg.project_name)
@@ -509,6 +510,16 @@ class Experiment:
 
         self._prepared = True
         return ctx
+
+    async def _load_remote_evaluators(self, api: PatronusAPIClient):
+        for link_dict in self._chain:
+            for evaluator_adapter in link_dict.get("evaluators", []):
+                if isinstance(evaluator_adapter, StructuredEvaluatorAdapter):
+                    evaluator = evaluator_adapter.evaluator
+                    if isinstance(evaluator, AsyncRemoteEvaluator):
+                        await evaluator.load(api=api)
+                    elif isinstance(evaluator, RemoteEvaluator):
+                        evaluator.load(api=api)
 
     async def _prepare_eval_weights(self):
         weights = {}

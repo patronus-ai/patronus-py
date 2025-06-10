@@ -18,7 +18,7 @@ class DummyEvaluator(StructuredEvaluator):
 def iexact_match(row: Row, **kwargs) -> bool:
     return row.task_output.lower().strip() == row.gold_answer.lower().strip()
 
-run_experiment(
+run_experiment(g
     project_name="Tutorial",
     dataset=[
         {
@@ -34,8 +34,8 @@ run_experiment(
     ],
     evaluators=[
         RemoteEvaluator("pii", "patronus:pii:1", weight="0.3"),
-        FuncEvaluatorAdapter(iexact_match, weight="0.3"),
-        DummyEvaluator(weight="0.3"),
+        # FuncEvaluatorAdapter(iexact_match, weight="0.3"),
+        # DummyEvaluator(weight="0.3"),
     ],
     experiment_name="Detect PII"
 )
