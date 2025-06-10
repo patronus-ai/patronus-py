@@ -51,8 +51,6 @@ class BERTScore(StructuredEvaluator):
             tags={"pass_threshold": str(self.pass_threshold)},
         )
 
-bert_score_evaluator = BERTScore(pass_threshold=0.8)
-
 run_experiment(
     dataset=[
         {
@@ -66,10 +64,5 @@ run_experiment(
             "gold_answer": "The quick brown fox jumps over the lazy dog",
         },
     ],
-    evaluators=[bert_score_evaluator],
-    metadata={
-        "evaluator_weights": {
-            bert_score_evaluator.canonical_name: "1.0"
-        }
-    }
+    evaluators=[BERTScore(pass_threshold=0.8)],
 )

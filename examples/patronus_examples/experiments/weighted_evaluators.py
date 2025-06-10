@@ -18,12 +18,7 @@ class DummyEvaluator(StructuredEvaluator):
 def iexact_match(row: Row, **kwargs) -> bool:
     return row.task_output.lower().strip() == row.gold_answer.lower().strip()
 
-
-patronus.init(
-    api_key='sk-K3NveFDrJV---hQMdeTR0fDWkq86Y4MGomqYck2FOBw'
-)
 run_experiment(
-    api_key='sk-K3NveFDrJV---hQMdeTR0fDWkq86Y4MGomqYck2FOBw',
     project_name="Tutorial",
     dataset=[
         {

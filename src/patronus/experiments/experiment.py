@@ -246,7 +246,6 @@ class Experiment:
     _otel_endpoint: Optional[str]
     _ui_url: Optional[str]
     _timeout_s: Optional[int]
-    _api: Optional[PatronusAPIClient]
 
     _ctx: Optional[context.PatronusContext] = None
 
@@ -483,7 +482,8 @@ class Experiment:
         self.project = await self._get_or_create_project(api, self._project_name or cfg.project_name)
         self._project_name = None
 
-        self.experiment = await self._create_experiment(api, self.project.id, self._experiment_name, self.tags, weights)
+        metadata = self.metadata.update(weights)
+        self.experiment = await self._create_experiment(api, self.project.id, self._experiment_name, self.tags, metadata)
         self._experiment_name = None
 
         ctx = build_context(
