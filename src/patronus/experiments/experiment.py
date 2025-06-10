@@ -482,7 +482,8 @@ class Experiment:
         self.project = await self._get_or_create_project(api, self._project_name or cfg.project_name)
         self._project_name = None
 
-        metadata = self.metadata.update(weights)
+        metadata = (self.metadata or {}).copy()
+        metadata.update(weights)
         self.experiment = await self._create_experiment(api, self.project.id, self._experiment_name, self.tags, metadata)
         self._experiment_name = None
 
@@ -513,8 +514,23 @@ class Experiment:
         weights = {}
         for link_dict in self._chain:
             for evaluator in link_dict.get("evaluators", []):
-                if weights.setdefault(evaluator.canonical_name, evaluator.weight) != evaluator.weight:
-                    raise TypeError(f'You cannot set different weights for the same evaluator: `{evaluator.canonical_name}`')
+                canonical_name = evaluator.canonical_name
+                current_weight = evaluator.weight
+                
+                if current_weight is not None:
+                    # Convert weight to string for consistent comparison and storage
+                    current_weight_str = str(current_weight)
+                    
+                    if canonical_name in weights:
+                        # Compare the stored weight with current weight
+                        stored_weight_str = str(weights[canonical_name])
+                        if stored_weight_str != current_weight_str:
+                            raise TypeError(
+                                f'You cannot set different weights for the same evaluator: `{canonical_name}`. '
+                                f'Found weights: {stored_weight_str} and {current_weight_str}'
+                            )
+                    else:
+                        weights[canonical_name] = current_weight
 
         return {
             "evaluator_weights": weights

@@ -570,13 +570,14 @@ class Evaluator(metaclass=_EvaluatorMeta):
 
     evaluator_id: Optional[str] = None
     criteria: Optional[str] = None
-    weight: Optional[str] = None
+    weight: Optional[Union[str, float]] = None
 
-    def __init__(self, weight: Optional[str] = None):
-        try:
-            Decimal(weight)
-        except Decimal.Invalid:
-            raise TypeError(f"{weight} is not a valid weight.")
+    def __init__(self, weight: Optional[Union[str, float]] = None):
+        if weight is not None:
+            try:
+                Decimal(str(weight))
+            except (Decimal.InvalidOperation, ValueError, TypeError):
+                raise TypeError(f"{weight} is not a valid weight. Weight must be a valid decimal number (string or float).")
         self.weight = weight
 
     def get_evaluator_id(self) -> str:
@@ -659,7 +660,7 @@ class RemoteEvaluatorMixin:
         allow_update: bool = False,
         max_attempts: int = 3,
         api_: Optional[PatronusAPIClient] = None,
-        weight: Optional[str] = None,
+        weight: Optional[Union[str, float]] = None,
     ):
         self.evaluator_id_or_alias = evaluator_id_or_alias
         self.evaluator_id = None

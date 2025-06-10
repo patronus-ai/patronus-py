@@ -27,7 +27,7 @@ class BaseEvaluatorAdapter(abc.ABC):
     All concrete adapter implementations must inherit from this class and implement
     the required abstract methods.
     """
-    _weight: Optional[str] = None
+    _weight: Optional[Union[str, float]] = None
 
     @property
     @abc.abstractmethod
@@ -40,7 +40,7 @@ class BaseEvaluatorAdapter(abc.ABC):
         pass
 
     @property
-    def weight(self) -> Optional[str]:
+    def weight(self) -> Optional[Union[str, float]]:
         return self._weight
 
     @property
@@ -129,7 +129,7 @@ class EvaluatorAdapter(BaseEvaluatorAdapter):
         self.evaluator = evaluator
 
     @property
-    def weight(self) -> Optional[str]:
+    def weight(self) -> Optional[Union[str, float]]:
         return self.evaluator.weight
 
     @property
@@ -323,18 +323,18 @@ class FuncEvaluatorAdapter(BaseEvaluatorAdapter):
 
     """
 
-    def __init__(self, fn: typing.Callable[..., typing.Any], weight: Optional[str] = None):
+    def __init__(self, fn: typing.Callable[..., typing.Any], weight: Optional[Union[str, float]] = None):
         if not hasattr(fn, "_pat_evaluator"):
             raise ValueError(
                 f"Passed function {fn.__qualname__} is not an evaluator. "
                 "Hint: add @evaluator decorator to the function."
             )
 
-        try:
-            if weight is not None:
-                Decimal(weight)
-        except decimal.InvalidOperation:
-            raise TypeError(f"{weight} is not a valid decimal number.")
+        if weight is not None:
+            try:
+                Decimal(str(weight))
+            except (decimal.InvalidOperation, ValueError, TypeError):
+                raise TypeError(f"{weight} is not a valid weight. Weight must be a valid decimal number (string or float).")
 
         self.fn = fn
         self._weight = weight
