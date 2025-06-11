@@ -53,6 +53,7 @@ class Evaluator(pydantic.BaseModel):
     name: str
     evaluator_family: Optional[str]
     aliases: Optional[list[str]]
+    default_criteria: Optional[str] = None
 
 
 class ListEvaluatorsResponse(pydantic.BaseModel):
