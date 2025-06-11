@@ -258,11 +258,17 @@ def final_aggregate_evaluator(row, task_result, parent, **kwargs):
 !!! note "Experiments Feature"
     Evaluator weights are only supported when using evaluators within the experiment framework. This feature is not available for standalone evaluator usage.
 
-You can assign weights to evaluators to indicate their relative importance in your evaluation strategy. Weights can be provided as either strings or floats representing valid decimal numbers and are stored as experiment metadata.
+You can assign weights to evaluators to indicate their relative importance in your evaluation strategy. Weights can be provided as either strings or floats representing valid decimal numbers and are automatically stored as experiment metadata.
+
+Weights work consistently across all evaluator types but are configured differently depending on whether you're using remote evaluators, function-based evaluators, or class-based evaluators.
 
 ### Weight Support by Evaluator Type
 
-**Remote Evaluators**: Pass the `weight` parameter directly to the constructor:
+Each evaluator type handles weight configuration differently:
+
+#### Remote Evaluators
+
+For remote evaluators, pass the `weight` parameter directly to the `RemoteEvaluator` constructor:
 
 ```python
 from patronus.evals import RemoteEvaluator
@@ -279,7 +285,9 @@ experiment = run_experiment(
 )
 ```
 
-**Function-Based Evaluators**: Pass the `weight` parameter to `FuncEvaluatorAdapter`:
+#### Function-Based Evaluators
+
+For function-based evaluators, pass the `weight` parameter to the `FuncEvaluatorAdapter` that wraps your evaluator function:
 
 ```python
 from patronus import evaluator
@@ -300,7 +308,9 @@ experiment = run_experiment(
 )
 ```
 
-**Class-Based Evaluators**: Pass the `weight` parameter to the evaluator constructor:
+#### Class-Based Evaluators
+
+For class-based evaluators, pass the `weight` parameter to your evaluator's constructor and ensure it's passed to the parent class:
 
 ```python
 from typing import Union
@@ -331,7 +341,7 @@ experiment = run_experiment(
 
 ### Complete Example
 
-Here's a comprehensive example showing weighted evaluators of different types:
+Here's a comprehensive example demonstrating weighted evaluators of all three types, based on the patterns shown in the experiment framework:
 
 ```python
 from patronus.experiments import FuncEvaluatorAdapter, run_experiment
@@ -361,9 +371,9 @@ experiment = run_experiment(
         },
     ],
     evaluators=[
-        RemoteEvaluator("pii", "patronus:pii:1", weight=0.4),             # Remote evaluator
-        FuncEvaluatorAdapter(exact_match, weight=0.3),                     # Function evaluator  
-        DummyEvaluator(weight=0.3),                                        # Class evaluator
+        RemoteEvaluator("pii", "patronus:pii:1", weight="0.3"),           # Remote evaluator with string weight
+        FuncEvaluatorAdapter(exact_match, weight="0.3"),                   # Function evaluator with string weight
+        DummyEvaluator(weight="0.4"),                                      # Class evaluator with string weight
     ],
     experiment_name="Weighted Evaluators Demo"
 )
@@ -371,11 +381,12 @@ experiment = run_experiment(
 
 ### Weight Validation and Rules
 
-1. **Valid Format**: Weights must be valid decimal numbers provided as either strings or floats (e.g., "0.3", 1.0, 0.7)
-2. **Consistency**: The same evaluator (identified by its canonical name) cannot have different weights within the same experiment
-3. **Storage**: Weights are automatically stored in the experiment's metadata under the "evaluator_weights" key
-4. **Optional**: Weights are optional - evaluators without weights will simply not have weight metadata
-5. **Best Practice**: Consider making weights sum to 1.0 for clearer interpretation of relative importance
+1. **Experiments Only**: Weights are exclusively available within the experiment framework - they cannot be used with standalone evaluator calls
+2. **Valid Format**: Weights must be valid decimal numbers provided as either strings or floats (e.g., "0.3", 1.0, 0.7)
+3. **Consistency**: The same evaluator (identified by its canonical name) cannot have different weights within the same experiment
+4. **Automatic Storage**: Weights are automatically collected and stored in the experiment's metadata under the "evaluator_weights" key
+5. **Optional**: Weights are optional - evaluators without weights will simply not have weight metadata stored
+6. **Best Practice**: Consider making weights sum to 1.0 for clearer interpretation of relative importance
 
 ### Error Examples
 
@@ -405,8 +416,8 @@ When using evaluators in experiments:
 4. **Create custom adapters when needed**: Don't force your evaluator functions to match the standard interface if there's a more natural way to express them
 5. **Handle edge cases gracefully**: Consider what happens with empty inputs, very long texts, etc.
 6. **Reuse evaluators across experiments**: Create a library of evaluators for consistent assessment
-7. **Use consistent weights**: When using evaluator weights, maintain consistency across experiments for the same evaluators
-8. **Consider weight distribution**: When using weights, consider making them sum to 1.0 for clearer interpretation of relative importance (e.g., 0.4, 0.3, 0.3 rather than 0.1, 0.1, 0.1)
-9. **Document weight rationale**: Consider documenting why specific weights were chosen for your evaluation strategy
+7. **Weight consistency across evaluator types**: When using evaluator weights, maintain consistency across experiments regardless of whether you're using remote, function-based, or class-based evaluators
+8. **Consider weight distribution**: When using weights, consider making them sum to 1.0 for clearer interpretation of relative importance (e.g., "0.4", "0.3", "0.3" rather than "0.1", "0.1", "0.1")
+9. **Document weight rationale**: Consider documenting why specific weights were chosen for your evaluation strategy, especially when mixing different evaluator types
 
 Next, we'll explore advanced features of the Patronus Experimentation Framework.

@@ -18,7 +18,7 @@ class DummyEvaluator(StructuredEvaluator):
 def iexact_match(row: Row, **kwargs) -> bool:
     return row.task_output.lower().strip() == row.gold_answer.lower().strip()
 
-run_experiment(g
+run_experiment(
     project_name="Tutorial",
     dataset=[
         {
