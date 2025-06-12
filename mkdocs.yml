@@ -39,6 +39,8 @@ extra_css:
   - stylesheets/extra.css
 
 markdown_extensions:
+  - attr_list
+  - mkdocs-click
   - pymdownx.highlight:
       anchor_linenums: true
       line_spans: __span
@@ -84,6 +86,9 @@ nav:
           - Trace CrewAI: examples/crewai-weather.md
         - Advanced Examples:
           - Manual OTel with OpenAI: examples/otel-openai-weather.md
+  - CLI:
+      - About: cli/about.md
+      - Reference: cli/reference.md
   - API Reference:
       - Init: api_ref/init.md
       - Tracing: api_ref/tracing.md
