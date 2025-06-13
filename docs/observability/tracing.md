@@ -114,3 +114,108 @@ with start_span("Query processing", attributes={
     # Processing code
     pass
 ```
+
+## Distributed Tracing
+
+The Patronus SDK is built on OpenTelemetry and automatically supports context propagation across distributed services. This enables you to trace requests as they flow through multiple services in your application architecture. The [OpenTelemetry Python Contrib](https://github.com/open-telemetry/opentelemetry-python-contrib) repository provides instrumentation for many popular frameworks and libraries.
+
+### Example: FastAPI Services with Context Propagation
+
+First, install the required dependencies:
+
+```bash
+uv add opentelemetry-instrumentation-httpx \
+    opentelemetry-instrumentation-fastapi \
+    fastapi[all] \
+    patronus
+```
+
+Here's a complete example showing two FastAPI services with automatic trace context propagation:
+
+**Backend Service (`service_backend.py`):**
+
+```python
+import patronus
+from fastapi import FastAPI
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+
+# Initialize Patronus SDK
+patronus_context = patronus.init(service="backend")
+
+app = FastAPI(title="Backend Service")
+
+@app.get("/hello/{name}")
+async def hello_backend(name: str):
+    return {
+        "message": f"Hello {name} from Backend Service!",
+        "service": "backend"
+    }
+
+# Instrument FastAPI after Patronus initialization
+FastAPIInstrumentor.instrument_app(app, tracer_provider=patronus_context.tracer_provider)
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8001)
+```
+
+**Gateway Service (`service_gateway.py`):**
+
+```python
+import httpx
+import patronus
+from fastapi import FastAPI
+from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+
+# Initialize Patronus SDK with HTTPX instrumentation
+patronus_context = patronus.init(
+    service="gateway",
+    integrations=[
+        HTTPXClientInstrumentor(),
+    ]
+)
+
+app = FastAPI(title="Gateway Service")
+
+@app.get("/hello/{name}")
+async def hello_gateway(name: str):
+    # This HTTP call will automatically propagate trace context
+    async with httpx.AsyncClient() as client:
+        response = await client.get(f"http://localhost:8001/hello/{name}")
+        backend_data = response.json()
+
+    return {
+        "gateway_message": f"Gateway received request for {name}",
+        "backend_response": backend_data
+    }
+
+# Instrument FastAPI after Patronus initialization
+FastAPIInstrumentor.instrument_app(app, tracer_provider=patronus_context.tracer_provider)
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+```
+
+### Running the Example
+
+First, export your Patronus API key:
+
+```bash
+export PATRONUS_API_KEY="your-api-key"
+```
+
+Then run the services:
+
+1. Start the backend: `python service_backend.py`
+2. Start the gateway: `python service_gateway.py`
+3. Make a request: `curl http://localhost:8000/hello/world`
+
+After making the request, you should see the connected traces in the Patronus Platform showing the complete request flow from gateway to backend service.
+
+### Important Notes
+
+- FastAPI instrumenter requires manual setup with `FastAPIInstrumentor.instrument_app()` after Patronus initialization
+- Pass the `tracer_provider` from Patronus context to ensure proper integration
+- Trace context is automatically propagated through HTTP headers when services are properly instrumented
