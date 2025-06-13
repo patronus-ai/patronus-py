@@ -579,6 +579,39 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#advanced" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#return-value" class="md-nav__link">
+    <span class="md-ellipsis">
+      Return Value
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#manual-context-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      Manual Context Management
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#next-steps" class="md-nav__link">
     <span class="md-ellipsis">
       Next Steps
@@ -2093,6 +2126,39 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#advanced" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#return-value" class="md-nav__link">
+    <span class="md-ellipsis">
+      Return Value
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#manual-context-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      Manual Context Management
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#next-steps" class="md-nav__link">
     <span class="md-ellipsis">
       Next Steps
@@ -2167,6 +2233,46 @@
 </span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 </span></code></pre></div>
 <p>If no errors occur, your Patronus SDK is correctly installed and configured.</p>
+<h2 id="advanced">Advanced</h2>
+<h3 id="return-value">Return Value</h3>
+<p>The <code>patronus.init()</code> function returns a <a class="autorefs autorefs-internal" title="PatronusContext
+
+
+  
+      dataclass
+  " href="../../api_ref/context/#patronus.context.PatronusContext"><code>PatronusContext</code></a> object that serves as the central access point for all SDK components and functionality. Additionally, <code>patronus.init()</code> automatically sets this context globally, making it accessible throughout your application:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">patronus</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1"># Capture the returned context</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">patronus_context</span> <span class="o">=</span> <span class="n">patronus</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>  <span class="c1"># Also sets context globally</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="c1"># Direct access is possible but not typically needed</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="n">tracer_provider</span> <span class="o">=</span> <span class="n">patronus_context</span><span class="o">.</span><span class="n">tracer_provider</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="n">api_client</span> <span class="o">=</span> <span class="n">patronus_context</span><span class="o">.</span><span class="n">api_client</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="n">scope</span> <span class="o">=</span> <span class="n">patronus_context</span><span class="o">.</span><span class="n">scope</span>
+</span></code></pre></div>
+<p>See the <a class="autorefs autorefs-internal" title="PatronusContext
+
+
+  
+      dataclass
+  " href="../../api_ref/context/#patronus.context.PatronusContext"><code>PatronusContext</code></a> API reference for the complete list of available components and their descriptions.</p>
+<p>This context is particularly useful when integrating with OpenTelemetry instrumentation libraries that require explicit tracer provider configuration, such as in <a href="../../observability/tracing/#distributed-tracing">distributed tracing scenarios</a>.</p>
+<h3 id="manual-context-management">Manual Context Management</h3>
+<p>For advanced use cases, you can build and manage contexts manually using <a class="autorefs autorefs-internal" title="build_context" href="../../api_ref/init/#patronus.init.build_context"><code>build_context()</code></a> and the context manager pattern:</p>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">patronus.init</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_context</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">patronus</span><span class="w"> </span><span class="kn">import</span> <span class="n">context</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># Build a context manually with custom configuration</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="n">custom_context</span> <span class="o">=</span> <span class="n">build_context</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="c1"># Use the context temporarily without setting it globally</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">_CTX_PAT</span><span class="o">.</span><span class="n">using</span><span class="p">(</span><span class="n">custom_context</span><span class="p">):</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>    <span class="c1"># All Patronus SDK operations within this block use custom_context</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>    <span class="n">result</span> <span class="o">=</span> <span class="n">some_patronus_operation</span><span class="p">()</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="c1"># Context reverts to previous state after exiting the block</span>
+</span></code></pre></div>
+<p>This pattern is particularly useful when you need to send data to multiple projects within the same process, or when building testing frameworks that require isolated contexts.</p>
 <h2 id="next-steps">Next Steps</h2>
 <p>Now that you've installed the Patronus SDK, proceed to the <a href="../quickstart/">Quickstart</a> guide to learn how to use it effectively.</p>
 
