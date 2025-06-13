@@ -825,21 +825,16 @@ class RemoteEvaluator(RemoteEvaluatorMixin, StructuredEvaluator):
                     get_last_revision=True
                 )
             )
-            if not criteria:
+            if not criteria.evaluator_criteria:
                 raise RuntimeError(f"Criteria {self.criteria} not found")
-            self.criteria = f"{criteria[0].evaluator_criteria.name}:{criteria[0].evaluator_criteria.revision}"
+            self.criteria = f"{criteria.evaluator_criteria[0].name}:{criteria.evaluator_criteria[0].revision}"
 
-        # Get default criteria from evaluator if criteraia not provided
+        # Get default criteria from evaluator if criteria not provided
         elif not self.criteria:
-            criteria = api.list_criteria_sync(
-                api_types.ListCriteriaRequest(
-                    name=evaluators[0].default_criteria,
-                    get_last_revision=True
-                )
-            )
-            if not criteria:
-                raise RuntimeError(f"Default criteria not found")
-            self.criteria = f"{criteria[0].evaluator_criteria.name}:{criteria[0].evaluator_criteria.revision}"
+            if evaluators[0].default_criteria is None:
+                raise RuntimeError(f"Default criteria not found. You must specify a criteria for {self.evaluator_id_or_alias} evaluator.")
+
+            self.criteria = evaluators[0].default_criteria
         self._loaded = True
 
 
