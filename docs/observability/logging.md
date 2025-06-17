@@ -4,6 +4,7 @@ Logging is an essential feature of the Patronus SDK that allows you to record ev
 This page covers how to set up and use logging in your code.
 
 !!! tip "Configuration"
+
     For information about configuring observability features, including exporter protocols and endpoints, see the [Observability Configuration](configuration.md) guide.
 
 ## Getting Started with Logging

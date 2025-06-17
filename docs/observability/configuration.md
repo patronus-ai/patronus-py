@@ -4,10 +4,10 @@
 
 The SDK supports two OTLP exporter protocols:
 
-| Protocol | Value           | Default Endpoint                | Port |
-|----------|-----------------|---------------------------------|------|
-| gRPC     | `grpc`          | `https://otel.patronus.ai:4317` | 4317 |
-| HTTP     | `http/protobuf` | `https://otel.patronus.ai:4318` | 4318 |
+| Protocol | Value           | Default Endpoint                | Available Ports |
+|----------|-----------------|---------------------------------|-----------------|
+| gRPC     | `grpc`          | `https://otel.patronus.ai:4317` | 4317            |
+| HTTP     | `http/protobuf` | `https://otel.patronus.ai:4318` | 4318, 443       |
 
 ## Configuration Methods
 
@@ -103,6 +103,15 @@ For HTTP protocol, paths are automatically appended:
 ```python
 patronus.init(
     otel_endpoint="http://internal-collector:8080",
+    otel_exporter_otlp_protocol="http/protobuf"
+)
+```
+
+### HTTP Protocol on Standard HTTPS Port
+
+```python
+patronus.init(
+    otel_endpoint="https://otel.example.com:443",
     otel_exporter_otlp_protocol="http/protobuf"
 )
 ```

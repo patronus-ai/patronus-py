@@ -39,11 +39,13 @@ extra_css:
   - stylesheets/extra.css
 
 markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
   - pymdownx.highlight:
       anchor_linenums: true
       line_spans: __span
       pygments_lang_class: true
-  - pymdownx.superfences:
 
 nav:
   - Home:
