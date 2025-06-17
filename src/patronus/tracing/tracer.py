@@ -8,12 +8,12 @@ from typing import Optional
 
 from opentelemetry import context as context_api
 from opentelemetry import trace
-from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk.trace import Span, SpanProcessor, TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
 from patronus import context
 from patronus.tracing.attributes import Attributes
+from patronus.tracing.exporters import create_trace_exporter
 
 
 class PatronusAttributesSpanProcessor(SpanProcessor):
@@ -58,8 +58,8 @@ def _create_patronus_attributes_span_processor(
 
 
 @functools.lru_cache()
-def _create_exporter(endpoint: str, api_key: str) -> OTLPSpanExporter:
-    return OTLPSpanExporter(endpoint=endpoint, headers={"x-api-key": api_key}, insecure=True)
+def _create_exporter(endpoint: str, api_key: str, protocol: Optional[str] = None):
+    return create_trace_exporter(endpoint=endpoint, api_key=api_key, protocol=protocol)
 
 
 @functools.lru_cache()
@@ -67,6 +67,7 @@ def create_tracer_provider(
     exporter_endpoint: str,
     api_key: str,
     scope: context.PatronusScope,
+    protocol: Optional[str] = None,
 ) -> TracerProvider:
     """
     Creates and returns a cached TracerProvider configured with the specified exporter.
@@ -85,7 +86,9 @@ def create_tracer_provider(
             experiment_id=scope.experiment_id,
         )
     )
-    provider.add_span_processor(BatchSpanProcessor(_create_exporter(endpoint=exporter_endpoint, api_key=api_key)))
+    provider.add_span_processor(
+        BatchSpanProcessor(_create_exporter(endpoint=exporter_endpoint, api_key=api_key, protocol=protocol))
+    )
     return provider
 
 
@@ -93,6 +96,7 @@ def create_tracer(
     scope: context.PatronusScope,
     exporter_endpoint: str,
     api_key: str,
+    protocol: Optional[str] = None,
 ) -> trace.Tracer:
     """
     Creates an OpenTelemetry (OTeL) tracer tied to the specified scope.
@@ -101,5 +105,6 @@ def create_tracer(
         exporter_endpoint=exporter_endpoint,
         api_key=api_key,
         scope=scope,
+        protocol=protocol,
     )
     return provider.get_tracer("patronus.sdk")

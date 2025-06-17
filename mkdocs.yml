@@ -55,6 +55,7 @@ nav:
     - Observability:
         - Tracing: observability/tracing.md
         - Logging: observability/logging.md
+        - Configuration: observability/configuration.md
     - Integrations:
         - Agent Integrations: integrations/agents.md
         - LLM Integrations: integrations/llms.md

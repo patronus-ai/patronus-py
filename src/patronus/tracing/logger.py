@@ -8,7 +8,7 @@ from types import MappingProxyType
 from typing import Optional, Union
 
 from opentelemetry._logs import SeverityNumber
-from opentelemetry.exporter.otlp.proto.grpc._log_exporter import OTLPLogExporter as OTLPLogExporterTCP
+from patronus.tracing.exporters import create_log_exporter
 from opentelemetry.sdk._logs import LogRecord
 from opentelemetry.sdk._logs import Logger as OTELLogger
 from opentelemetry.sdk._logs import LoggerProvider as OTELLoggerProvider
@@ -233,14 +233,16 @@ class Logger(OTELLogger):
         )
 
 
-def _create_exporter(endpoint: str, api_key: str) -> OTLPLogExporterTCP:
-    return OTLPLogExporterTCP(endpoint=endpoint, headers={"x-api-key": api_key}, insecure=True)
+def _create_exporter(endpoint: str, api_key: str, protocol: Optional[str] = None):
+    return create_log_exporter(endpoint=endpoint, api_key=api_key, protocol=protocol)
 
 
 @functools.lru_cache()
-def create_logger_provider(exporter_endpoint: str, api_key: str, scope: context.PatronusScope) -> LoggerProvider:
+def create_logger_provider(
+    exporter_endpoint: str, api_key: str, scope: context.PatronusScope, protocol: Optional[str] = None
+) -> LoggerProvider:
     logger_provider = LoggerProvider(project_name=scope.project_name, app=scope.app, experiment_id=scope.experiment_id)
-    exporter = _create_exporter(exporter_endpoint, api_key)
+    exporter = _create_exporter(exporter_endpoint, api_key, protocol)
     logger_provider.add_log_record_processor(BatchLogRecordProcessor(exporter))
     return logger_provider
 
@@ -249,11 +251,13 @@ def create_patronus_logger(
     scope: context.PatronusScope,
     exporter_endpoint: str,
     api_key: str,
+    protocol: Optional[str] = None,
 ) -> Logger:
     provider = create_logger_provider(
         exporter_endpoint=exporter_endpoint,
         api_key=api_key,
         scope=scope,
+        protocol=protocol,
     )
     return provider.get_logger("patronus.sdk")
 
@@ -278,11 +282,13 @@ def create_logger(
     scope: context.PatronusScope,
     exporter_endpoint: str,
     api_key: str,
+    protocol: Optional[str] = None,
 ) -> logging.Logger:
     provider = create_logger_provider(
         exporter_endpoint=exporter_endpoint,
         api_key=api_key,
         scope=scope,
+        protocol=protocol,
     )
     with __logger_count as mu:
         n = mu.get()
