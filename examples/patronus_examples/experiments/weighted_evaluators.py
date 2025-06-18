@@ -1,7 +1,5 @@
-from patronus.experiments import FuncEvaluatorAdapter
 from patronus import RemoteEvaluator, EvaluationResult, StructuredEvaluator, evaluator
-import patronus
-from patronus.experiments import run_experiment, EvaluatorAdapter, Row
+from patronus.experiments import run_experiment, Row
 
 
 class DummyEvaluator(StructuredEvaluator):
@@ -17,6 +15,7 @@ class DummyEvaluator(StructuredEvaluator):
 @evaluator
 def iexact_match(row: Row, **kwargs) -> bool:
     return row.task_output.lower().strip() == row.gold_answer.lower().strip()
+
 
 run_experiment(
     project_name="Tutorial",
@@ -37,5 +36,5 @@ run_experiment(
         # FuncEvaluatorAdapter(iexact_match, weight="0.3"),
         # DummyEvaluator(weight="0.3"),
     ],
-    experiment_name="Detect PII"
+    experiment_name="Detect PII",
 )

@@ -577,7 +577,9 @@ class Evaluator(metaclass=_EvaluatorMeta):
             try:
                 Decimal(str(weight))
             except (Decimal.InvalidOperation, ValueError, TypeError):
-                raise TypeError(f"{weight} is not a valid weight. Weight must be a valid decimal number (string or float).")
+                raise TypeError(
+                    f"{weight} is not a valid weight. Weight must be a valid decimal number (string or float)."
+                )
         self.weight = weight
 
     def get_evaluator_id(self) -> str:
@@ -676,18 +678,24 @@ class RemoteEvaluatorMixin:
 
     def get_evaluator_id(self) -> str:
         if not self._loaded:
-            raise RuntimeError(f"`get_evaluator_id` cannot be called on unloaded remote evaluator. Call load() method first.")
+            raise RuntimeError(
+                "`get_evaluator_id` cannot be called on unloaded remote evaluator. Call load() method first."
+            )
         return self.evaluator_id
 
     def get_criteria(self) -> str:
         if not self._loaded:
-            raise RuntimeError(f"`get_criteria` cannot be called on unloaded remote evaluator. Call load() method first.")
+            raise RuntimeError(
+                "`get_criteria` cannot be called on unloaded remote evaluator. Call load() method first."
+            )
         return self.criteria
 
     @property
     def canonical_name(self) -> str:
         if not self._loaded:
-            raise RuntimeError(f"`canonical_name` cannot be called on unloaded remote evaluator. Call load() method first.")
+            raise RuntimeError(
+                "`canonical_name` cannot be called on unloaded remote evaluator. Call load() method first."
+            )
         return f"{self.get_evaluator_id()}:{self.get_criteria() or ''}"
 
     def _get_api(self) -> PatronusAPIClient:
@@ -711,6 +719,7 @@ class RemoteEvaluatorMixin:
             evaluation_duration=resp.evaluation_duration,
             explanation_duration=resp.explanation_duration,
         )
+
 
 class RemoteEvaluator(RemoteEvaluatorMixin, StructuredEvaluator):
     """Synchronous remote evaluator"""
@@ -818,13 +827,8 @@ class RemoteEvaluator(RemoteEvaluatorMixin, StructuredEvaluator):
             self.evaluator_id = evaluators[0].id
 
         # Get criteria with revision if revision is not provided
-        if self.criteria and not self.criteria.find(':'):
-            criteria = api.list_criteria_sync(
-                api_types.ListCriteriaRequest(
-                    name=self.criteria,
-                    get_last_revision=True
-                )
-            )
+        if self.criteria and not self.criteria.find(":"):
+            criteria = api.list_criteria_sync(api_types.ListCriteriaRequest(name=self.criteria, get_last_revision=True))
             if not criteria.evaluator_criteria:
                 raise RuntimeError(f"Criteria {self.criteria} not found")
             self.criteria = f"{criteria.evaluator_criteria[0].name}:{criteria.evaluator_criteria[0].revision}"
@@ -832,7 +836,9 @@ class RemoteEvaluator(RemoteEvaluatorMixin, StructuredEvaluator):
         # Get default criteria from evaluator if criteria not provided
         elif not self.criteria:
             if evaluators[0].default_criteria is None:
-                raise RuntimeError(f"Default criteria not found. You must specify a criteria for {self.evaluator_id_or_alias} evaluator.")
+                raise RuntimeError(
+                    f"Default criteria not found. You must specify a criteria for {self.evaluator_id_or_alias} evaluator."
+                )
 
             self.criteria = evaluators[0].default_criteria
         self._loaded = True
@@ -944,12 +950,9 @@ class AsyncRemoteEvaluator(RemoteEvaluatorMixin, AsyncStructuredEvaluator):
             self.evaluator_id = evaluators[0].id
 
         # Get criteria with revision if revision is not provided
-        if self.criteria and not self.criteria.find(':'):
+        if self.criteria and not self.criteria.find(":"):
             criteria = await api.list_criteria(
-                api_types.ListCriteriaRequest(
-                    name=self.criteria,
-                    get_last_revision=True
-                )
+                api_types.ListCriteriaRequest(name=self.criteria, get_last_revision=True)
             )
             if not criteria:
                 raise RuntimeError(f"Criteria {self.criteria} not found")
@@ -958,12 +961,9 @@ class AsyncRemoteEvaluator(RemoteEvaluatorMixin, AsyncStructuredEvaluator):
         # Get default criteria from evaluator if criteraia not provided
         elif not self.criteria:
             criteria = await api.list_criteria(
-                api_types.ListCriteriaRequest(
-                    name=evaluators[0].default_criteria,
-                    get_last_revision=True
-                )
+                api_types.ListCriteriaRequest(name=evaluators[0].default_criteria, get_last_revision=True)
             )
             if not criteria:
-                raise RuntimeError(f"Default criteria not found")
+                raise RuntimeError("Default criteria not found")
             self.criteria = f"{criteria[0].evaluator_criteria.name}:{criteria[0].evaluator_criteria.revision}"
         self._loaded = True

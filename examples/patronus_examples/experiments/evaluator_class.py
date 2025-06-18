@@ -51,6 +51,7 @@ class BERTScore(StructuredEvaluator):
             tags={"pass_threshold": str(self.pass_threshold)},
         )
 
+
 run_experiment(
     dataset=[
         {

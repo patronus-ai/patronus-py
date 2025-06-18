@@ -27,6 +27,7 @@ class BaseEvaluatorAdapter(abc.ABC):
     All concrete adapter implementations must inherit from this class and implement
     the required abstract methods.
     """
+
     _weight: Optional[Union[str, float]] = None
 
     @property
@@ -334,11 +335,13 @@ class FuncEvaluatorAdapter(BaseEvaluatorAdapter):
             try:
                 Decimal(str(weight))
             except (decimal.InvalidOperation, ValueError, TypeError):
-                raise TypeError(f"{weight} is not a valid weight. Weight must be a valid decimal number (string or float).")
+                raise TypeError(
+                    f"{weight} is not a valid weight. Weight must be a valid decimal number (string or float)."
+                )
 
         self.fn = fn
         self._weight = weight
-    
+
     @property
     def evaluator_id(self) -> str:
         # @evaluator() wrapper sets that value

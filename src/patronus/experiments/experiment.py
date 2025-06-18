@@ -17,10 +17,16 @@ from patronus import context, datasets
 from patronus.api import PatronusAPIClient, api_types
 from patronus.context import get_tracer
 from patronus.datasets import Dataset, DatasetLoader
-from patronus.evals import AsyncRemoteEvaluator, StructuredEvaluator, AsyncStructuredEvaluator, bundled_eval, EvaluationResult
-from patronus.evals.evaluators import  RemoteEvaluator
+from patronus.evals import (
+    AsyncRemoteEvaluator,
+    StructuredEvaluator,
+    AsyncStructuredEvaluator,
+    bundled_eval,
+    EvaluationResult,
+)
+from patronus.evals.evaluators import RemoteEvaluator
 from patronus.evals.context import evaluation_attributes
-from patronus.experiments.adapters import BaseEvaluatorAdapter, StructuredEvaluatorAdapter, EvaluatorAdapter
+from patronus.experiments.adapters import BaseEvaluatorAdapter, StructuredEvaluatorAdapter
 from patronus.experiments.async_utils import run_until_complete
 from patronus.experiments.reporter import Reporter
 from patronus.experiments.tqdm import AsyncTQDMWithHandle
@@ -485,7 +491,9 @@ class Experiment:
 
         metadata = (self.metadata or {}).copy()
         metadata.update(weights)
-        self.experiment = await self._create_experiment(api, self.project.id, self._experiment_name, self.tags, metadata)
+        self.experiment = await self._create_experiment(
+            api, self.project.id, self._experiment_name, self.tags, metadata
+        )
         self._experiment_name = None
 
         ctx = build_context(
@@ -527,25 +535,23 @@ class Experiment:
             for evaluator in link_dict.get("evaluators", []):
                 canonical_name = evaluator.canonical_name
                 current_weight = evaluator.weight
-                
+
                 if current_weight is not None:
                     # Convert weight to string for consistent comparison and storage
                     current_weight_str = str(current_weight)
-                    
+
                     if canonical_name in weights:
                         # Compare the stored weight with current weight
                         stored_weight_str = str(weights[canonical_name])
                         if stored_weight_str != current_weight_str:
                             raise TypeError(
-                                f'You cannot set different weights for the same evaluator: `{canonical_name}`. '
-                                f'Found weights: {stored_weight_str} and {current_weight_str}'
+                                f"You cannot set different weights for the same evaluator: `{canonical_name}`. "
+                                f"Found weights: {stored_weight_str} and {current_weight_str}"
                             )
                     else:
                         weights[canonical_name] = current_weight
 
-        return {
-            "evaluator_weights": weights
-        }
+        return {"evaluator_weights": weights}
 
     async def _run(self):
         title = f"Experiment  {self.project.name}/{self.experiment.name}"
@@ -589,12 +595,7 @@ class Experiment:
     ) -> api_types.Experiment:
         name = generate_experiment_name(experiment_name)
         return await api.create_experiment(
-            api_types.CreateExperimentRequest(
-                project_id=project_id,
-                name=name,
-                tags=tags,
-                metadata=metadata
-            )
+            api_types.CreateExperimentRequest(project_id=project_id, name=name, tags=tags, metadata=metadata)
         )
 
     async def _run_chain(self, idx: int, row: datasets.Row):

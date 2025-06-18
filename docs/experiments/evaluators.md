@@ -321,7 +321,7 @@ class CustomEvaluator(StructuredEvaluator):
     def __init__(self, threshold: float, weight: Union[str, float] = None):
         super().__init__(weight=weight)  # Pass to parent class
         self.threshold = threshold
-    
+
     def evaluate(self, *, task_output: str, **kwargs) -> EvaluationResult:
         score = len(task_output) / 100  # Simple length-based scoring
         return EvaluationResult(
