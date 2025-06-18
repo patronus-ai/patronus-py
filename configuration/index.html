@@ -533,6 +533,8 @@
       
         
       
+        
+      
     
     
     
@@ -610,6 +612,29 @@
   
   <span class="md-ellipsis">
     Logging
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../observability/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuration
     
   </span>
   
@@ -1244,6 +1269,15 @@
   <a href="#programmatic-configuration-access" class="md-nav__link">
     <span class="md-ellipsis">
       Programmatic Configuration Access
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#observability-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Observability Configuration
     </span>
   </a>
   
@@ -2155,6 +2189,15 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#observability-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Observability Configuration
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -2226,6 +2269,11 @@
 <td>otel_endpoint</td>
 <td>PATRONUS_OTEL_ENDPOINT</td>
 <td><code>https://otel.patronus.ai:4317</code></td>
+</tr>
+<tr>
+<td>otel_exporter_otlp_protocol</td>
+<td>PATRONUS_OTEL_EXPORTER_OTLP_PROTOCOL</td>
+<td>Falls back to OTEL env vars, defaults to <code>grpc</code></td>
 </tr>
 <tr>
 <td>timeout_s</td>
@@ -2303,12 +2351,13 @@ directory when executing your script.</p>
 </span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="nt">api_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;https://api.patronus.ai&quot;</span>
 </span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="nt">ui_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;https://app.patronus.ai&quot;</span>
 </span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="nt">otel_endpoint</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;https://otel.patronus.ai:4317&quot;</span>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="nt">timeout_s</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300</span>
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>
-</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="c1"># Prompt management configuration</span>
-</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="nt">prompt_templating_engine</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mustache&quot;</span>
-</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="nt">prompt_providers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="s">&quot;local&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;api&quot;</span><span class="w"> </span><span class="p p-Indicator">]</span>
-</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="nt">resource_dir</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;./my-resources&quot;</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="nt">otel_exporter_otlp_protocol</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;grpc&quot;</span><span class="w">  </span><span class="c1"># or &quot;http/protobuf&quot;</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="nt">timeout_s</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="c1"># Prompt management configuration</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="nt">prompt_templating_engine</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;mustache&quot;</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="nt">prompt_providers</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="s">&quot;local&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;api&quot;</span><span class="w"> </span><span class="p p-Indicator">]</span>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="nt">resource_dir</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;./my-resources&quot;</span>
 </span></code></pre></div>
 <h2 id="configuration-precedence">Configuration Precedence</h2>
 <p>When determining the value for a configuration option, Patronus follows this order of precedence:</p>
@@ -2340,6 +2389,8 @@ directory when executing your script.</p>
 </span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Using custom API endpoint&quot;</span><span class="p">)</span>
 </span></code></pre></div>
 <p>This approach is particularly useful when you need to inspect or log the current configuration state.</p>
+<h2 id="observability-configuration">Observability Configuration</h2>
+<p>For detailed information about configuring observability features like tracing and logging, including exporter protocol selection and endpoint configuration, see the <a href="../observability/configuration/">Observability Configuration</a> guide.</p>
 
 
 

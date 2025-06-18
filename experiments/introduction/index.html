@@ -533,6 +533,8 @@
       
         
       
+        
+      
     
     
     
@@ -610,6 +612,29 @@
   
   <span class="md-ellipsis">
     Logging
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../observability/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuration
     
   </span>
   
@@ -2188,6 +2213,7 @@ Each example, represented as a <code>Row</code> object, can contain:</p>
 </li>
 </ul>
 <p>Each evaluator produces an <code>EvaluationResult</code> containing scores, pass/fail status, explanations, and other metadata.</p>
+<p><strong>Evaluator Weights</strong>: You can assign weights to evaluators to indicate their relative importance in your evaluation strategy. Weights are stored as experiment metadata and can be provided as either strings or floats representing valid decimal numbers. See the <a href="../evaluators/#evaluator-weights-experiments-only">Using Evaluators</a> page for detailed information.</p>
 <h3 id="chains">Chains</h3>
 <p>For more complex workflows, Patronus supports multi-stage evaluation chains where the output of one evaluation stage becomes the input for the next.
 This allows for pipeline-based approaches to LLM evaluation.</p>
