@@ -1,4 +1,5 @@
 import abc
+import asyncio
 import contextlib
 import contextvars
 import datetime
@@ -9,8 +10,10 @@ import threading
 import time
 import typing
 import uuid
+import decimal
+
 from opentelemetry.trace import get_current_span, SpanContext
-from typing import Any, Optional, Union
+from typing import Any, Optional, Union, Self
 
 from patronus import context
 from patronus.api import api_types
@@ -568,6 +571,17 @@ class Evaluator(metaclass=_EvaluatorMeta):
 
     evaluator_id: Optional[str] = None
     criteria: Optional[str] = None
+    weight: Optional[Union[str, float]] = None
+
+    def __init__(self, weight: Optional[Union[str, float]] = None):
+        if weight is not None:
+            try:
+                decimal.Decimal(str(weight))
+            except (decimal.InvalidOperation, ValueError, TypeError):
+                raise TypeError(
+                    f"{weight} is not a valid weight. Weight must be a valid decimal number (string or float)."
+                )
+        self.weight = weight
 
     def get_evaluator_id(self) -> str:
         return self.evaluator_id or self.__class__.__qualname__
@@ -582,6 +596,10 @@ class Evaluator(metaclass=_EvaluatorMeta):
         When inheriting directly from Evaluator class it's permitted to change parameters signature.
         Return type should stay unchanged.
         """
+
+    @property
+    def canonical_name(self) -> str:
+        return f"{self.get_evaluator_id()}:{self.get_criteria() or ''}"
 
 
 class AsyncEvaluator(Evaluator):
@@ -632,6 +650,7 @@ class AsyncStructuredEvaluator(AsyncEvaluator):
 
 class RemoteEvaluatorMixin:
     _disable_export = True
+    _loaded = False
 
     def __init__(
         self,
@@ -644,8 +663,30 @@ class RemoteEvaluatorMixin:
         allow_update: bool = False,
         max_attempts: int = 3,
         api_: Optional[PatronusAPIClient] = None,
+        weight: Optional[Union[str, float]] = None,
     ):
+        """Initialize a remote evaluator.
+
+        Args:
+            evaluator_id_or_alias: The ID or alias of the evaluator to use.
+            criteria: The criteria name to use for evaluation. If not provided,
+                the evaluator's default criteria will be used.
+            tags: Optional tags to attach to evaluations.
+            explain_strategy: When to generate explanations for evaluations.
+                Options are "never", "on-fail", "on-success", or "always".
+            criteria_config: Configuration for the criteria. (Currently unused)
+            allow_update: Whether to allow updates. (Currently unused)
+            max_attempts: Maximum number of retry attempts. (Currently unused)
+            api_: Optional API client instance. If not provided, will use the
+                default client from context.
+            weight: Optional weight for the evaluator. This is only used within
+                the Patronus Experimentation Framework to indicate the relative
+                importance of evaluators. Must be a valid decimal number (string
+                or float). Weights are stored as experiment metadata and do not
+                affect standalone evaluator usage.
+        """
         self.evaluator_id_or_alias = evaluator_id_or_alias
+        self.evaluator_id = None
         self.criteria = criteria
         self.tags = tags or {}
         self.explain_strategy = explain_strategy
@@ -653,12 +694,32 @@ class RemoteEvaluatorMixin:
         self.allow_update = allow_update
         self.max_attempts = max_attempts
         self._api = api_
+        self._resolved = False
+        self.weight = weight
+        self._load_lock = threading.Lock()
+        self._async_load_lock = asyncio.Lock()
 
     def get_evaluator_id(self) -> str:
-        return self.evaluator_id_or_alias
+        if not self._loaded:
+            raise RuntimeError(
+                "`get_evaluator_id` cannot be called on unloaded remote evaluator. Call load() method first."
+            )
+        return self.evaluator_id
 
     def get_criteria(self) -> str:
+        if not self._loaded:
+            raise RuntimeError(
+                "`get_criteria` cannot be called on unloaded remote evaluator. Call load() method first."
+            )
         return self.criteria
+
+    @property
+    def canonical_name(self) -> str:
+        if not self._loaded:
+            raise RuntimeError(
+                "`canonical_name` cannot be called on unloaded remote evaluator. Call load() method first."
+            )
+        return f"{self.get_evaluator_id()}:{self.get_criteria() or ''}"
 
     def _get_api(self) -> PatronusAPIClient:
         api_client = self._api or context.get_api_client_deprecated_or_none()
@@ -780,6 +841,39 @@ class RemoteEvaluator(RemoteEvaluatorMixin, StructuredEvaluator):
             )
         )
 
+    def load(self, *, api: Optional[PatronusAPIClient] = None) -> Self:
+        with self._load_lock:
+            # Check if already loaded to avoid duplicate work
+            if self._loaded:
+                return self
+
+            api = api or self._get_api()
+            self._load(api=api)
+            return self
+
+    def _load(self, *, api: PatronusAPIClient):
+        # Get evaluator id by aliases
+        evaluators = api.list_evaluators_sync(by_alias_or_id=self.evaluator_id_or_alias)
+        if evaluators is not None:
+            self.evaluator_id = evaluators[0].id
+
+        # Get criteria with revision if revision is not provided
+        if self.criteria and not self.criteria.find(":"):
+            criteria = api.list_criteria_sync(api_types.ListCriteriaRequest(name=self.criteria, get_last_revision=True))
+            if not criteria.evaluator_criteria:
+                raise RuntimeError(f"Criteria {self.criteria} not found")
+            self.criteria = f"{criteria.evaluator_criteria[0].name}:{criteria.evaluator_criteria[0].revision}"
+
+        # Get default criteria from evaluator if criteria not provided
+        elif not self.criteria:
+            if evaluators[0].default_criteria is None:
+                raise RuntimeError(
+                    f"Default criteria not found. You must specify a criteria for {self.evaluator_id_or_alias} evaluator."
+                )
+
+            self.criteria = evaluators[0].default_criteria
+        self._loaded = True
+
 
 class AsyncRemoteEvaluator(RemoteEvaluatorMixin, AsyncStructuredEvaluator):
     """Asynchronous remote evaluator"""
@@ -877,3 +971,38 @@ class AsyncRemoteEvaluator(RemoteEvaluatorMixin, AsyncStructuredEvaluator):
                 log_id=log_id and str(log_id),
             )
         )
+
+    async def load(self, *, api: Optional[PatronusAPIClient] = None) -> Self:
+        async with self._async_load_lock:
+            # Check if already loaded to avoid duplicate work
+            if self._loaded:
+                return self
+
+            api = api or self._get_api()
+            await self._load(api=api)
+            return self
+
+    async def _load(self, *, api: PatronusAPIClient):
+        # Get evaluator id by aliases
+        evaluators = await api.list_evaluators(by_alias_or_id=self.evaluator_id_or_alias)
+        if evaluators is not None:
+            self.evaluator_id = evaluators[0].id
+
+        # Get criteria with revision if revision is not provided
+        if self.criteria and not self.criteria.find(":"):
+            criteria = await api.list_criteria(
+                api_types.ListCriteriaRequest(name=self.criteria, get_last_revision=True)
+            )
+            if not criteria.evaluator_criteria:
+                raise RuntimeError(f"Criteria {self.criteria} not found")
+            self.criteria = f"{criteria.evaluator_criteria[0].name}:{criteria.evaluator_criteria[0].revision}"
+
+        # Get default criteria from evaluator if criteria not provided
+        elif not self.criteria:
+            if evaluators[0].default_criteria is None:
+                raise RuntimeError(
+                    f"Default criteria not found. You must specify a criteria for {self.evaluator_id_or_alias} evaluator."
+                )
+
+            self.criteria = evaluators[0].default_criteria
+        self._loaded = True

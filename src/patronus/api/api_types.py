@@ -53,6 +53,7 @@ class Evaluator(pydantic.BaseModel):
     name: str
     evaluator_family: Optional[str]
     aliases: Optional[list[str]]
+    default_criteria: Optional[str] = None
 
 
 class ListEvaluatorsResponse(pydantic.BaseModel):
@@ -77,15 +78,25 @@ class Experiment(pydantic.BaseModel):
     id: str
     name: str
     tags: Optional[dict[str, str]] = None
+    metadata: Optional[dict[str, typing.Any]] = None
 
 
 class CreateExperimentRequest(pydantic.BaseModel):
     project_id: str
     name: str
     tags: dict[str, str] = pydantic.Field(default_factory=dict)
+    metadata: Optional[dict[str, typing.Any]] = None
 
 
 class CreateExperimentResponse(pydantic.BaseModel):
+    experiment: Experiment
+
+
+class UpdateExperimentRequest(pydantic.BaseModel):
+    metadata: dict[str, typing.Any]
+
+
+class UpdateExperimentResponse(pydantic.BaseModel):
     experiment: Experiment
 
 

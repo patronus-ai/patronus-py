@@ -46,7 +46,7 @@ class BERTScore(StructuredEvaluator):
         )
 
         return EvaluationResult(
-            score_raw=score,
+            score=score,
             pass_=score >= self.pass_threshold,
             tags={"pass_threshold": str(self.pass_threshold)},
         )

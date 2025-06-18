@@ -1,8 +1,6 @@
 from patronus.experiments import run_experiment
 from patronus.evals import RemoteEvaluator
 
-detect_pii = RemoteEvaluator("pii")
-
 run_experiment(
     project_name="Tutorial",
     dataset=[
@@ -15,6 +13,6 @@ run_experiment(
             "task_output": "My name is Jane Doe and I live at 123 Elm Street.",
         },
     ],
-    evaluators=[detect_pii],
+    evaluators=[RemoteEvaluator("pii")],
     experiment_name="Detect PII",
 )

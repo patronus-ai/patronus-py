@@ -163,6 +163,40 @@ Important notes about tags:
 - Use a small set of consistent values for each tag (avoid having too many unique values)
 - Tags are powerful for filtering and grouping in analysis
 
+### Experiment Metadata
+
+Experiments automatically capture important metadata, including evaluator weights when specified:
+
+```python
+from patronus.experiments import run_experiment, FuncEvaluatorAdapter
+from patronus.evals import RemoteEvaluator
+from patronus import evaluator
+
+@evaluator()
+def custom_check(row, **kwargs):
+    return True
+
+# Experiment with weighted evaluators
+experiment = run_experiment(
+    dataset=dataset,
+    task=my_task,
+    evaluators=[
+        RemoteEvaluator("judge", "patronus:is-concise", weight=0.6),
+        FuncEvaluatorAdapter(custom_check, weight="0.4")
+    ]
+)
+
+# Weights are automatically stored in experiment metadata
+# as "evaluator_weights": {
+#     "judge:patronus:is-concise": "0.6",
+#     "custom_check:": "0.4"
+# }
+```
+
+Evaluator weights are automatically collected and stored in the experiment's metadata under the `evaluator_weights` key. This provides a permanent record of how evaluators were weighted in each experiment for reproducibility and analysis.
+
+For more details on using evaluator weights, see the [Using Evaluators](evaluators.md#evaluator-weights-experiments-only) page.
+
 ## Custom API Configuration
 
 For on-prem environments, you can customize the API configuration:

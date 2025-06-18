@@ -210,7 +210,7 @@ def build_context(
         async_api_client=async_api_client,
         exporter=eval_exporter,
         prompts=context.PromptsConfig(
-            directory=pathlib.Path(resource_dir, "prompts"),
+            directory=resource_dir and pathlib.Path(resource_dir, "prompts"),
             providers=prompt_providers,
             templating_engine=prompt_templating_engine,
         ),

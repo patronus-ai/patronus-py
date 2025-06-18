@@ -202,6 +202,7 @@ class BaseAPIClient:
 
     def _url(self, path: str):
         assert self.base_url, "BaseAPIClient: base_url must be set"
+        print(f"{self.base_url}{path}")
         return f"{self.base_url}{path}"
 
     def headers(self, content_type: Optional[str] = "application/json") -> typing.Dict[str, str]:

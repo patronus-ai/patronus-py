@@ -17,7 +17,14 @@ from patronus import context, datasets
 from patronus.api import PatronusAPIClient, api_types
 from patronus.context import get_tracer
 from patronus.datasets import Dataset, DatasetLoader
-from patronus.evals import StructuredEvaluator, AsyncStructuredEvaluator, bundled_eval, EvaluationResult
+from patronus.evals import (
+    AsyncRemoteEvaluator,
+    StructuredEvaluator,
+    AsyncStructuredEvaluator,
+    bundled_eval,
+    EvaluationResult,
+)
+from patronus.evals.evaluators import RemoteEvaluator
 from patronus.evals.context import evaluation_attributes
 from patronus.experiments.adapters import BaseEvaluatorAdapter, StructuredEvaluatorAdapter
 from patronus.experiments.async_utils import run_until_complete
@@ -235,6 +242,7 @@ class Experiment:
 
     _chain: list[_ChainLink]
     _started: bool
+    _prepared: bool
 
     _sem_tasks: asyncio.Semaphore
     _sem_evals: asyncio.Semaphore
@@ -256,6 +264,7 @@ class Experiment:
         evaluators: Optional[list[AdaptableEvaluators]] = None,
         chain: Optional[list[ChainLink]] = None,
         tags: Optional[dict[str, str]] = None,
+        metadata: Optional[dict[str, Any]] = None,
         max_concurrency: int = 10,
         project_name: Optional[str] = None,
         experiment_name: Optional[str] = None,
@@ -288,6 +297,7 @@ class Experiment:
         self.experiment = None
 
         self.tags = tags or {}
+        self.metadata = metadata
 
         self.max_concurrency = max_concurrency
 
@@ -312,6 +322,7 @@ class Experiment:
         evaluators: Optional[list[AdaptableEvaluators]] = None,
         chain: Optional[list[ChainLink]] = None,
         tags: Optional[Tags] = None,
+        metadata: Optional[dict[str, Any]] = None,
         max_concurrency: int = 10,
         project_name: Optional[str] = None,
         experiment_name: Optional[str] = None,
@@ -342,6 +353,8 @@ class Experiment:
                 Use this for multi-stage evaluation pipelines.
             tags: Key-value pairs.
                 All evaluations created by the experiment will contain these tags.
+            metadata: Arbitrary dict.
+                Metadata associated with the experiment.
             max_concurrency: Maximum number of concurrent task and evaluation operations.
             project_name: Name of the project to create or use. Falls back to configuration or
                 environment variables if not provided.
@@ -371,6 +384,7 @@ class Experiment:
             evaluators=evaluators,
             chain=chain,
             tags=tags,
+            metadata=metadata,
             max_concurrency=max_concurrency,
             project_name=project_name,
             experiment_name=experiment_name,
@@ -469,11 +483,17 @@ class Experiment:
             base_url=self._api_url or cfg.api_url,
             api_key=self._api_key or cfg.api_key,
         )
+        await self._load_remote_evaluators(api)
+        weights = await self._prepare_eval_weights()
 
         self.project = await self._get_or_create_project(api, self._project_name or cfg.project_name)
         self._project_name = None
 
-        self.experiment = await self._create_experiment(api, self.project.id, self._experiment_name, self.tags)
+        metadata = (self.metadata or {}).copy()
+        metadata.update(weights)
+        self.experiment = await self._create_experiment(
+            api, self.project.id, self._experiment_name, self.tags, metadata
+        )
         self._experiment_name = None
 
         ctx = build_context(
@@ -498,6 +518,40 @@ class Experiment:
 
         self._prepared = True
         return ctx
+
+    async def _load_remote_evaluators(self, api: PatronusAPIClient):
+        for link_dict in self._chain:
+            for evaluator_adapter in link_dict.get("evaluators", []):
+                if isinstance(evaluator_adapter, StructuredEvaluatorAdapter):
+                    evaluator = evaluator_adapter.evaluator
+                    if isinstance(evaluator, AsyncRemoteEvaluator):
+                        await evaluator.load(api=api)
+                    elif isinstance(evaluator, RemoteEvaluator):
+                        evaluator.load(api=api)
+
+    async def _prepare_eval_weights(self):
+        weights = {}
+        for link_dict in self._chain:
+            for evaluator in link_dict.get("evaluators", []):
+                canonical_name = evaluator.canonical_name
+                current_weight = evaluator.weight
+
+                if current_weight is not None:
+                    # Convert weight to string for consistent comparison and storage
+                    current_weight_str = str(current_weight)
+
+                    if canonical_name in weights:
+                        # Compare the stored weight with current weight
+                        stored_weight_str = str(weights[canonical_name])
+                        if stored_weight_str != current_weight_str:
+                            raise TypeError(
+                                f"You cannot set different weights for the same evaluator: `{canonical_name}`. "
+                                f"Found weights: {stored_weight_str} and {current_weight_str}"
+                            )
+                    else:
+                        weights[canonical_name] = current_weight
+
+        return {"evaluator_weights": weights}
 
     async def _run(self):
         title = f"Experiment  {self.project.name}/{self.experiment.name}"
@@ -537,15 +591,11 @@ class Experiment:
 
     @staticmethod
     async def _create_experiment(
-        api: PatronusAPIClient, project_id: str, experiment_name: str, tags: Tags
+        api: PatronusAPIClient, project_id: str, experiment_name: str, tags: Tags, metadata: Optional[dict[str, Any]]
     ) -> api_types.Experiment:
         name = generate_experiment_name(experiment_name)
         return await api.create_experiment(
-            api_types.CreateExperimentRequest(
-                project_id=project_id,
-                name=name,
-                tags=tags,
-            )
+            api_types.CreateExperimentRequest(project_id=project_id, name=name, tags=tags, metadata=metadata)
         )
 
     async def _run_chain(self, idx: int, row: datasets.Row):

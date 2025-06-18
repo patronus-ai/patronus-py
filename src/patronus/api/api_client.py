@@ -77,6 +77,32 @@ class PatronusAPIClient(BaseAPIClient):
         resp.raise_for_status()
         return resp.data.experiment
 
+    async def update_experiment(
+        self, experiment_id: str, request: api_types.UpdateExperimentRequest
+    ) -> api_types.Experiment:
+        """Updates an existing experiment based on the given request."""
+        resp = await self.call(
+            "POST",
+            f"/v1/experiments/{experiment_id}",
+            body=request,
+            response_cls=api_types.UpdateExperimentResponse,
+        )
+        resp.raise_for_status()
+        return resp.data.experiment
+
+    def update_experiment_sync(
+        self, experiment_id: str, request: api_types.UpdateExperimentRequest
+    ) -> api_types.Experiment:
+        """Updates an existing experiment based on the given request."""
+        resp = self.call_sync(
+            "POST",
+            f"/v1/experiments{experiment_id}",
+            body=request,
+            response_cls=api_types.UpdateExperimentResponse,
+        )
+        resp.raise_for_status()
+        return resp.data.experiment
+
     async def get_experiment(self, experiment_id: str) -> Optional[api_types.Experiment]:
         """Fetches an experiment by its ID or returns None if not found."""
         resp = await self.call(
@@ -230,15 +256,23 @@ class PatronusAPIClient(BaseAPIClient):
         resp.raise_for_status()
         return resp.data
 
-    async def list_evaluators(self) -> list[api_types.Evaluator]:
+    async def list_evaluators(self, by_alias_or_id: Optional[str] = None) -> list[api_types.Evaluator]:
         """Retrieves a list of available evaluators."""
-        resp = await self.call("GET", "/v1/evaluators", response_cls=api_types.ListEvaluatorsResponse)
+        params = {}
+        if by_alias_or_id:
+            params["by_alias_or_id"] = by_alias_or_id
+
+        resp = await self.call("GET", "/v1/evaluators", params=params, response_cls=api_types.ListEvaluatorsResponse)
         resp.raise_for_status()
         return resp.data.evaluators
 
-    def list_evaluators_sync(self) -> list[api_types.Evaluator]:
+    def list_evaluators_sync(self, by_alias_or_id: Optional[str] = None) -> list[api_types.Evaluator]:
         """Retrieves a list of available evaluators."""
-        resp = self.call_sync("GET", "/v1/evaluators", response_cls=api_types.ListEvaluatorsResponse)
+        params = {}
+        if by_alias_or_id:
+            params["by_alias_or_id"] = by_alias_or_id
+
+        resp = self.call_sync("GET", "/v1/evaluators", params=params, response_cls=api_types.ListEvaluatorsResponse)
         resp.raise_for_status()
         return resp.data.evaluators
 

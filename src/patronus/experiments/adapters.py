@@ -1,3 +1,4 @@
+import decimal
 import inspect
 
 import typing
@@ -5,7 +6,7 @@ import typing
 import asyncio
 
 import abc
-
+from decimal import Decimal
 
 from typing import Union, Optional
 
@@ -27,6 +28,8 @@ class BaseEvaluatorAdapter(abc.ABC):
     the required abstract methods.
     """
 
+    _weight: Optional[Union[str, float]] = None
+
     @property
     @abc.abstractmethod
     def evaluator_id(self) -> str:
@@ -36,6 +39,10 @@ class BaseEvaluatorAdapter(abc.ABC):
     @abc.abstractmethod
     def criteria(self) -> Optional[str]:
         pass
+
+    @property
+    def weight(self) -> Optional[Union[str, float]]:
+        return self._weight
 
     @property
     def canonical_name(self) -> str:
@@ -121,6 +128,10 @@ class EvaluatorAdapter(BaseEvaluatorAdapter):
         if not isinstance(evaluator, evals.Evaluator):
             raise TypeError(f"{evaluator} is not {evals.Evaluator.__name__}.")
         self.evaluator = evaluator
+
+    @property
+    def weight(self) -> Optional[Union[str, float]]:
+        return self.evaluator.weight
 
     @property
     def evaluator_id(self) -> str:
@@ -313,13 +324,23 @@ class FuncEvaluatorAdapter(BaseEvaluatorAdapter):
 
     """
 
-    def __init__(self, fn: typing.Callable[..., typing.Any]):
+    def __init__(self, fn: typing.Callable[..., typing.Any], weight: Optional[Union[str, float]] = None):
         if not hasattr(fn, "_pat_evaluator"):
             raise ValueError(
                 f"Passed function {fn.__qualname__} is not an evaluator. "
                 "Hint: add @evaluator decorator to the function."
             )
+
+        if weight is not None:
+            try:
+                Decimal(str(weight))
+            except (decimal.InvalidOperation, ValueError, TypeError):
+                raise TypeError(
+                    f"{weight} is not a valid weight. Weight must be a valid decimal number (string or float)."
+                )
+
         self.fn = fn
+        self._weight = weight
 
     @property
     def evaluator_id(self) -> str:
