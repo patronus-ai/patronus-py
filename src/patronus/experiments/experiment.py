@@ -141,6 +141,7 @@ def run_experiment(
     api_key: Optional[str] = None,
     api_url: Optional[str] = None,
     otel_endpoint: Optional[str] = None,
+    otel_exporter_otlp_protocol: Optional[str] = None,
     ui_url: Optional[str] = None,
     timeout_s: Optional[int] = None,
     integrations: Optional[list[typing.Any]] = None,
@@ -207,6 +208,7 @@ def run_experiment(
             api_key=api_key,
             api_url=api_url,
             otel_endpoint=otel_endpoint,
+            otel_exporter_otlp_protocol=otel_exporter_otlp_protocol,
             ui_url=ui_url,
             timeout_s=timeout_s,
             integrations=integrations,
@@ -251,6 +253,7 @@ class Experiment:
     _api_key: Optional[str]
     _api_url: Optional[str]
     _otel_endpoint: Optional[str]
+    _otel_exporter_otlp_protocol: Optional[str]
     _ui_url: Optional[str]
     _timeout_s: Optional[int]
 
@@ -272,6 +275,7 @@ class Experiment:
         api_key: Optional[str] = None,
         api_url: Optional[str] = None,
         otel_endpoint: Optional[str] = None,
+        otel_exporter_otlp_protocol: Optional[str] = None,
         ui_url: Optional[str] = None,
         timeout_s: Optional[int] = None,
         integrations: Optional[list[typing.Any]] = None,
@@ -305,6 +309,7 @@ class Experiment:
         self._api_key = api_key
         self._api_url = api_url
         self._otel_endpoint = otel_endpoint
+        self._otel_exporter_otlp_protocol = otel_exporter_otlp_protocol
         self._ui_url = ui_url
         self._timeout_s = timeout_s
 
@@ -330,6 +335,7 @@ class Experiment:
         api_key: Optional[str] = None,
         api_url: Optional[str] = None,
         otel_endpoint: Optional[str] = None,
+        otel_exporter_otlp_protocol: Optional[str] = None,
         ui_url: Optional[str] = None,
         timeout_s: Optional[int] = None,
         integrations: Optional[list[typing.Any]] = None,
@@ -367,6 +373,8 @@ class Experiment:
                 variables if not provided.
             otel_endpoint: OpenTelemetry collector endpoint. Falls back to configuration or
                 environment variables if not provided.
+            otel_exporter_otlp_protocol: OpenTelemetry exporter protocol (grpc or http/protobuf).
+                Falls back to configuration or environment variables if not provided.
             ui_url: URL for the Patronus UI. Falls back to configuration or environment
                 variables if not provided.
             timeout_s: Timeout in seconds for API operations. Falls back to configuration or
@@ -392,6 +400,7 @@ class Experiment:
             api_key=api_key,
             api_url=api_url,
             otel_endpoint=otel_endpoint,
+            otel_exporter_otlp_protocol=otel_exporter_otlp_protocol,
             ui_url=ui_url,
             timeout_s=timeout_s,
             integrations=integrations,
@@ -504,6 +513,7 @@ class Experiment:
             experiment_name=self.experiment.name,
             api_url=self._api_url or cfg.api_url,
             otel_endpoint=self._otel_endpoint or cfg.otel_endpoint,
+            otel_exporter_otlp_protocol=self._otel_exporter_otlp_protocol or cfg.otel_exporter_otlp_protocol,
             api_key=self._api_key or cfg.api_key,
             client_http=client_http,
             client_http_async=client_http_async,

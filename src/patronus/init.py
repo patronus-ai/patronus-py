@@ -26,6 +26,7 @@ def init(
     app: Optional[str] = None,
     api_url: Optional[str] = None,
     otel_endpoint: Optional[str] = None,
+    otel_exporter_otlp_protocol: Optional[str] = None,
     api_key: Optional[str] = None,
     service: Optional[str] = None,
     resource_dir: Optional[str] = None,
@@ -55,6 +56,8 @@ def init(
         api_url: URL for the Patronus API service.
             Falls back to configuration file or environment variables if not provided.
         otel_endpoint: Endpoint for OpenTelemetry data collection.
+            Falls back to configuration file or environment variables if not provided.
+        otel_exporter_otlp_protocol: OpenTelemetry exporter protocol (grpc or http/protobuf).
             Falls back to configuration file or environment variables if not provided.
         api_key: Authentication key for Patronus services.
             Falls back to configuration file or environment variables if not provided.
@@ -97,6 +100,7 @@ def init(
             experiment_name=None,
             api_url=api_url or cfg.api_url,
             otel_endpoint=otel_endpoint or cfg.otel_endpoint,
+            otel_exporter_otlp_protocol=otel_exporter_otlp_protocol or cfg.otel_exporter_otlp_protocol,
             api_key=api_key or cfg.api_key,
             resource_dir=resource_dir or cfg.resource_dir,
             prompt_providers=prompt_providers or cfg.prompt_providers,
@@ -125,6 +129,7 @@ def build_context(
     experiment_name: Optional[str],
     api_url: Optional[str],
     otel_endpoint: str,
+    otel_exporter_otlp_protocol: Optional[str],
     api_key: str,
     resource_dir: Optional[str] = None,
     prompt_providers: Optional[list[str]] = None,
@@ -151,6 +156,7 @@ def build_context(
         experiment_name: Display name for an experiment when running in experiment mode.
         api_url: URL for the Patronus API service.
         otel_endpoint: Endpoint for OpenTelemetry data collection.
+        otel_exporter_otlp_protocol: OpenTelemetry exporter protocol (grpc or http/protobuf).
         api_key: Authentication key for Patronus services.
         client_http: Custom HTTP client for synchronous API requests.
             If not provided, a new client will be created.
@@ -192,12 +198,14 @@ def build_context(
         exporter_endpoint=otel_endpoint,
         api_key=api_key,
         scope=scope,
+        protocol=otel_exporter_otlp_protocol,
     )
 
     tracer_provider = create_tracer_provider(
         exporter_endpoint=otel_endpoint,
         api_key=api_key,
         scope=scope,
+        protocol=otel_exporter_otlp_protocol,
     )
 
     eval_exporter = BatchEvaluationExporter(client=api_deprecated)

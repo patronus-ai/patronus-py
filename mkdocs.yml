@@ -39,11 +39,13 @@ extra_css:
   - stylesheets/extra.css
 
 markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
   - pymdownx.highlight:
       anchor_linenums: true
       line_spans: __span
       pygments_lang_class: true
-  - pymdownx.superfences:
 
 nav:
   - Home:
@@ -55,6 +57,7 @@ nav:
     - Observability:
         - Tracing: observability/tracing.md
         - Logging: observability/logging.md
+        - Configuration: observability/configuration.md
     - Integrations:
         - Agent Integrations: integrations/agents.md
         - LLM Integrations: integrations/llms.md

@@ -52,6 +52,8 @@ class Config(pydantic_settings.BaseSettings):
         api_url: URL for the Patronus API service. Default: https://api.patronus.ai
         otel_endpoint: Endpoint for OpenTelemetry data collection.
             Default: https://otel.patronus.ai:4317
+        otel_exporter_otlp_protocol: OpenTelemetry exporter protocol. Values: grpc, http/protobuf.
+            Falls back to standard OTEL environment variables if not set.
         ui_url: URL for the Patronus UI. Default: https://app.patronus.ai
         timeout_s: Timeout in seconds for HTTP requests. Default: 300
         project_name: Name of the project for organizing evaluations and experiments.
@@ -74,6 +76,16 @@ class Config(pydantic_settings.BaseSettings):
     api_key: Optional[str] = pydantic.Field(default=None)
     api_url: str = pydantic.Field(default=DEFAULT_API_URL)
     otel_endpoint: str = pydantic.Field(default=DEFAULT_OTEL_ENDPOINT)
+    otel_exporter_otlp_protocol: Optional[typing.Literal["grpc", "http/protobuf"]] = pydantic.Field(
+        default=None,
+        description=(
+            "Forces the OpenTelemetry exporter protocol for traces and logs. "
+            "Valid values: 'grpc' (gRPC/protobuf) or 'http/protobuf' (HTTP/protobuf). "
+            "If not set, falls back to standard OTEL environment variables: "
+            "OTEL_EXPORTER_OTLP_PROTOCOL, OTEL_EXPORTER_OTLP_TRACES_PROTOCOL, "
+            "OTEL_EXPORTER_OTLP_LOGS_PROTOCOL. Default behavior uses gRPC."
+        ),
+    )
     ui_url: str = pydantic.Field(default=DEFAULT_UI_URL)
 
     timeout_s: int = pydantic.Field(

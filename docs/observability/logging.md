@@ -3,6 +3,10 @@
 Logging is an essential feature of the Patronus SDK that allows you to record events, debug information, and track the execution of your LLM applications.
 This page covers how to set up and use logging in your code.
 
+!!! tip "Configuration"
+
+    For information about configuring observability features, including exporter protocols and endpoints, see the [Observability Configuration](configuration.md) guide.
+
 ## Getting Started with Logging
 
 The Patronus SDK provides a simple logging interface that integrates with Python's standard logging module while also automatically exporting logs to the Patronus AI Platform:
