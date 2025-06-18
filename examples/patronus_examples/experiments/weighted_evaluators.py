@@ -7,7 +7,7 @@ class DummyEvaluator(StructuredEvaluator):
         self, task_output: str, gold_answer: str, **kwargs
     ) -> EvaluationResult:
         return EvaluationResult(
-            score_raw=1,
+            score=1,
             pass_=True,
         )
 
