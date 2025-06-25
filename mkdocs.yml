@@ -1,6 +1,6 @@
-site_name: ""
-site_description: "PatronusAI Python SKD"
-site_url: https://docs.patronus.ai/patronus-py
+site_name: "PatronusAI SDK"
+site_description: "PatronusAI Python SDK for systematic LLM evaluation - Build, test, and improve AI applications with evaluations, experiments, and prompt management"
+site_url: https://patronus-ai.github.io/patronus-py/
 repo_name: patronus-ai/patronus-py
 repo_url: https://github.com/patronus-ai/patronus-py
 edit_uri: edit/main/docs
@@ -103,6 +103,28 @@ nav:
 plugins:
   - search
   - autorefs
+  - llmstxt:
+      markdown_description: The Patronus SDK provides tools for observability, evaluation, experimentation, and prompt management for Large Language Models (LLMs), helping you build reliable and high-quality AI applications.
+      full_output: llms-full.txt
+      sections:
+        Getting Started:
+          - getting-started/*.md
+        Observability:
+          - observability/*.md
+        Evaluations:
+          - evaluations/*.md
+        Experiments:
+          - experiments/*.md
+        Integrations:
+          - integrations/*.md
+        Prompts:
+          - prompts/*.md
+        Configuration:
+          - configuration.md
+        Examples:
+          - examples/*.md
+        API Reference:
+          - api_ref/*.md
   - mkdocstrings:
       default_handler: python
       handlers:

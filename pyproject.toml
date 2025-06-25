@@ -49,6 +49,7 @@ Repository = "https://github.com/patronus-ai/patronus-py"
 
 [dependency-groups]
 docs = [
+    "mkdocs-llmstxt>=0.2.0",
     "mkdocs-material>=9.6.7,<10",
     "mkdocstrings-python>=1.16.5,<2",
 ]
