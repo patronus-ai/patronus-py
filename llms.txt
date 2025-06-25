@@ -1,0 +1,72 @@
+# PatronusAI SDK
+
+> PatronusAI Python SDK for systematic LLM evaluation - Build, test, and improve AI applications with evaluations, experiments, and prompt management
+
+The Patronus SDK provides tools for observability, evaluation, experimentation, and prompt management for Large Language Models (LLMs), helping you build reliable and high-quality AI applications.
+
+## Getting Started
+
+- [Initialization](https://patronus-ai.github.io/patronus-py/getting-started/initialization/index.md)
+- [Installation](https://patronus-ai.github.io/patronus-py/getting-started/installation/index.md)
+- [Quickstart](https://patronus-ai.github.io/patronus-py/getting-started/quickstart/index.md)
+
+## Observability
+
+- [Configuration](https://patronus-ai.github.io/patronus-py/observability/configuration/index.md)
+- [Logging](https://patronus-ai.github.io/patronus-py/observability/logging/index.md)
+- [Tracing](https://patronus-ai.github.io/patronus-py/observability/tracing/index.md)
+
+## Evaluations
+
+- [Batching Evaluations](https://patronus-ai.github.io/patronus-py/evaluations/batching/index.md)
+- [Evaluators](https://patronus-ai.github.io/patronus-py/evaluations/evaluators/index.md)
+- [Patronus Evaluators](https://patronus-ai.github.io/patronus-py/evaluations/patronus-evaluators/index.md)
+
+## Experiments
+
+- [Advanced Features](https://patronus-ai.github.io/patronus-py/experiments/advanced/index.md)
+- [Working with Datasets](https://patronus-ai.github.io/patronus-py/experiments/datasets/index.md)
+- [Using Evaluators](https://patronus-ai.github.io/patronus-py/experiments/evaluators/index.md)
+- [Introduction](https://patronus-ai.github.io/patronus-py/experiments/introduction/index.md)
+- [Running Experiments](https://patronus-ai.github.io/patronus-py/experiments/running/index.md)
+- [Creating Tasks](https://patronus-ai.github.io/patronus-py/experiments/tasks/index.md)
+
+## Integrations
+
+- [Agent Integrations](https://patronus-ai.github.io/patronus-py/integrations/agents/index.md)
+- [LLM Integrations](https://patronus-ai.github.io/patronus-py/integrations/llms/index.md)
+
+## Prompts
+
+- [Prompts](https://patronus-ai.github.io/patronus-py/prompts/index.md)
+
+## Configuration
+
+- [Configuration](https://patronus-ai.github.io/patronus-py/configuration/index.md)
+
+## Examples
+
+- [Examples](https://patronus-ai.github.io/patronus-py/examples/index.md)
+- [Trace Anthropic](https://patronus-ai.github.io/patronus-py/examples/anthropic-weather/index.md)
+- [Trace CrewAI](https://patronus-ai.github.io/patronus-py/examples/crewai-weather/index.md)
+- [Trace LangChain](https://patronus-ai.github.io/patronus-py/examples/langchain-weather/index.md)
+- [Trace OpenAI Agents](https://patronus-ai.github.io/patronus-py/examples/openai-agents-weather/index.md)
+- [Trace OpenAI](https://patronus-ai.github.io/patronus-py/examples/openai-weather/index.md)
+- [Manual OTel with OpenAI](https://patronus-ai.github.io/patronus-py/examples/otel-openai-weather/index.md)
+- [Trace PydanticAI](https://patronus-ai.github.io/patronus-py/examples/pydanticai-weather/index.md)
+- [Trace Smolagents](https://patronus-ai.github.io/patronus-py/examples/smolagents-weather/index.md)
+
+## API Reference
+
+- [API Client](https://patronus-ai.github.io/patronus-py/api_ref/api_client/index.md)
+- [Config](https://patronus-ai.github.io/patronus-py/api_ref/config/index.md)
+- [Context](https://patronus-ai.github.io/patronus-py/api_ref/context/index.md)
+- [Datasets](https://patronus-ai.github.io/patronus-py/api_ref/datasets/index.md)
+- [Evals](https://patronus-ai.github.io/patronus-py/api_ref/evals/index.md)
+- [Experiments](https://patronus-ai.github.io/patronus-py/api_ref/experiments/index.md)
+- [Init](https://patronus-ai.github.io/patronus-py/api_ref/init/index.md)
+- [Integrations](https://patronus-ai.github.io/patronus-py/api_ref/integrations/index.md)
+- [Patronus Client](https://patronus-ai.github.io/patronus-py/api_ref/pat_client/index.md)
+- [Prompts](https://patronus-ai.github.io/patronus-py/api_ref/prompts/index.md)
+- [Tracing](https://patronus-ai.github.io/patronus-py/api_ref/tracing/index.md)
+
