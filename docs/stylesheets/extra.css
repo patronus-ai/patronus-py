@@ -8,3 +8,8 @@
   background-color: #1E1E1E;
   color: #BDBDBD;
 }
+
+/* Hide site name in header */
+.md-header__title .md-header__topic:first-child {
+  display: none;
+}
