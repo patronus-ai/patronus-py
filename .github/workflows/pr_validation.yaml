@@ -59,11 +59,10 @@ jobs:
     if: always()
     needs: [lint, typecheck]
     runs-on: ubuntu-latest
-    with:
-      allowed-failures: lint, typecheck  # workflows are failing - work in progress
 
     steps:
       - name: Decide whether the needed jobs succeeded or failed
         uses: re-actors/alls-green@release/v1
         with:
+          allowed-failures: lint, typecheck  # workflows are failing - work in progress
           jobs: ${{ toJSON(needs) }}
