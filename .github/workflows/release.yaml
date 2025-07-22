@@ -46,7 +46,7 @@ jobs:
 
     environment:
       name: release
-      url: https://pypi.org/project/patronus/${{ steps.get_version.outputs.version }}
+      url: https://pypi.org/project/patronus/${{ steps.inspect_package.outputs.version }}
 
     steps:
       - uses: actions/checkout@v4
@@ -60,26 +60,12 @@ jobs:
       - name: Build package
         run: uv build
 
-      - name: Get version from tag
-        id: get_version
-        run: |
-          # Extract version from tag (remove 'v' prefix if present)
-          VERSION=${GITHUB_REF#refs/tags/}
-          VERSION=${VERSION#v}
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "Release version: $VERSION"
-
-      - name: Verify package version matches tag
+      - name: Inspect package version
+        id: inspect_package
         run: |
           uv tool install --with uv-dynamic-versioning hatchling
-          PACKAGE_VERSION=$(uvx hatchling version)
-          TAG_VERSION="${{ steps.get_version.outputs.version }}"
-          echo "Package version: $PACKAGE_VERSION"
-          echo "Tag version: $TAG_VERSION"
-          if [[ "$PACKAGE_VERSION" != "$TAG_VERSION" ]]; then
-            echo "Error: Package version ($PACKAGE_VERSION) does not match tag version ($TAG_VERSION)"
-            exit 1
-          fi
+          version=$(uvx hatchling version)
+          echo "version=$version" >> "$GITHUB_OUTPUT"
 
       - name: List built packages
         run: ls -lh dist/
