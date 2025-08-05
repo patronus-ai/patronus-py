@@ -6,6 +6,7 @@ import datetime
 import functools
 import inspect
 import logging
+import re
 import threading
 import time
 import typing
@@ -860,7 +861,7 @@ class RemoteEvaluator(RemoteEvaluatorMixin, StructuredEvaluator):
             raise RuntimeError(f"Remote evaluator '{self.evaluator_id_or_alias}' not found.")
 
         # Get criteria with revision if revision is not provided
-        if self.criteria and self.criteria.find(":") == -1:
+        if self.criteria and not re.match(r'^[^:]+:([^:]+:)?\d+$', self.criteria):
             criteria = api.list_criteria_sync(api_types.ListCriteriaRequest(name=self.criteria, get_last_revision=True))
             if not criteria.evaluator_criteria:
                 raise RuntimeError(f"Criteria '{self.criteria}' not found")
@@ -994,7 +995,7 @@ class AsyncRemoteEvaluator(RemoteEvaluatorMixin, AsyncStructuredEvaluator):
             raise RuntimeError(f"Remote evaluator '{self.evaluator_id_or_alias}' not found.")
 
         # Get criteria with revision if revision is not provided
-        if self.criteria and self.criteria.find(":") == -1:
+        if self.criteria and not re.match(r'^[^:]+:([^:]+:)?\d+$', self.criteria):
             criteria = await api.list_criteria(
                 api_types.ListCriteriaRequest(name=self.criteria, get_last_revision=True)
             )
