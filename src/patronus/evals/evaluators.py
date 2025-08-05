@@ -816,7 +816,7 @@ class RemoteEvaluator(RemoteEvaluatorMixin, StructuredEvaluator):
             api_types.EvaluateRequest(
                 evaluators=[
                     api_types.EvaluateEvaluator(
-                        evaluator=self.evaluator_id,
+                        evaluator=self.evaluator_id or self.evaluator_id_or_alias,
                         criteria=self.criteria,
                         explain_strategy=self.explain_strategy,
                     )
@@ -950,7 +950,7 @@ class AsyncRemoteEvaluator(RemoteEvaluatorMixin, AsyncStructuredEvaluator):
             api_types.EvaluateRequest(
                 evaluators=[
                     api_types.EvaluateEvaluator(
-                        evaluator=self.evaluator_id_or_alias,
+                        evaluator=self.evaluator_id or self.evaluator_id_or_alias,
                         criteria=self.criteria,
                         explain_strategy=self.explain_strategy,
                     )
