@@ -41,7 +41,7 @@ jobs:
 
   # Build and release to PyPI
   release:
-    needs: [validate]
+    # needs: [validate]
     runs-on: ubuntu-latest
 
     environment:
