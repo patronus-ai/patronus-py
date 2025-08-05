@@ -816,7 +816,7 @@ class RemoteEvaluator(RemoteEvaluatorMixin, StructuredEvaluator):
             api_types.EvaluateRequest(
                 evaluators=[
                     api_types.EvaluateEvaluator(
-                        evaluator=self.evaluator_id_or_alias,
+                        evaluator=self.evaluator_id,
                         criteria=self.criteria,
                         explain_strategy=self.explain_strategy,
                     )
@@ -854,21 +854,24 @@ class RemoteEvaluator(RemoteEvaluatorMixin, StructuredEvaluator):
     def _load(self, *, api: PatronusAPIClient):
         # Get evaluator id by aliases
         evaluators = api.list_evaluators_sync(by_alias_or_id=self.evaluator_id_or_alias)
-        if evaluators is not None:
+        if evaluators:
             self.evaluator_id = evaluators[0].id
+        else:
+            raise RuntimeError(f"Remote evaluator '{self.evaluator_id_or_alias}' not found.")
 
         # Get criteria with revision if revision is not provided
-        if self.criteria and not self.criteria.find(":"):
+        if self.criteria and self.criteria.find(":") == -1:
             criteria = api.list_criteria_sync(api_types.ListCriteriaRequest(name=self.criteria, get_last_revision=True))
             if not criteria.evaluator_criteria:
-                raise RuntimeError(f"Criteria {self.criteria} not found")
+                raise RuntimeError(f"Criteria '{self.criteria}' not found")
             self.criteria = f"{criteria.evaluator_criteria[0].name}:{criteria.evaluator_criteria[0].revision}"
 
         # Get default criteria from evaluator if criteria not provided
         elif not self.criteria:
             if evaluators[0].default_criteria is None:
                 raise RuntimeError(
-                    f"Default criteria not found. You must specify a criteria for {self.evaluator_id_or_alias} evaluator."
+                    f"Default criteria not found. "
+                    f"You must specify a criteria for '{self.evaluator_id_or_alias}' evaluator."
                 )
 
             self.criteria = evaluators[0].default_criteria
@@ -985,11 +988,13 @@ class AsyncRemoteEvaluator(RemoteEvaluatorMixin, AsyncStructuredEvaluator):
     async def _load(self, *, api: PatronusAPIClient):
         # Get evaluator id by aliases
         evaluators = await api.list_evaluators(by_alias_or_id=self.evaluator_id_or_alias)
-        if evaluators is not None:
+        if evaluators:
             self.evaluator_id = evaluators[0].id
+        else:
+            raise RuntimeError(f"Remote evaluator '{self.evaluator_id_or_alias}' not found.")
 
         # Get criteria with revision if revision is not provided
-        if self.criteria and not self.criteria.find(":"):
+        if self.criteria and self.criteria.find(":") == -1:
             criteria = await api.list_criteria(
                 api_types.ListCriteriaRequest(name=self.criteria, get_last_revision=True)
             )
@@ -1001,7 +1006,8 @@ class AsyncRemoteEvaluator(RemoteEvaluatorMixin, AsyncStructuredEvaluator):
         elif not self.criteria:
             if evaluators[0].default_criteria is None:
                 raise RuntimeError(
-                    f"Default criteria not found. You must specify a criteria for {self.evaluator_id_or_alias} evaluator."
+                    f"Default criteria not found. "
+                    f"You must specify a criteria for '{self.evaluator_id_or_alias}' evaluator."
                 )
 
             self.criteria = evaluators[0].default_criteria
