@@ -1,0 +1,77 @@
+name: Release
+
+on:
+  push:
+    branches: ["main"]
+
+env:
+  UV_PYTHON: 3.12
+  UV_FROZEN: "1"
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: false
+
+jobs:
+  # Run validation checks before release
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --all-extras --group lint
+
+      - name: Run linting
+        run: uv run --group lint ruff check
+
+      - name: Run type checking
+        run: uv run --group lint mypy src/patronus
+
+      - name: Build package
+        run: uv build
+
+  # Build and release to PyPI
+  release:
+    needs: [validate]
+    runs-on: ubuntu-latest
+
+    environment:
+      name: release
+      url: https://pypi.org/project/patronus/${{ steps.inspect_package.outputs.version }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Build package
+        run: uv build
+
+      - name: Inspect package version
+        id: inspect_package
+        run: |
+          uv tool install --with uv-dynamic-versioning hatchling
+          version=$(uvx hatchling version)
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: List built packages
+        run: ls -lh dist/
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          skip-existing: true
+          verbose: true
