@@ -145,6 +145,7 @@ def run_experiment(
     ui_url: Optional[str] = None,
     timeout_s: Optional[int] = None,
     integrations: Optional[list[typing.Any]] = None,
+    verify_ssl: bool = True,
     **kwargs,
 ) -> Union["Experiment", typing.Awaitable["Experiment"]]:
     """
@@ -212,6 +213,7 @@ def run_experiment(
             ui_url=ui_url,
             timeout_s=timeout_s,
             integrations=integrations,
+            verify_ssl=verify_ssl,
             **kwargs,
         )
         return await ex.run()
@@ -256,6 +258,7 @@ class Experiment:
     _otel_exporter_otlp_protocol: Optional[str]
     _ui_url: Optional[str]
     _timeout_s: Optional[int]
+    _verify_ssl: bool
 
     _ctx: Optional[context.PatronusContext] = None
 
@@ -279,6 +282,7 @@ class Experiment:
         ui_url: Optional[str] = None,
         timeout_s: Optional[int] = None,
         integrations: Optional[list[typing.Any]] = None,
+        verify_ssl: bool = True,
         **kwargs,
     ):
         if chain and evaluators:
@@ -304,6 +308,7 @@ class Experiment:
         self.metadata = metadata
 
         self.max_concurrency = max_concurrency
+        self._verify_ssl = verify_ssl
 
         self._service = service
         self._api_key = api_key
@@ -339,6 +344,7 @@ class Experiment:
         ui_url: Optional[str] = None,
         timeout_s: Optional[int] = None,
         integrations: Optional[list[typing.Any]] = None,
+        verify_ssl: bool = True,
         **kwargs: typing.Any,
     ) -> te.Self:
         """
@@ -404,6 +410,7 @@ class Experiment:
             ui_url=ui_url,
             timeout_s=timeout_s,
             integrations=integrations,
+            verify_ssl=verify_ssl,
             **kwargs,
         )
         ex._ctx = await ex._prepare()
@@ -483,8 +490,8 @@ class Experiment:
 
         cfg = config()
 
-        client_http = httpx.Client(timeout=cfg.timeout_s)
-        client_http_async = httpx.AsyncClient(timeout=cfg.timeout_s)
+        client_http = httpx.Client(timeout=cfg.timeout_s, verify=self._verify_ssl)
+        client_http_async = httpx.AsyncClient(timeout=cfg.timeout_s, verify=self._verify_ssl)
 
         api = PatronusAPIClient(
             client_http_async=client_http_async,
@@ -519,6 +526,7 @@ class Experiment:
             client_http_async=client_http_async,
             timeout_s=self._timeout_s or cfg.timeout_s,
             integrations=self._integrations,
+            verify_ssl=self._verify_ssl,
         )
 
         with context._CTX_PAT.using(ctx):
