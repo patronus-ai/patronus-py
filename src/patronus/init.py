@@ -137,6 +137,7 @@ def build_context(
     client_http: Optional[httpx.Client] = None,
     client_http_async: Optional[httpx.AsyncClient] = None,
     timeout_s: int = 60,
+    verify_ssl: bool = True,
     integrations: Optional[list[typing.Any]] = None,
     **kwargs: typing.Any,
 ) -> context.PatronusContext:
@@ -172,9 +173,9 @@ def build_context(
             components for SDK operation.
     """
     if client_http is None:
-        client_http = httpx.Client(timeout=timeout_s)
+        client_http = httpx.Client(timeout=timeout_s, verify=verify_ssl)
     if client_http_async is None:
-        client_http_async = httpx.AsyncClient(timeout=timeout_s)
+        client_http_async = httpx.AsyncClient(timeout=timeout_s, verify=verify_ssl)
 
     integrations = prepare_integrations(integrations)
 
