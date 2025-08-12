@@ -6,10 +6,12 @@ import json
 import pathlib
 import re
 import typing
-from typing import Optional, Union
+from typing import Optional, Union, Any
 
 import pandas as pd
 import typing_extensions as te
+
+from patronus.utils import LogSerializer
 
 
 class Attachment(typing.TypedDict, total=False):
@@ -51,7 +53,7 @@ class Fields(typing.TypedDict, total=False):
 
 
 @dataclasses.dataclass
-class Row:
+class Row(LogSerializer):
     """
     Represents a data row encapsulating access to properties in a pandas Series.
 
@@ -133,6 +135,26 @@ class Row:
         if "tags" in self._row.index:
             return self._row.tags
         return None
+    
+    def dump_as_log(self) -> dict[str, Any]:
+        """
+        Serialize the Row into a dictionary format suitable for logging.
+        
+        Returns:
+            A dictionary containing all available row fields for logging, excluding None values.
+        """
+        data = {
+            "dataset_id": self.dataset_id,
+            "system_prompt": self.system_prompt,
+            "task_context": self.task_context,
+            "task_attachments": self.task_attachments,
+            "task_input": self.task_input,
+            "task_output": self.task_output,
+            "gold_answer": self.gold_answer,
+            "task_metadata": self.task_metadata,
+            "tags": self.tags,
+        }
+        return {k: v for k, v in data.items() if v is not None}
 
 
 @dataclasses.dataclass

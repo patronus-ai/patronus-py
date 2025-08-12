@@ -144,6 +144,15 @@ def transform_body(v: typing.Any):
         return tuple(transform_body(vv) for vv in v)
     if isinstance(v, (str, bool, int, float)):
         return v
+
+    # Try to call dump_as_log if the object has this method
+    try:
+        if hasattr(v, 'dump_as_log') and callable(getattr(v, 'dump_as_log')):
+            return transform_body(v.dump_as_log())
+    except Exception:
+        # If dump_as_log fails, continue with normal processing
+        pass
+
     if not isinstance(v, dict):
         return str(v)
 

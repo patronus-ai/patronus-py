@@ -6,8 +6,10 @@ from patronus.api import api_types
 
 import pydantic
 
+from utils import LogSerializer
 
-class TaskResult(pydantic.BaseModel):
+
+class TaskResult(pydantic.BaseModel, LogSerializer):
     """
     Represents the result of a task with optional output, metadata, and tags.
 
@@ -24,6 +26,19 @@ class TaskResult(pydantic.BaseModel):
     output: Optional[str] = None
     metadata: Optional[dict[str, typing.Any]] = None
     tags: Optional[dict[str, str]] = None
+    
+    def dump_as_log(self) -> dict[str, typing.Any]:
+        """
+        Serialize the TaskResult into a dictionary format suitable for logging.
+        
+        Returns:
+            A dictionary containing the task output, metadata, and tags.
+        """
+        return {
+            "output": self.output,
+            "metadata": self.metadata,
+            "tags": self.tags,
+        }
 
 
 MaybeEvaluationResult = typing.Union[EvaluationResult, api_types.EvaluationResult, None]

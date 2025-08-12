@@ -1,9 +1,29 @@
+from abc import ABC, abstractmethod
 from threading import Lock
 
-from typing import Optional, Callable
+from typing import Optional, Callable, Any
 import warnings
 
 NOT_GIVEN = object()
+
+
+class LogSerializer(ABC):
+    """
+    Abstract base class for objects that can serialize themselves for logging.
+    
+    Classes implementing this interface provide a method to convert their state
+    into a dictionary format suitable for OpenTelemetry logging.
+    """
+    
+    @abstractmethod
+    def dump_as_log(self) -> dict[str, Any]:
+        """
+        Serialize the object into a dictionary format suitable for logging.
+        
+        Returns:
+            A dictionary representation of the object for logging purposes.
+        """
+        pass
 
 
 def merge_tags(tags: Optional[dict], new_tags: Optional[dict], experiment_tags: Optional[dict]) -> dict:
@@ -46,3 +66,4 @@ class Once:
                 self._done = True
                 return True
         return False
+

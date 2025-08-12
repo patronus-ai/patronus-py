@@ -86,6 +86,10 @@ Task = Union[
     TaskProtocol[Union[TaskResult, str, None]],
     # Asynchronous task signature
     TaskProtocol[typing.Awaitable[Union[TaskResult, str, None]]],
+    # Regular callable (sync)
+    typing.Callable[..., Union[TaskResult, str, None]],
+    # Regular callable (async)
+    typing.Callable[..., typing.Awaitable[Union[TaskResult, str, None]]],
 ]
 """
 A function that processes each dataset row and produces output for evaluation.
