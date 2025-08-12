@@ -6,7 +6,7 @@ from patronus.api import api_types
 
 import pydantic
 
-from utils import LogSerializer
+from patronus.utils import LogSerializer
 
 
 class TaskResult(pydantic.BaseModel, LogSerializer):
