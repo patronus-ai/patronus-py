@@ -143,18 +143,7 @@ class Row(LogSerializer):
         Returns:
             A dictionary containing all available row fields for logging, excluding None values.
         """
-        data = {
-            "dataset_id": self.dataset_id,
-            "system_prompt": self.system_prompt,
-            "task_context": self.task_context,
-            "task_attachments": self.task_attachments,
-            "task_input": self.task_input,
-            "task_output": self.task_output,
-            "gold_answer": self.gold_answer,
-            "task_metadata": self.task_metadata,
-            "tags": self.tags,
-        }
-        return {k: v for k, v in data.items() if v is not None}
+        return self._row.to_dict()
 
 
 @dataclasses.dataclass

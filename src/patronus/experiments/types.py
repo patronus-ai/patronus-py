@@ -34,11 +34,7 @@ class TaskResult(pydantic.BaseModel, LogSerializer):
         Returns:
             A dictionary containing the task output, metadata, and tags.
         """
-        return {
-            "output": self.output,
-            "metadata": self.metadata,
-            "tags": self.tags,
-        }
+        return self.model_dump(mode="json")
 
 
 MaybeEvaluationResult = typing.Union[EvaluationResult, api_types.EvaluationResult, None]
