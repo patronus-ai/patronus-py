@@ -50,19 +50,7 @@ class EvaluationResult(pydantic.BaseModel, LogSerializer):
         Returns:
             A dictionary containing all evaluation result fields, excluding None values.
         """
-        data = {
-            "score": self.score,
-            "pass_": self.pass_,
-            "text_output": self.text_output,
-            "metadata": self.metadata,
-            "explanation": self.explanation,
-            "tags": self.tags,
-            "dataset_id": self.dataset_id,
-            "dataset_sample_id": self.dataset_sample_id,
-            "evaluation_duration": str(self.evaluation_duration) if self.evaluation_duration else None,
-            "explanation_duration": str(self.explanation_duration) if self.explanation_duration else None,
-        }
-        return {k: v for k, v in data.items() if v is not None}
+        return self.model_dump(mode='json')
 
     def format(self) -> str:
         """
