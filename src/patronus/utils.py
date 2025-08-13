@@ -16,7 +16,7 @@ class LogSerializer(ABC):
     """
     
     @abstractmethod
-    def dump_as_log(self) -> dict[str, Any]:
+    def dump_as_log(self) -> Any:
         """
         Serialize the object into a dictionary format suitable for logging.
         
