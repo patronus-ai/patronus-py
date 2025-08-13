@@ -3,8 +3,10 @@ import pydantic
 from typing import Any, Optional
 import yaml
 
+from patronus.utils import LogSerializer
 
-class EvaluationResult(pydantic.BaseModel):
+
+class EvaluationResult(pydantic.BaseModel, LogSerializer):
     """
     Container for evaluation outcomes including score, pass/fail status, explanations, and metadata.
 
@@ -40,6 +42,15 @@ class EvaluationResult(pydantic.BaseModel):
     dataset_sample_id: Optional[str] = None
     evaluation_duration: Optional[datetime.timedelta] = None
     explanation_duration: Optional[datetime.timedelta] = None
+
+    def dump_as_log(self) -> dict[str, Any]:
+        """
+        Serialize the EvaluationResult into a dictionary format suitable for logging.
+        
+        Returns:
+            A dictionary containing all evaluation result fields, excluding None values.
+        """
+        return self.model_dump(mode='json')
 
     def format(self) -> str:
         """

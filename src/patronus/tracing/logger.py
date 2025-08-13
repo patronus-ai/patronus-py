@@ -23,6 +23,7 @@ from opentelemetry.util.types import Attributes as OTeLAttributes
 from patronus import context
 from patronus.context.context_utils import ResourceMutex
 from patronus.tracing.attributes import Attributes, LogTypes
+from patronus.utils import LogSerializer
 
 
 @dataclasses.dataclass
@@ -138,6 +139,8 @@ def transform_body(v: typing.Any):
         return None
     if isinstance(v, MappingProxyType):
         v = dict(v)
+    if isinstance(v, LogSerializer):
+        return transform_body(v.dump_as_log())
     if isinstance(v, list):
         return [transform_body(vv) for vv in v]
     if isinstance(v, tuple):
