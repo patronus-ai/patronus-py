@@ -35,7 +35,7 @@ experiment = run_experiment(
 )
 ```
 
-Ensure you either set the `api_key` argument with either `export PATRONUS_API_KEY="my_api_key"` (recommended) or by passing the key directly as a string.
+Ensure you set the `api_key` argument with either `export PATRONUS_API_KEY="my_api_key"` (recommended) or by passing the key directly as a string.
 
 ## Creating a Simple Experiment
 
