@@ -30,9 +30,12 @@ experiment = run_experiment(
     tags={"dataset-version": "v1.0"}, # Optional: Tags for the experiment
     max_concurrency=10,               # Optional: Control parallel execution
     project_name="My Project",        # Optional: Override the global project name
-    experiment_name="Test Run"        # Optional: Name this experiment run
+    experiment_name="Test Run",       # Optional: Name this experiment run
+    api_key="my_api_key"              # Optional: Defaults to 'PATRONUS_API_KEY' environment variable
 )
 ```
+
+Ensure you either set the `api_key` argument with either `export PATRONUS_API_KEY="my_api_key"` (recommended) or by passing the key directly as a string.
 
 ## Creating a Simple Experiment
 
