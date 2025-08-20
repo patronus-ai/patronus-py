@@ -14,6 +14,7 @@ from patronus.evals import RemoteEvaluator
 init()
 
 factual_accuracy = RemoteEvaluator("judge", "factual-accuracy")
+factual_accuracy.load()
 
 # Evaluate an LLM output
 result = factual_accuracy.evaluate(
@@ -34,11 +35,13 @@ Patronus evaluators are available in both synchronous and asynchronous versions:
 ```python
 # Synchronous usage (as shown above)
 factual_accuracy = RemoteEvaluator("judge", "factual-accuracy")
+factual_accuracy.load()
 result = factual_accuracy.evaluate(...)
 
 # Asynchronous usage
 from patronus.evals import AsyncRemoteEvaluator
 
 async_factual_accuracy = AsyncRemoteEvaluator("judge", "factual-accuracy")
+await async_factual_accuracy.load()
 result = await async_factual_accuracy.evaluate(...)
 ```

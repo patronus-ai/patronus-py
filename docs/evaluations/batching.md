@@ -14,12 +14,18 @@ from patronus.evals import RemoteEvaluator
 
 init()
 
+# Initialize evaluators
+helpful_eval = RemoteEvaluator("judge", "patronus:is-helpful")
+helpful_eval.load()
+hallucination_eval = RemoteEvaluator("lynx", "patronus:hallucination")
+hallucination_eval.load()
+
 with Patronus() as client:
     # Run multiple evaluators in parallel
     results = client.evaluate(
         evaluators=[
-            RemoteEvaluator("judge", "patronus:is-helpful"),
-            RemoteEvaluator("lynx", "patronus:hallucination")
+            helpful_eval,
+            hallucination_eval
         ],
         task_input="What is quantum computing?",
         task_output="Quantum computing uses quantum bits or qubits to perform computations...",
@@ -56,12 +62,18 @@ init()
 
 
 async def evaluate_responses():
+    # Initialize async evaluators
+    async_helpful_eval = AsyncRemoteEvaluator("judge", "patronus:is-helpful")
+    await async_helpful_eval.load()
+    async_hallucination_eval = AsyncRemoteEvaluator("lynx", "patronus:hallucination")
+    await async_hallucination_eval.load()
+    
     async with AsyncPatronus() as client:
         # Run evaluations asynchronously
         results = await client.evaluate(
             evaluators=[
-                AsyncRemoteEvaluator("judge", "patronus:is-helpful"),
-                AsyncRemoteEvaluator("lynx", "patronus:hallucination")
+                async_helpful_eval,
+                async_hallucination_eval
             ],
             task_input="What is quantum computing?",
             task_output="Quantum computing uses quantum bits or qubits to perform computations...",
@@ -86,12 +98,18 @@ from patronus.evals import RemoteEvaluator
 
 init()
 
+# Initialize evaluators for background evaluation
+factual_eval = RemoteEvaluator("judge", "factual-accuracy")
+factual_eval.load()
+helpfulness_eval = RemoteEvaluator("judge", "patronus:helpfulness")
+helpfulness_eval.load()
+
 with Patronus() as client:
     # Start background evaluation
     future = client.evaluate_bg(
         evaluators=[
-            RemoteEvaluator("judge", "factual-accuracy"),
-            RemoteEvaluator("judge", "patronus:helpfulness")
+            factual_eval,
+            helpfulness_eval
         ],
         task_input="Explain how vaccines work.",
         task_output="Vaccines work by training the immune system to recognize and combat pathogens..."
@@ -158,14 +176,26 @@ from patronus.evals import RemoteEvaluator
 init()
 
 def check_content_quality(question, answer):
+    # Initialize all evaluators
+    factual_eval = RemoteEvaluator("judge", "factual-accuracy")
+    factual_eval.load()
+    helpfulness_eval = RemoteEvaluator("judge", "helpfulness")
+    helpfulness_eval.load()
+    coherence_eval = RemoteEvaluator("judge", "coherence")
+    coherence_eval.load()
+    grammar_eval = RemoteEvaluator("judge", "grammar")
+    grammar_eval.load()
+    hallucination_eval = RemoteEvaluator("lynx", "patronus:hallucination")
+    hallucination_eval.load()
+    
     with Patronus() as client:
         results = client.evaluate(
             evaluators=[
-                RemoteEvaluator("judge", "factual-accuracy"),
-                RemoteEvaluator("judge", "helpfulness"),
-                RemoteEvaluator("judge", "coherence"),
-                RemoteEvaluator("judge", "grammar"),
-                RemoteEvaluator("lynx", "patronus:hallucination")
+                factual_eval,
+                helpfulness_eval,
+                coherence_eval,
+                grammar_eval,
+                hallucination_eval
             ],
             task_input=question,
             task_output=answer

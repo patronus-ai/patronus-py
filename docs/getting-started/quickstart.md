@@ -93,6 +93,7 @@ def generate_insurance_response(query: str) -> str:
 @traced("Quickstart: detect hallucination")
 def main():
     check_hallucinates = RemoteEvaluator("lynx", "patronus:hallucination")
+    check_hallucinates.load()
 
     context = """
     To qualify for our car insurance policy, you need a way to show competence
@@ -235,9 +236,13 @@ test_data = [
     }
 ]
 
+# Initialize evaluators
+remote_eval = RemoteEvaluator("answer-relevance", "patronus:answer-relevance")
+remote_eval.load()
+
 evaluators = [
     FuncEvaluatorAdapter(fuzzy_match),
-    RemoteEvaluator("answer-relevance", "patronus:answer-relevance")
+    remote_eval
 ]
 
 # Run the experiment with OpenInference instrumentation
