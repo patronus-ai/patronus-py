@@ -21,12 +21,15 @@ class TaskResult(pydantic.BaseModel, LogSerializer):
         output: The output of the task, if any.
         metadata: Additional information or metadata associated with the task.
         tags: Key-value pairs used to tag and describe the task.
+        context: The context of the task, if any.
+
     """
 
     output: Optional[str] = None
     metadata: Optional[dict[str, typing.Any]] = None
     tags: Optional[dict[str, str]] = None
-    
+    context: Optional[str] = None
+
     def dump_as_log(self) -> dict[str, typing.Any]:
         """
         Serialize the TaskResult into a dictionary format suitable for logging.

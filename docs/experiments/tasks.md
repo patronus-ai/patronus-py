@@ -128,12 +128,16 @@ def task_result(row: Row, **kwargs) -> TaskResult:
         "model": "gpt-4",
         "temperature": "0.7"
     }
+    
+    # Generate context
+    context = "Context of the processing process"
 
     # Return a complete TaskResult
     return TaskResult(
         output=output,
         metadata=metadata,
-        tags=tags
+        tags=tags,
+        context=context,
     )
 ```
 
