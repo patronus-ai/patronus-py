@@ -10,13 +10,10 @@ A task function receives a dataset row and produces an output. The simplest task
 ```python
 def simple_task(row, **kwargs):
     # Process the input from the row
-    input_text = row.task_input
+    output = f"The output is: '{row.task_input}'"
 
-    # Generate an output (typically a score between 0 and 1)
-    quality_score = 0.85
-
-    # Return the output as a float
-    return quality_score
+    # Return the output
+    return output
 ```
 
 The framework automatically converts numeric outputs to `TaskResult` objects.
@@ -95,16 +92,6 @@ def classify_sentiment(row: Row, **kwargs) -> str:
 
 The string output represents a specific classification category, which is a common pattern in text classification tasks.
 
-### Numeric Output (Float/Int)
-
-For score-based outputs:
-
-```python
-def score_task(row: Row, **kwargs) -> float:
-    # Calculate a relevance score between 0 and 1
-    return 0.92
-```
-
 ### TaskResult Object
 
 For more control, return a [TaskResult][patronus.experiments.types.TaskResult] object:
@@ -128,12 +115,16 @@ def task_result(row: Row, **kwargs) -> TaskResult:
         "model": "gpt-4",
         "temperature": "0.7"
     }
+    
+    # Generate context
+    context = "Context of the processing process"
 
     # Return a complete TaskResult
     return TaskResult(
         output=output,
         metadata=metadata,
-        tags=tags
+        tags=tags,
+        context=context,
     )
 ```
 

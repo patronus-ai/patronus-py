@@ -11,7 +11,7 @@ from patronus.utils import LogSerializer
 
 class TaskResult(pydantic.BaseModel, LogSerializer):
     """
-    Represents the result of a task with optional output, metadata, and tags.
+    Represents the result of a task with optional output, metadata, context and tags.
 
     This class is used to encapsulate the result of a task, including optional
     fields for the output of the task, metadata related to the task, and any
@@ -21,18 +21,20 @@ class TaskResult(pydantic.BaseModel, LogSerializer):
         output: The output of the task, if any.
         metadata: Additional information or metadata associated with the task.
         tags: Key-value pairs used to tag and describe the task.
+        context: The context of the task, if any.
     """
 
     output: Optional[str] = None
     metadata: Optional[dict[str, typing.Any]] = None
     tags: Optional[dict[str, str]] = None
-    
+    context: Optional[typing.Union[list[str], str]] = None
+
     def dump_as_log(self) -> dict[str, typing.Any]:
         """
         Serialize the TaskResult into a dictionary format suitable for logging.
         
         Returns:
-            A dictionary containing the task output, metadata, and tags.
+            A dictionary containing the task output, metadata, context and tags.
         """
         return self.model_dump(mode="json")
 

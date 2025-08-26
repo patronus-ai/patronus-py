@@ -227,13 +227,16 @@ class StructuredEvaluatorAdapter(EvaluatorAdapter):
     ) -> tuple[list[typing.Any], dict[str, typing.Any]]:
         task_output = row.task_output
         task_metadata = row.task_metadata
+        task_context = row.task_context
+
         if task_result is not None:
             task_output = task_result.output
             task_metadata = task_result.metadata
+            task_context = task_result.context
 
         ev_kwargs = dict(
             system_prompt=row.system_prompt,
-            task_context=row.task_context,
+            task_context=task_context,
             task_attachments=row.task_attachments,
             task_input=row.task_input,
             task_output=task_output,
