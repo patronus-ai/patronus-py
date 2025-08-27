@@ -33,6 +33,35 @@ log = logging.getLogger("patronus.core")
 LogID = uuid.UUID
 
 
+def ensure_loading(
+    func: Optional[typing.Callable[..., typing.Any]] = None,
+):
+    """
+    Decorator that calls .load() on the decorated entity if the .load method exists.
+    This ensures that remote evaluators are properly loaded before evaluation.
+    """
+
+    if func is None:
+        return ensure_loading()(func)
+
+    @functools.wraps(func)
+    def wrapper(self, *args, **kwargs):
+        if hasattr(self, 'load') and callable(getattr(self, 'load')) and not getattr(self, '_loaded', False):
+            self.load()
+        return func(self, *args, **kwargs)
+    
+    @functools.wraps(func)
+    async def async_wrapper(self, *args, **kwargs):
+        if hasattr(self, 'load') and callable(getattr(self, 'load')) and not getattr(self, '_loaded', False):
+            await self.load()
+        return await func(self, *args, **kwargs)
+    
+    if inspect.iscoroutinefunction(func):
+        return async_wrapper
+    else:
+        return wrapper
+
+
 # EvaluationDataRecord holds evaluation log data and ID of the log.
 # Log data consists of positional arguments (args) and keyword arguments (kwargs)
 # that were passed to an evaluator.
@@ -418,8 +447,6 @@ def evaluator(
             eval_id = None
             eval_criteria = None
             if isinstance(instance, Evaluator):
-                if isinstance(instance, RemoteEvaluator):
-                    instance.load()
                 eval_id = instance.get_evaluator_id()
                 eval_criteria = instance.get_criteria()
 
@@ -565,7 +592,7 @@ class _EvaluatorMeta(abc.ABCMeta):
                 is_method=True,
                 span_name=namespace.get("_span_name"),
             )
-            namespace["evaluate"] = into_evaluator(namespace["evaluate"])
+            namespace["evaluate"] = ensure_loading(into_evaluator(namespace["evaluate"]))
         return super().__new__(mcls, name, bases, namespace, **kwargs)
 
 
