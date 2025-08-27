@@ -418,6 +418,8 @@ def evaluator(
             eval_id = None
             eval_criteria = None
             if isinstance(instance, Evaluator):
+                if isinstance(instance, RemoteEvaluator):
+                    instance.load()
                 eval_id = instance.get_evaluator_id()
                 eval_criteria = instance.get_criteria()
 
