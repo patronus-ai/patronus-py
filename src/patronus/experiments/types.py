@@ -71,7 +71,7 @@ class EvalsMap(dict):
         return item
 
 
-class _EvalParent(pydantic.BaseModel):
+class _EvalParent(pydantic.BaseModel, LogSerializer):
     """
     Represents a node in the evaluation parent-child hierarchy, tracking task results and evaluations.
 
@@ -105,6 +105,9 @@ class _EvalParent(pydantic.BaseModel):
             return self.evals[evaluator_or_name]
         return None
 
+    def dump_as_log(self) -> dict[str, typing.Any]:
+        return self.model_dump(mode="json", exclude={"parent"})
+
 
 _EvalParent.model_rebuild()
 
@@ -114,3 +117,4 @@ EvalParent = typing.Optional[_EvalParent]
 Type alias representing an optional reference to an evaluation parent,
 used to track the hierarchy of evaluations and their results
 """
+
