@@ -29,8 +29,8 @@ def retry(max_attempts=3, initial_delay=1, backoff_factor=2):
                     call_time = datetime.datetime.now()
                     try:
                         return await func(*args, **kwargs)
-                    # except UnrecoverableAPIError as e:
-                    #     raise RetryError(attempts, max_attempts, e, traceback.format_exc())
+                    except UnrecoverableAPIError as e:
+                        raise RetryError(attempts, max_attempts, e, traceback.format_exc())
                     except RPMLimitError as err:
                         last_error = err
                         stack_trace = traceback.format_exc()
@@ -89,7 +89,6 @@ def retry(max_attempts=3, initial_delay=1, backoff_factor=2):
                             time.sleep(wait_for_s)
                     except Exception as err:
                         log.debug(f"api_retry: Attempt {attempts} out of {max_attempts}: {err}")
-                        print(f"api_retry: Attempt {attempts} out of {max_attempts}: {err}")
                         last_error = err
                         stack_trace = traceback.format_exc()
                         if attempts < max_attempts:
