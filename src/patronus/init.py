@@ -87,7 +87,7 @@ def init(
     api_url = api_url and api_url.rstrip("/")
     otel_endpoint = otel_endpoint and otel_endpoint.rstrip("/")
 
-    if api_url != config.DEFAULT_API_URL and (otel_endpoint is None or otel_endpoint == config.DEFAULT_OTEL_ENDPOINT):
+    if (api_url and api_url != config.DEFAULT_API_URL) and (otel_endpoint is None or otel_endpoint == config.DEFAULT_OTEL_ENDPOINT):
         raise ValueError(
             "'api_url' is set to non-default value, "
             "but 'otel_endpoint' is a default. Change 'otel_endpoint' to point to the same environment as 'api_url'"

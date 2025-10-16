@@ -681,6 +681,9 @@ class AsyncStructuredEvaluator(AsyncEvaluator):
 class RemoteEvaluatorMixin:
     _disable_export = True
     _loaded = False
+    retry_max_attempts = 3
+    retry_initial_delay = 1
+    retry_backoff_factor = 2
 
     def __init__(
         self,
@@ -694,6 +697,9 @@ class RemoteEvaluatorMixin:
         max_attempts: int = 3,
         api_: Optional[PatronusAPIClient] = None,
         weight: Optional[Union[str, float]] = None,
+        retry_max_attempts: Optional[int] = 3,
+        retry_initial_delay: Optional[int] = 1,
+        retry_backoff_factor: Optional[int] = 2,
     ):
         """Initialize a remote evaluator.
 
@@ -714,6 +720,9 @@ class RemoteEvaluatorMixin:
                 importance of evaluators. Must be a valid decimal number (string
                 or float). Weights are stored as experiment metadata and do not
                 affect standalone evaluator usage.
+            retry_max_attempts: Maximum number of retry attempts.
+            retry_initial_delay: Initial delay before next retry.
+            retry_backoff_factor: Delay factor between retry attempts.
         """
         self.evaluator_id_or_alias = evaluator_id_or_alias
         self.evaluator_id = None
@@ -728,6 +737,9 @@ class RemoteEvaluatorMixin:
         self.weight = weight
         self._load_lock = threading.Lock()
         self._async_load_lock = asyncio.Lock()
+        self.retry_max_attempts = retry_max_attempts
+        self.retry_initial_delay = retry_initial_delay
+        self.retry_backoff_factor = retry_backoff_factor
 
     def get_evaluator_id(self) -> str:
         if not self._loaded:
@@ -816,7 +828,11 @@ class RemoteEvaluator(RemoteEvaluatorMixin, StructuredEvaluator):
         if sid := attrs["dataset_sample_id"]:
             kws["dataset_sample_id"] = sid
 
-        resp = retry()(self._evaluate)(log_id=log_id, **kws)
+        resp = retry(
+            self.retry_max_attempts,
+            self.retry_initial_delay,
+            self.retry_backoff_factor,
+        )(self._evaluate)(log_id=log_id, **kws)
         return self._translate_response(resp)
 
     def _evaluate(
@@ -950,7 +966,11 @@ class AsyncRemoteEvaluator(RemoteEvaluatorMixin, AsyncStructuredEvaluator):
         if sid := attrs["dataset_sample_id"]:
             kws["dataset_sample_id"] = sid
 
-        resp = await retry()(self._evaluate)(log_id=log_id, **kws)
+        resp = await retry(
+            self.retry_max_attempts,
+            self.retry_initial_delay,
+            self.retry_backoff_factor,
+        )(self._evaluate)(log_id=log_id, **kws)
         return self._translate_response(resp)
 
     async def _evaluate(
