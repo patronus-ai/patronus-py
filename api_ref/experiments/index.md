@@ -18,7 +18,6 @@ All concrete adapter implementations must inherit from this class and implement 
 
 ```python
 EvaluatorAdapter(evaluator: Evaluator)
-
 ```
 
 Bases: `BaseEvaluatorAdapter`
@@ -29,7 +28,9 @@ This adapter enables the use of evaluator classes that implement either the Eval
 
 Attributes:
 
-| Name | Type | Description | | --- | --- | --- | | `evaluator` | `Union[Evaluator, AsyncEvaluator]` | The evaluator instance to adapt. |
+| Name        | Type                               | Description                      |
+| ----------- | ---------------------------------- | -------------------------------- |
+| `evaluator` | `Union[Evaluator, AsyncEvaluator]` | The evaluator instance to adapt. |
 
 **Examples:**
 
@@ -81,7 +82,6 @@ run_experiment(
     dataset=[{"task_output": "string        ", "gold_answer": "string"}],
     evaluators=[MatchAdapter(exact_match), MatchAdapter(fuzzy_match)],
 )
-
 ```
 
 Source code in `src/patronus/experiments/adapters.py`
@@ -91,30 +91,31 @@ def __init__(self, evaluator: evals.Evaluator):
     if not isinstance(evaluator, evals.Evaluator):
         raise TypeError(f"{evaluator} is not {evals.Evaluator.__name__}.")
     self.evaluator = evaluator
-
 ```
 
 ##### transform
 
 ```python
-transform(
-    row: Row,
-    task_result: Optional[TaskResult],
-    parent: EvalParent,
-    **kwargs: Any,
-) -> tuple[list[typing.Any], dict[str, typing.Any]]
-
+transform(row: Row, task_result: Optional[TaskResult], parent: EvalParent, **kwargs: Any) -> tuple[list[typing.Any], dict[str, typing.Any]]
 ```
 
 Transform experiment framework arguments to evaluation method arguments.
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `row` | `Row` | The data row being evaluated. | *required* | | `task_result` | `Optional[TaskResult]` | The result of the task execution, if available. | *required* | | `parent` | `EvalParent` | The parent evaluation context. | *required* | | `**kwargs` | `Any` | Additional keyword arguments from the experiment. | `{}` |
+| Name          | Type                   | Description                                       | Default    |
+| ------------- | ---------------------- | ------------------------------------------------- | ---------- |
+| `row`         | `Row`                  | The data row being evaluated.                     | *required* |
+| `task_result` | `Optional[TaskResult]` | The result of the task execution, if available.   | *required* |
+| `parent`      | `EvalParent`           | The parent evaluation context.                    | *required* |
+| `**kwargs`    | `Any`                  | Additional keyword arguments from the experiment. | `{}`       |
 
 Returns:
 
-| Type | Description | | --- | --- | | `list[Any]` | A list of positional arguments to pass to the evaluator function. | | `dict[str, Any]` | A dictionary of keyword arguments to pass to the evaluator function. |
+| Type             | Description                                                          |
+| ---------------- | -------------------------------------------------------------------- |
+| `list[Any]`      | A list of positional arguments to pass to the evaluator function.    |
+| `dict[str, Any]` | A dictionary of keyword arguments to pass to the evaluator function. |
 
 Source code in `src/patronus/experiments/adapters.py`
 
@@ -144,19 +145,12 @@ def transform(
         [],
         {"row": row, "task_result": task_result, "parent": parent, **kwargs},
     )
-
 ```
 
 ##### evaluate
 
 ```python
-evaluate(
-    row: Row,
-    task_result: Optional[TaskResult],
-    parent: EvalParent,
-    **kwargs: Any,
-) -> EvaluationResult
-
+evaluate(row: Row, task_result: Optional[TaskResult], parent: EvalParent, **kwargs: Any) -> EvaluationResult
 ```
 
 Evaluate the given row and task result using the adapted evaluator function.
@@ -165,11 +159,18 @@ This method implements the BaseEvaluatorAdapter.evaluate() protocol.
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `row` | `Row` | The data row being evaluated. | *required* | | `task_result` | `Optional[TaskResult]` | The result of the task execution, if available. | *required* | | `parent` | `EvalParent` | The parent evaluation context. | *required* | | `**kwargs` | `Any` | Additional keyword arguments from the experiment. | `{}` |
+| Name          | Type                   | Description                                       | Default    |
+| ------------- | ---------------------- | ------------------------------------------------- | ---------- |
+| `row`         | `Row`                  | The data row being evaluated.                     | *required* |
+| `task_result` | `Optional[TaskResult]` | The result of the task execution, if available.   | *required* |
+| `parent`      | `EvalParent`           | The parent evaluation context.                    | *required* |
+| `**kwargs`    | `Any`                  | Additional keyword arguments from the experiment. | `{}`       |
 
 Returns:
 
-| Type | Description | | --- | --- | | `EvaluationResult` | An EvaluationResult containing the evaluation outcome. |
+| Type               | Description                                            |
+| ------------------ | ------------------------------------------------------ |
+| `EvaluationResult` | An EvaluationResult containing the evaluation outcome. |
 
 Source code in `src/patronus/experiments/adapters.py`
 
@@ -197,18 +198,12 @@ async def evaluate(
     """
     ev_args, ev_kwargs = self.transform(row, task_result, parent, **kwargs)
     return await self._evaluate(*ev_args, **ev_kwargs)
-
 ```
 
 #### StructuredEvaluatorAdapter
 
 ```python
-StructuredEvaluatorAdapter(
-    evaluator: Union[
-        StructuredEvaluator, AsyncStructuredEvaluator
-    ],
-)
-
+StructuredEvaluatorAdapter(evaluator: Union[StructuredEvaluator, AsyncStructuredEvaluator])
 ```
 
 Bases: `EvaluatorAdapter`
@@ -228,17 +223,12 @@ def __init__(
             f"{evals.AsyncStructuredEvaluator.__name__} nor {evals.StructuredEvaluator.__name__}."
         )
     super().__init__(evaluator)
-
 ```
 
 #### FuncEvaluatorAdapter
 
 ```python
-FuncEvaluatorAdapter(
-    fn: Callable[..., Any],
-    weight: Optional[Union[str, float]] = None,
-)
-
+FuncEvaluatorAdapter(fn: Callable[..., Any], weight: Optional[Union[str, float]] = None)
 ```
 
 Bases: `BaseEvaluatorAdapter`
@@ -249,7 +239,9 @@ This adapter serves as a bridge between function-based evaluators decorated with
 
 Attributes:
 
-| Name | Type | Description | | --- | --- | --- | | `fn` | `Callable` | The evaluator function to be adapted. |
+| Name | Type       | Description                           |
+| ---- | ---------- | ------------------------------------- |
+| `fn` | `Callable` | The evaluator function to be adapted. |
 
 Notes
 
@@ -342,30 +334,31 @@ def __init__(self, fn: typing.Callable[..., typing.Any], weight: Optional[Union[
 
     self.fn = fn
     self._weight = weight
-
 ````
 
 ##### transform
 
 ```python
-transform(
-    row: Row,
-    task_result: Optional[TaskResult],
-    parent: EvalParent,
-    **kwargs: Any,
-) -> tuple[list[typing.Any], dict[str, typing.Any]]
-
+transform(row: Row, task_result: Optional[TaskResult], parent: EvalParent, **kwargs: Any) -> tuple[list[typing.Any], dict[str, typing.Any]]
 ```
 
 Transform experiment framework parameters to evaluator function parameters.
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `row` | `Row` | The data row being evaluated. | *required* | | `task_result` | `Optional[TaskResult]` | The result of the task execution, if available. | *required* | | `parent` | `EvalParent` | The parent evaluation context. | *required* | | `**kwargs` | `Any` | Additional keyword arguments from the experiment. | `{}` |
+| Name          | Type                   | Description                                       | Default    |
+| ------------- | ---------------------- | ------------------------------------------------- | ---------- |
+| `row`         | `Row`                  | The data row being evaluated.                     | *required* |
+| `task_result` | `Optional[TaskResult]` | The result of the task execution, if available.   | *required* |
+| `parent`      | `EvalParent`           | The parent evaluation context.                    | *required* |
+| `**kwargs`    | `Any`                  | Additional keyword arguments from the experiment. | `{}`       |
 
 Returns:
 
-| Type | Description | | --- | --- | | `list[Any]` | A list of positional arguments to pass to the evaluator function. | | `dict[str, Any]` | A dictionary of keyword arguments to pass to the evaluator function. |
+| Type             | Description                                                          |
+| ---------------- | -------------------------------------------------------------------- |
+| `list[Any]`      | A list of positional arguments to pass to the evaluator function.    |
+| `dict[str, Any]` | A dictionary of keyword arguments to pass to the evaluator function. |
 
 Source code in `src/patronus/experiments/adapters.py`
 
@@ -395,19 +388,12 @@ def transform(
         [],
         {"row": row, "task_result": task_result, "parent": parent, **kwargs},
     )
-
 ```
 
 ##### evaluate
 
 ```python
-evaluate(
-    row: Row,
-    task_result: Optional[TaskResult],
-    parent: EvalParent,
-    **kwargs: Any,
-) -> EvaluationResult
-
+evaluate(row: Row, task_result: Optional[TaskResult], parent: EvalParent, **kwargs: Any) -> EvaluationResult
 ```
 
 Evaluate the given row and task result using the adapted evaluator function.
@@ -416,11 +402,18 @@ This method implements the BaseEvaluatorAdapter.evaluate() protocol.
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `row` | `Row` | The data row being evaluated. | *required* | | `task_result` | `Optional[TaskResult]` | The result of the task execution, if available. | *required* | | `parent` | `EvalParent` | The parent evaluation context. | *required* | | `**kwargs` | `Any` | Additional keyword arguments from the experiment. | `{}` |
+| Name          | Type                   | Description                                       | Default    |
+| ------------- | ---------------------- | ------------------------------------------------- | ---------- |
+| `row`         | `Row`                  | The data row being evaluated.                     | *required* |
+| `task_result` | `Optional[TaskResult]` | The result of the task execution, if available.   | *required* |
+| `parent`      | `EvalParent`           | The parent evaluation context.                    | *required* |
+| `**kwargs`    | `Any`                  | Additional keyword arguments from the experiment. | `{}`       |
 
 Returns:
 
-| Type | Description | | --- | --- | | `EvaluationResult` | An EvaluationResult containing the evaluation outcome. |
+| Type               | Description                                            |
+| ------------------ | ------------------------------------------------------ |
+| `EvaluationResult` | An EvaluationResult containing the evaluation outcome. |
 
 Source code in `src/patronus/experiments/adapters.py`
 
@@ -448,7 +441,6 @@ async def evaluate(
     """
     ev_args, ev_kwargs = self.transform(row, task_result, parent, **kwargs)
     return await self._evaluate(*ev_args, **ev_kwargs)
-
 ```
 
 ### experiment
@@ -457,7 +449,6 @@ async def evaluate(
 
 ```python
 Tags = dict[str, str]
-
 ```
 
 Tags are key-value pairs applied to experiments, task results and evaluation results.
@@ -465,11 +456,7 @@ Tags are key-value pairs applied to experiments, task results and evaluation res
 #### Task
 
 ```python
-Task = Union[
-    TaskProtocol[Union[TaskResult, str, None]],
-    TaskProtocol[Awaitable[Union[TaskResult, str, None]]],
-]
-
+Task = Union[TaskProtocol[Union[TaskResult, str, None]], TaskProtocol[Awaitable[Union[TaskResult, str, None]]]]
 ```
 
 A function that processes each dataset row and produces output for evaluation.
@@ -477,16 +464,7 @@ A function that processes each dataset row and produces output for evaluation.
 #### ExperimentDataset
 
 ```python
-ExperimentDataset = Union[
-    Dataset,
-    DatasetLoader,
-    list[dict[str, Any]],
-    tuple[dict[str, Any], ...],
-    DataFrame,
-    Awaitable,
-    Callable[[], Awaitable],
-]
-
+ExperimentDataset = Union[Dataset, DatasetLoader, list[dict[str, Any]], tuple[dict[str, Any], ...], DataFrame, Awaitable, Callable[[], Awaitable]]
 ```
 
 Any object that would "resolve" into Dataset.
@@ -503,18 +481,23 @@ Task is a function that processes each dataset row and produces output for evalu
 
 ```python
 __call__(*, row: Row, parent: EvalParent, tags: Tags) -> T
-
 ```
 
 Processes a dataset row, using the provided context to produce task output.
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `row` | `Row` | The dataset row to process. | *required* | | `parent` | `EvalParent` | Reference to the parent task's output and evaluation results. | *required* | | `tags` | `Tags` | Key-value pairs. | *required* |
+| Name     | Type         | Description                                                   | Default    |
+| -------- | ------------ | ------------------------------------------------------------- | ---------- |
+| `row`    | `Row`        | The dataset row to process.                                   | *required* |
+| `parent` | `EvalParent` | Reference to the parent task's output and evaluation results. | *required* |
+| `tags`   | `Tags`       | Key-value pairs.                                              | *required* |
 
 Returns:
 
-| Type | Description | | --- | --- | | `T` | Task output of type T or None to skip the row processing. |
+| Type | Description                                               |
+| ---- | --------------------------------------------------------- |
+| `T`  | Task output of type T or None to skip the row processing. |
 
 Example
 
@@ -532,7 +515,6 @@ def simple_task(row: datasets.Row, parent: EvalParent, tags: Tags) -> TaskResult
         metadata={"processing_time_ms": 42},
         tags={"model": "example-model"}
     )
-
 ```
 
 Source code in `src/patronus/experiments/experiment.py`
@@ -567,7 +549,6 @@ def __call__(self, *, row: datasets.Row, parent: EvalParent, tags: Tags) -> T:
             )
         ```
     """
-
 ````
 
 #### ChainLink
@@ -580,33 +561,15 @@ Each ChainLink contains an optional task function that processes dataset rows an
 
 Attributes:
 
-| Name | Type | Description | | --- | --- | --- | | `task` | `Optional[Task]` | Function that processes a dataset row and produces output. | | `evaluators` | `list[AdaptableEvaluators]` | List of evaluators to assess the task's output. |
+| Name         | Type                        | Description                                                |
+| ------------ | --------------------------- | ---------------------------------------------------------- |
+| `task`       | `Optional[Task]`            | Function that processes a dataset row and produces output. |
+| `evaluators` | `list[AdaptableEvaluators]` | List of evaluators to assess the task's output.            |
 
 #### Experiment
 
 ```python
-Experiment(
-    *,
-    dataset: Any,
-    task: Optional[Task] = None,
-    evaluators: Optional[list[AdaptableEvaluators]] = None,
-    chain: Optional[list[ChainLink]] = None,
-    tags: Optional[dict[str, str]] = None,
-    metadata: Optional[dict[str, Any]] = None,
-    max_concurrency: int = 10,
-    project_name: Optional[str] = None,
-    experiment_name: Optional[str] = None,
-    service: Optional[str] = None,
-    api_key: Optional[str] = None,
-    api_url: Optional[str] = None,
-    otel_endpoint: Optional[str] = None,
-    otel_exporter_otlp_protocol: Optional[str] = None,
-    ui_url: Optional[str] = None,
-    timeout_s: Optional[int] = None,
-    integrations: Optional[list[Any]] = None,
-    **kwargs,
-)
-
+Experiment(*, dataset: Any, task: Optional[Task] = None, evaluators: Optional[list[AdaptableEvaluators]] = None, chain: Optional[list[ChainLink]] = None, tags: Optional[dict[str, str]] = None, metadata: Optional[dict[str, Any]] = None, max_concurrency: int = 10, project_name: Optional[str] = None, experiment_name: Optional[str] = None, service: Optional[str] = None, api_key: Optional[str] = None, api_url: Optional[str] = None, otel_endpoint: Optional[str] = None, otel_exporter_otlp_protocol: Optional[str] = None, ui_url: Optional[str] = None, timeout_s: Optional[int] = None, integrations: Optional[list[Any]] = None, verify_ssl: bool = True, **kwargs)
 ```
 
 Manages evaluation experiments across datasets using tasks and evaluators.
@@ -638,6 +601,7 @@ def __init__(
     ui_url: Optional[str] = None,
     timeout_s: Optional[int] = None,
     integrations: Optional[list[typing.Any]] = None,
+    verify_ssl: bool = True,
     **kwargs,
 ):
     if chain and evaluators:
@@ -663,6 +627,7 @@ def __init__(
     self.metadata = metadata
 
     self.max_concurrency = max_concurrency
+    self._verify_ssl = verify_ssl
 
     self._service = service
     self._api_key = api_key
@@ -677,33 +642,12 @@ def __init__(
     self.reporter = Reporter()
 
     self._integrations = integrations
-
 ```
 
 ##### create
 
 ```python
-create(
-    dataset: ExperimentDataset,
-    task: Optional[Task] = None,
-    evaluators: Optional[list[AdaptableEvaluators]] = None,
-    chain: Optional[list[ChainLink]] = None,
-    tags: Optional[Tags] = None,
-    metadata: Optional[dict[str, Any]] = None,
-    max_concurrency: int = 10,
-    project_name: Optional[str] = None,
-    experiment_name: Optional[str] = None,
-    service: Optional[str] = None,
-    api_key: Optional[str] = None,
-    api_url: Optional[str] = None,
-    otel_endpoint: Optional[str] = None,
-    otel_exporter_otlp_protocol: Optional[str] = None,
-    ui_url: Optional[str] = None,
-    timeout_s: Optional[int] = None,
-    integrations: Optional[list[Any]] = None,
-    **kwargs: Any,
-) -> te.Self
-
+create(dataset: ExperimentDataset, task: Optional[Task] = None, evaluators: Optional[list[AdaptableEvaluators]] = None, chain: Optional[list[ChainLink]] = None, tags: Optional[Tags] = None, metadata: Optional[dict[str, Any]] = None, max_concurrency: int = 10, project_name: Optional[str] = None, experiment_name: Optional[str] = None, service: Optional[str] = None, api_key: Optional[str] = None, api_url: Optional[str] = None, otel_endpoint: Optional[str] = None, otel_exporter_otlp_protocol: Optional[str] = None, ui_url: Optional[str] = None, timeout_s: Optional[int] = None, integrations: Optional[list[Any]] = None, verify_ssl: bool = True, **kwargs: Any) -> te.Self
 ```
 
 Creates an instance of the class asynchronously with the specified parameters while performing necessary preparations. This method initializes various attributes including dataset, task, evaluators, chain, and additional configurations for managing concurrency, project details, service information, API keys, timeout settings, and integrations.
@@ -712,11 +656,32 @@ Use run_experiment for more convenient usage.
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `dataset` | `ExperimentDataset` | The dataset to run evaluations against. | *required* | | `task` | `Optional[Task]` | A function that processes each dataset row and produces output for evaluation. Mutually exclusive with the chain parameter. | `None` | | `evaluators` | `Optional[list[AdaptableEvaluators]]` | A list of evaluators to assess the task output. Mutually exclusive with the chain parameter. | `None` | | `chain` | `Optional[list[ChainLink]]` | A list of processing stages, each containing a task and associated evaluators. Use this for multi-stage evaluation pipelines. | `None` | | `tags` | `Optional[Tags]` | Key-value pairs. All evaluations created by the experiment will contain these tags. | `None` | | `metadata` | `Optional[dict[str, Any]]` | Arbitrary dict. Metadata associated with the experiment. | `None` | | `max_concurrency` | `int` | Maximum number of concurrent task and evaluation operations. | `10` | | `project_name` | `Optional[str]` | Name of the project to create or use. Falls back to configuration or environment variables if not provided. | `None` | | `experiment_name` | `Optional[str]` | Custom name for this experiment run. A timestamp will be appended. | `None` | | `service` | `Optional[str]` | OpenTelemetry service name for tracing. Falls back to configuration or environment variables if not provided. | `None` | | `api_key` | `Optional[str]` | API key for Patronus services. Falls back to configuration or environment variables if not provided. | `None` | | `api_url` | `Optional[str]` | URL for the Patronus API. Falls back to configuration or environment variables if not provided. | `None` | | `otel_endpoint` | `Optional[str]` | OpenTelemetry collector endpoint. Falls back to configuration or environment variables if not provided. | `None` | | `otel_exporter_otlp_protocol` | `Optional[str]` | OpenTelemetry exporter protocol (grpc or http/protobuf). Falls back to configuration or environment variables if not provided. | `None` | | `ui_url` | `Optional[str]` | URL for the Patronus UI. Falls back to configuration or environment variables if not provided. | `None` | | `timeout_s` | `Optional[int]` | Timeout in seconds for API operations. Falls back to configuration or environment variables if not provided. | `None` | | `integrations` | `Optional[list[Any]]` | A list of OpenTelemetry instrumentors for additional tracing capabilities. | `None` | | `**kwargs` | `Any` | Additional keyword arguments passed to the experiment. | `{}` |
+| Name                          | Type                                  | Description                                                                                                                    | Default    |
+| ----------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ---------- |
+| `dataset`                     | `ExperimentDataset`                   | The dataset to run evaluations against.                                                                                        | *required* |
+| `task`                        | `Optional[Task]`                      | A function that processes each dataset row and produces output for evaluation. Mutually exclusive with the chain parameter.    | `None`     |
+| `evaluators`                  | `Optional[list[AdaptableEvaluators]]` | A list of evaluators to assess the task output. Mutually exclusive with the chain parameter.                                   | `None`     |
+| `chain`                       | `Optional[list[ChainLink]]`           | A list of processing stages, each containing a task and associated evaluators. Use this for multi-stage evaluation pipelines.  | `None`     |
+| `tags`                        | `Optional[Tags]`                      | Key-value pairs. All evaluations created by the experiment will contain these tags.                                            | `None`     |
+| `metadata`                    | `Optional[dict[str, Any]]`            | Arbitrary dict. Metadata associated with the experiment.                                                                       | `None`     |
+| `max_concurrency`             | `int`                                 | Maximum number of concurrent task and evaluation operations.                                                                   | `10`       |
+| `project_name`                | `Optional[str]`                       | Name of the project to create or use. Falls back to configuration or environment variables if not provided.                    | `None`     |
+| `experiment_name`             | `Optional[str]`                       | Custom name for this experiment run. A timestamp will be appended.                                                             | `None`     |
+| `service`                     | `Optional[str]`                       | OpenTelemetry service name for tracing. Falls back to configuration or environment variables if not provided.                  | `None`     |
+| `api_key`                     | `Optional[str]`                       | API key for Patronus services. Falls back to configuration or environment variables if not provided.                           | `None`     |
+| `api_url`                     | `Optional[str]`                       | URL for the Patronus API. Falls back to configuration or environment variables if not provided.                                | `None`     |
+| `otel_endpoint`               | `Optional[str]`                       | OpenTelemetry collector endpoint. Falls back to configuration or environment variables if not provided.                        | `None`     |
+| `otel_exporter_otlp_protocol` | `Optional[str]`                       | OpenTelemetry exporter protocol (grpc or http/protobuf). Falls back to configuration or environment variables if not provided. | `None`     |
+| `ui_url`                      | `Optional[str]`                       | URL for the Patronus UI. Falls back to configuration or environment variables if not provided.                                 | `None`     |
+| `timeout_s`                   | `Optional[int]`                       | Timeout in seconds for API operations. Falls back to configuration or environment variables if not provided.                   | `None`     |
+| `integrations`                | `Optional[list[Any]]`                 | A list of OpenTelemetry instrumentors for additional tracing capabilities.                                                     | `None`     |
+| `**kwargs`                    | `Any`                                 | Additional keyword arguments passed to the experiment.                                                                         | `{}`       |
 
 Returns:
 
-| Name | Type | Description | | --- | --- | --- | | `Experiment` | `Self` | ... |
+| Name         | Type   | Description |
+| ------------ | ------ | ----------- |
+| `Experiment` | `Self` | ...         |
 
 Source code in `src/patronus/experiments/experiment.py`
 
@@ -741,6 +706,7 @@ async def create(
     ui_url: Optional[str] = None,
     timeout_s: Optional[int] = None,
     integrations: Optional[list[typing.Any]] = None,
+    verify_ssl: bool = True,
     **kwargs: typing.Any,
 ) -> te.Self:
     """
@@ -806,19 +772,18 @@ async def create(
         ui_url=ui_url,
         timeout_s=timeout_s,
         integrations=integrations,
+        verify_ssl=verify_ssl,
         **kwargs,
     )
     ex._ctx = await ex._prepare()
 
     return ex
-
 ```
 
 ##### run
 
 ```python
 run() -> te.Self
-
 ```
 
 Executes the experiment by processing all dataset items.
@@ -827,7 +792,9 @@ Runs the experiment's task chain on each dataset row, applying evaluators to the
 
 Returns:
 
-| Type | Description | | --- | --- | | `Self` | The experiment instance. |
+| Type   | Description              |
+| ------ | ------------------------ |
+| `Self` | The experiment instance. |
 
 Source code in `src/patronus/experiments/experiment.py`
 
@@ -861,14 +828,12 @@ async def run(self) -> te.Self:
     await asyncio.to_thread(self._ctx.tracer_provider.force_flush)
 
     return self
-
 ```
 
 ##### to_dataframe
 
 ```python
 to_dataframe() -> pd.DataFrame
-
 ```
 
 Converts experiment results to a pandas DataFrame.
@@ -877,7 +842,9 @@ Creates a tabular representation of all evaluation results with dataset identifi
 
 Returns:
 
-| Type | Description | | --- | --- | | `DataFrame` | A pandas DataFrame containing all experiment results. |
+| Type        | Description                                           |
+| ----------- | ----------------------------------------------------- |
+| `DataFrame` | A pandas DataFrame containing all experiment results. |
 
 Source code in `src/patronus/experiments/experiment.py`
 
@@ -895,16 +862,12 @@ def to_dataframe(self) -> pd.DataFrame:
     if self._finished is not True:
         raise RuntimeError("Experiment has to be in finished state")
     return self.reporter.to_dataframe()
-
 ```
 
 ##### to_csv
 
 ```python
-to_csv(
-    path_or_buf: Union[str, Path, IO[AnyStr]], **kwargs: Any
-) -> Optional[str]
-
+to_csv(path_or_buf: Union[str, Path, IO[AnyStr]], **kwargs: Any) -> Optional[str]
 ```
 
 Saves experiment results to a CSV file.
@@ -913,11 +876,16 @@ Converts experiment results to a DataFrame and saves them as a CSV file.
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `path_or_buf` | `Union[str, Path, IO[AnyStr]]` | String path or file-like object where the CSV will be saved. | *required* | | `**kwargs` | `Any` | Additional arguments passed to pandas.DataFrame.to_csv(). | `{}` |
+| Name          | Type                           | Description                                                  | Default    |
+| ------------- | ------------------------------ | ------------------------------------------------------------ | ---------- |
+| `path_or_buf` | `Union[str, Path, IO[AnyStr]]` | String path or file-like object where the CSV will be saved. | *required* |
+| `**kwargs`    | `Any`                          | Additional arguments passed to pandas.DataFrame.to_csv().    | `{}`       |
 
 Returns:
 
-| Type | Description | | --- | --- | | `Optional[str]` | String path if a path was specified and return_path is True, otherwise None. |
+| Type            | Description                                                                  |
+| --------------- | ---------------------------------------------------------------------------- |
+| `Optional[str]` | String path if a path was specified and return_path is True, otherwise None. |
 
 Source code in `src/patronus/experiments/experiment.py`
 
@@ -939,32 +907,12 @@ def to_csv(
 
     """
     return self.to_dataframe().to_csv(path_or_buf, **kwargs)
-
 ```
 
 #### run_experiment
 
 ```python
-run_experiment(
-    dataset: ExperimentDataset,
-    task: Optional[Task] = None,
-    evaluators: Optional[list[AdaptableEvaluators]] = None,
-    chain: Optional[list[ChainLink]] = None,
-    tags: Optional[Tags] = None,
-    max_concurrency: int = 10,
-    project_name: Optional[str] = None,
-    experiment_name: Optional[str] = None,
-    service: Optional[str] = None,
-    api_key: Optional[str] = None,
-    api_url: Optional[str] = None,
-    otel_endpoint: Optional[str] = None,
-    otel_exporter_otlp_protocol: Optional[str] = None,
-    ui_url: Optional[str] = None,
-    timeout_s: Optional[int] = None,
-    integrations: Optional[list[Any]] = None,
-    **kwargs,
-) -> Union[Experiment, typing.Awaitable[Experiment]]
-
+run_experiment(dataset: ExperimentDataset, task: Optional[Task] = None, evaluators: Optional[list[AdaptableEvaluators]] = None, chain: Optional[list[ChainLink]] = None, tags: Optional[Tags] = None, max_concurrency: int = 10, project_name: Optional[str] = None, experiment_name: Optional[str] = None, service: Optional[str] = None, api_key: Optional[str] = None, api_url: Optional[str] = None, otel_endpoint: Optional[str] = None, otel_exporter_otlp_protocol: Optional[str] = None, ui_url: Optional[str] = None, timeout_s: Optional[int] = None, integrations: Optional[list[Any]] = None, verify_ssl: bool = True, **kwargs) -> Union[Experiment, typing.Awaitable[Experiment]]
 ```
 
 Create and run an experiment.
@@ -981,7 +929,6 @@ Synchronous execution:
 ```python
 experiment = run_experiment(dataset, task=some_task)
 # Blocks until the experiment finishes.
-
 ```
 
 Asynchronous execution (e.g., in a Jupyter Notebook):
@@ -989,7 +936,6 @@ Asynchronous execution (e.g., in a Jupyter Notebook):
 ```python
 experiment = await run_experiment(dataset, task=some_task)
 # Must be awaited within an async function or event loop.
-
 ```
 
 **Parameters:**
@@ -998,7 +944,10 @@ See Experiment.create for list of arguments.
 
 Returns:
 
-| Name | Type | Description | | --- | --- | --- | | `Experiment` | `Experiment` | In a synchronous context: the completed Experiment object. | | `Experiment` | `Awaitable[Experiment]` | In an asynchronous context: an awaitable that resolves to the Experiment object. |
+| Name         | Type                    | Description                                                                      |
+| ------------ | ----------------------- | -------------------------------------------------------------------------------- |
+| `Experiment` | `Experiment`            | In a synchronous context: the completed Experiment object.                       |
+| `Experiment` | `Awaitable[Experiment]` | In an asynchronous context: an awaitable that resolves to the Experiment object. |
 
 Notes
 
@@ -1007,7 +956,6 @@ For manual control of the event loop, you can create and run the experiment as f
 ```python
 experiment = await Experiment.create(...)
 await experiment.run()
-
 ```
 
 Source code in `src/patronus/experiments/experiment.py`
@@ -1030,6 +978,7 @@ def run_experiment(
     ui_url: Optional[str] = None,
     timeout_s: Optional[int] = None,
     integrations: Optional[list[typing.Any]] = None,
+    verify_ssl: bool = True,
     **kwargs,
 ) -> Union["Experiment", typing.Awaitable["Experiment"]]:
     """
@@ -1097,12 +1046,12 @@ def run_experiment(
             ui_url=ui_url,
             timeout_s=timeout_s,
             integrations=integrations,
+            verify_ssl=verify_ssl,
             **kwargs,
         )
         return await ex.run()
 
     return run_until_complete(_run_experiment())
-
 ````
 
 ### types
@@ -1111,22 +1060,53 @@ def run_experiment(
 
 ```python
 EvalParent = Optional[_EvalParent]
-
 ```
 
 Type alias representing an optional reference to an evaluation parent, used to track the hierarchy of evaluations and their results
 
 #### TaskResult
 
-Bases: `BaseModel`
+Bases: `BaseModel`, `LogSerializer`
 
-Represents the result of a task with optional output, metadata, and tags.
+Represents the result of a task with optional output, metadata, context and tags.
 
 This class is used to encapsulate the result of a task, including optional fields for the output of the task, metadata related to the task, and any tags that can provide additional information or context about the task.
 
 Attributes:
 
-| Name | Type | Description | | --- | --- | --- | | `output` | `Optional[str]` | The output of the task, if any. | | `metadata` | `Optional[dict[str, Any]]` | Additional information or metadata associated with the task. | | `tags` | `Optional[dict[str, str]]` | Key-value pairs used to tag and describe the task. |
+| Name       | Type                              | Description                                                  |
+| ---------- | --------------------------------- | ------------------------------------------------------------ |
+| `output`   | `Optional[str]`                   | The output of the task, if any.                              |
+| `metadata` | `Optional[dict[str, Any]]`        | Additional information or metadata associated with the task. |
+| `tags`     | `Optional[dict[str, str]]`        | Key-value pairs used to tag and describe the task.           |
+| `context`  | `Optional[Union[list[str], str]]` | The context of the task, if any.                             |
+
+##### dump_as_log
+
+```python
+dump_as_log() -> dict[str, typing.Any]
+```
+
+Serialize the TaskResult into a dictionary format suitable for logging.
+
+Returns:
+
+| Type             | Description                                                          |
+| ---------------- | -------------------------------------------------------------------- |
+| `dict[str, Any]` | A dictionary containing the task output, metadata, context and tags. |
+
+Source code in `src/patronus/experiments/types.py`
+
+```python
+def dump_as_log(self) -> dict[str, typing.Any]:
+    """
+    Serialize the TaskResult into a dictionary format suitable for logging.
+
+    Returns:
+        A dictionary containing the task output, metadata, context and tags.
+    """
+    return self.model_dump(mode="json")
+```
 
 #### EvalsMap
 

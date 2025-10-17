@@ -5,7 +5,6 @@ To run this example, you need to add API keys to your environment:
 ```shell
 export PATRONUS_API_KEY=your-api-key
 export ANTHROPIC_API_KEY=your-api-key
-
 ```
 
 ### Running with `uv`
@@ -16,7 +15,6 @@ You can run the example as a one-liner with zero setup:
 # Remember to export environment variables before running the example.
 uv run --no-cache --with "patronus-examples[anthropic]" \
     -m patronus_examples.tracking.anthropic_weather
-
 ```
 
 ### Running the script directly
@@ -30,7 +28,6 @@ cd patronus-py
 
 # Run the example script (requires uv)
 ./examples/patronus_examples/tracking/anthropic_weather.py
-
 ```
 
 ### Manual installation
@@ -41,7 +38,6 @@ If you prefer to copy the example code to your own project, you'll need to insta
 pip install patronus
 pip install anthropic
 pip install openinference-instrumentation-anthropic
-
 ```
 
 ## Example overview
@@ -134,5 +130,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-
 ```

@@ -10,7 +10,20 @@ Configuration options are prioritized in the order listed above, meaning that if
 
 ## Configuration Options
 
-| Config name | Environment Variable | Default Value | | --- | --- | --- | | service | PATRONUS_SERVICE | Defaults to value retrieved from `OTEL_SERVICE_NAME` env var or `platform.node()`. | | project_name | PATRONUS_PROJECT_NAME | `Global` | | app | PATRONUS_APP | `default` | | api_key | PATRONUS_API_KEY | | | api_url | PATRONUS_API_URL | `https://api.patronus.ai` | | ui_url | PATRONUS_UI_URL | `https://app.patronus.ai` | | otel_endpoint | PATRONUS_OTEL_ENDPOINT | `https://otel.patronus.ai:4317` | | otel_exporter_otlp_protocol | PATRONUS_OTEL_EXPORTER_OTLP_PROTOCOL | Falls back to OTEL env vars, defaults to `grpc` | | timeout_s | PATRONUS_TIMEOUT_S | `300` | | prompt_templating_engine | PATRONUS_PROMPT_TEMPLATING_ENGINE | `f-string` | | prompt_providers | PATRONUS_PROMPT_PROVIDERS | `["local", "api"]` | | resource_dir | PATRONUS_RESOURCE_DIR | `./patronus` |
+| Config name                 | Environment Variable                 | Default Value                                                                      |
+| --------------------------- | ------------------------------------ | ---------------------------------------------------------------------------------- |
+| service                     | PATRONUS_SERVICE                     | Defaults to value retrieved from `OTEL_SERVICE_NAME` env var or `platform.node()`. |
+| project_name                | PATRONUS_PROJECT_NAME                | `Global`                                                                           |
+| app                         | PATRONUS_APP                         | `default`                                                                          |
+| api_key                     | PATRONUS_API_KEY                     |                                                                                    |
+| api_url                     | PATRONUS_API_URL                     | `https://api.patronus.ai`                                                          |
+| ui_url                      | PATRONUS_UI_URL                      | `https://app.patronus.ai`                                                          |
+| otel_endpoint               | PATRONUS_OTEL_ENDPOINT               | `https://otel.patronus.ai:4317`                                                    |
+| otel_exporter_otlp_protocol | PATRONUS_OTEL_EXPORTER_OTLP_PROTOCOL | Falls back to OTEL env vars, defaults to `grpc`                                    |
+| timeout_s                   | PATRONUS_TIMEOUT_S                   | `300`                                                                              |
+| prompt_templating_engine    | PATRONUS_PROMPT_TEMPLATING_ENGINE    | `f-string`                                                                         |
+| prompt_providers            | PATRONUS_PROMPT_PROVIDERS            | `["local", "api"]`                                                                 |
+| resource_dir                | PATRONUS_RESOURCE_DIR                | `./patronus`                                                                       |
 
 ## Configuration Methods
 
@@ -34,7 +47,6 @@ patronus.init(
     service="my-service",
     prompt_templating_engine="mustache"
 )
-
 ```
 
 #### Using run_experiment() or Experiment.create()
@@ -53,7 +65,6 @@ experiment = run_experiment(
     api_key="your-api-key",
     service="my-service"
 )
-
 ```
 
 ### 2. Environment Variables
@@ -64,7 +75,6 @@ You can set configuration options using environment variables with the prefix `P
 export PATRONUS_API_KEY="your-api-key"
 export PATRONUS_PROJECT_NAME="my-project"
 export PATRONUS_SERVICE="my-service"
-
 ```
 
 ### 3. YAML Configuration File (`patronus.yaml`)
@@ -87,7 +97,6 @@ timeout_s: 300
 prompt_templating_engine: "mustache"
 prompt_providers: [ "local", "api" ]
 resource_dir: "./my-resources"
-
 ```
 
 ## Configuration Precedence
@@ -118,7 +127,6 @@ project_name = cfg.project_name
 # Check for specific conditions
 if cfg.api_url != "https://api.patronus.ai":
     print("Using custom API endpoint")
-
 ```
 
 This approach is particularly useful when you need to inspect or log the current configuration state.

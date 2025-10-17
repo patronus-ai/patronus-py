@@ -41,7 +41,6 @@ experiment = run_experiment(
         }
     ]
 )
-
 ```
 
 Each stage in the chain can:
@@ -74,7 +73,6 @@ def generate_questions(row, parent, **kwargs):
 
     # Default questions if no evaluations available
     return "Here are some standard questions about the topic..."
-
 ```
 
 This example demonstrates how a task can adapt its behavior based on previous outputs and evaluations.
@@ -91,7 +89,6 @@ experiment = run_experiment(
     # Limit the number of concurrent tasks and evaluations
     max_concurrency=5
 )
-
 ```
 
 This is particularly important for:
@@ -114,7 +111,6 @@ experiment = run_experiment(
     # Add OpenTelemetry instrumentors
     integrations=[OpenAIInstrumentor()]
 )
-
 ```
 
 Benefits of OpenTelemetry integration include:
@@ -138,7 +134,6 @@ experiment = run_experiment(
     project_name="RAG System Evaluation",
     experiment_name="baseline-gpt4-retrieval"
 )
-
 ```
 
 The framework automatically appends a timestamp to experiment names for uniqueness.
@@ -160,7 +155,6 @@ experiment = run_experiment(
         "environment": "staging"
     }
 )
-
 ```
 
 Important notes about tags:
@@ -198,7 +192,6 @@ experiment = run_experiment(
 #     "judge:patronus:is-concise": "0.6",
 #     "custom_check:": "0.4"
 # }
-
 ```
 
 Evaluator weights are automatically collected and stored in the experiment's metadata under the `evaluator_weights` key. This provides a permanent record of how evaluators were weighted in each experiment for reproducibility and analysis.
@@ -220,7 +213,6 @@ experiment = run_experiment(
     otel_endpoint="https://custom-telemetry.patronus.ai",
     timeout_s=120
 )
-
 ```
 
 ## Manual Experiment Control
@@ -246,7 +238,6 @@ await experiment.run()
 
 # Export results
 experiment.to_csv("results.csv")
-
 ```
 
 This pattern is useful when you need to:

@@ -24,7 +24,6 @@ log.debug("Detailed debug information")
 log.warning("Something might be wrong")
 log.error("An error occurred")
 log.critical("System cannot continue")
-
 ```
 
 ## Configuring Console Output
@@ -45,7 +44,6 @@ log.addHandler(console_handler)
 
 # Now logs will appear in both console and Patronus Platform
 log.info("This message appears in the console and is sent to Patronus")
-
 ```
 
 You can also customize the format of console logs:
@@ -66,7 +64,6 @@ log.addHandler(console_handler)
 
 # Logs will now include timestamp and level
 log.info("Formatted log message")
-
 ```
 
 ## Advanced Configuration
@@ -104,7 +101,6 @@ patronus_core_logger.setLevel(logging.WARNING)  # Only show warnings and above f
 
 patronus_sdk_logger = logging.getLogger("patronus.sdk")
 patronus_sdk_logger.setLevel(logging.INFO)  # Show info and above for your application logs
-
 ```
 
 ## Logging with Traces
@@ -134,5 +130,4 @@ def process_user_query(query):
 
 # Logs will be associated with the appropriate spans
 result = process_user_query("Tell me about machine learning")
-
 ```

@@ -16,7 +16,6 @@ Set your API key as an environment variable:
 
 ```bash
 export PATRONUS_API_KEY="your-api-key"
-
 ```
 
 ### Configuration File
@@ -27,7 +26,6 @@ Create a `patronus.yaml` file in your project directory:
 api_key: "your-api-key"
 project_name: "Global"
 app: "default"
-
 ```
 
 ### Direct Configuration
@@ -42,7 +40,6 @@ patronus.init(
     project_name="Global",
     app="default",
 )
-
 ```
 
 ## Verification
@@ -62,7 +59,6 @@ def test_function():
 # Call the function to test tracing
 result = test_function()
 print(result)
-
 ```
 
 If no errors occur, your Patronus SDK is correctly installed and configured.
@@ -83,7 +79,6 @@ patronus_context = patronus.init()  # Also sets context globally
 tracer_provider = patronus_context.tracer_provider
 api_client = patronus_context.api_client
 scope = patronus_context.scope
-
 ```
 
 See the PatronusContext API reference for the complete list of available components and their descriptions.
@@ -106,7 +101,6 @@ with context._CTX_PAT.using(custom_context):
     # All Patronus SDK operations within this block use custom_context
     result = some_patronus_operation()
 # Context reverts to previous state after exiting the block
-
 ```
 
 This pattern is particularly useful when you need to send data to multiple projects within the same process, or when building testing frameworks that require isolated contexts.

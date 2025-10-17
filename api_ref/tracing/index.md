@@ -7,13 +7,7 @@
 #### start_span
 
 ```python
-start_span(
-    name: str,
-    *,
-    record_exception: bool = True,
-    attributes: Optional[Attributes] = None,
-) -> Iterator[Optional[typing.Any]]
-
+start_span(name: str, *, record_exception: bool = True, attributes: Optional[Attributes] = None) -> Iterator[Optional[typing.Any]]
 ```
 
 Context manager for creating and managing a trace span.
@@ -32,12 +26,15 @@ def complex_operation():
     with patronus.start_span("Data preparation"):
         # Prepare data
         pass
-
 ```
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `name` | `str` | The name of the span. | *required* | | `record_exception` | `bool` | Whether to record exceptions that occur within the span. Default is True. | `True` | | `attributes` | `Optional[Attributes]` | Attributes to associate with the span, providing additional metadata. | `None` |
+| Name               | Type                   | Description                                                               | Default    |
+| ------------------ | ---------------------- | ------------------------------------------------------------------------- | ---------- |
+| `name`             | `str`                  | The name of the span.                                                     | *required* |
+| `record_exception` | `bool`                 | Whether to record exceptions that occur within the span. Default is True. | `True`     |
+| `attributes`       | `Optional[Attributes]` | Attributes to associate with the span, providing additional metadata.     | `None`     |
 
 Source code in `src/patronus/tracing/decorators.py`
 
@@ -83,23 +80,12 @@ def start_span(
         attributes=attributes,
     ) as span:
         yield span
-
 ````
 
 #### traced
 
 ```python
-traced(
-    span_name: Optional[str] = None,
-    *,
-    log_args: bool = True,
-    log_results: bool = True,
-    log_exceptions: bool = True,
-    disable_log: bool = False,
-    attributes: Attributes = None,
-    **kwargs: Any,
-)
-
+traced(span_name: Optional[str] = None, *, log_args: bool = True, log_results: bool = True, log_exceptions: bool = True, disable_log: bool = False, attributes: Attributes = None, **kwargs: Any)
 ```
 
 A decorator to trace function execution by recording a span for the traced function.
@@ -115,12 +101,19 @@ patronus.init()
 @patronus.traced()
 def process_input(user_query):
     # Process the input
-
 ```
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `span_name` | `Optional[str]` | The name of the traced span. Defaults to the function name if not provided. | `None` | | `log_args` | `bool` | Whether to log the arguments passed to the function. Default is True. | `True` | | `log_results` | `bool` | Whether to log the function's return value. Default is True. | `True` | | `log_exceptions` | `bool` | Whether to log any exceptions raised while executing the function. Default is True. | `True` | | `disable_log` | `bool` | Whether to disable logging the trace information. Default is False. | `False` | | `attributes` | `Attributes` | Attributes to attach to the traced span. Default is None. | `None` | | `**kwargs` | `Any` | Additional arguments for the decorator. | `{}` |
+| Name             | Type            | Description                                                                         | Default |
+| ---------------- | --------------- | ----------------------------------------------------------------------------------- | ------- |
+| `span_name`      | `Optional[str]` | The name of the traced span. Defaults to the function name if not provided.         | `None`  |
+| `log_args`       | `bool`          | Whether to log the arguments passed to the function. Default is True.               | `True`  |
+| `log_results`    | `bool`          | Whether to log the function's return value. Default is True.                        | `True`  |
+| `log_exceptions` | `bool`          | Whether to log any exceptions raised while executing the function. Default is True. | `True`  |
+| `disable_log`    | `bool`          | Whether to disable logging the trace information. Default is False.                 | `False` |
+| `attributes`     | `Attributes`    | Attributes to attach to the traced span. Default is None.                           | `None`  |
+| `**kwargs`       | `Any`           | Additional arguments for the decorator.                                             | `{}`    |
 
 Source code in `src/patronus/tracing/decorators.py`
 
@@ -238,7 +231,6 @@ def traced(
             return wrapper_sync
 
     return decorator
-
 ````
 
 ### exporters
@@ -248,23 +240,24 @@ This module provides exporter selection functionality for OpenTelemetry traces a
 #### create_trace_exporter
 
 ```python
-create_trace_exporter(
-    endpoint: str,
-    api_key: str,
-    protocol: Optional[str] = None,
-) -> SpanExporter
-
+create_trace_exporter(endpoint: str, api_key: str, protocol: Optional[str] = None) -> SpanExporter
 ```
 
 Create a configured trace exporter instance.
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `endpoint` | `str` | The OTLP endpoint URL | *required* | | `api_key` | `str` | Authentication key for Patronus services | *required* | | `protocol` | `Optional[str]` | OTLP protocol override from Patronus configuration | `None` |
+| Name       | Type            | Description                                        | Default    |
+| ---------- | --------------- | -------------------------------------------------- | ---------- |
+| `endpoint` | `str`           | The OTLP endpoint URL                              | *required* |
+| `api_key`  | `str`           | Authentication key for Patronus services           | *required* |
+| `protocol` | `Optional[str]` | OTLP protocol override from Patronus configuration | `None`     |
 
 Returns:
 
-| Type | Description | | --- | --- | | `SpanExporter` | Configured trace exporter instance |
+| Type           | Description                        |
+| -------------- | ---------------------------------- |
+| `SpanExporter` | Configured trace exporter instance |
 
 Source code in `src/patronus/tracing/exporters.py`
 
@@ -292,29 +285,29 @@ def create_trace_exporter(endpoint: str, api_key: str, protocol: Optional[str] =
         # For gRPC exporter, determine if connection should be insecure based on URL scheme
         is_insecure = endpoint.startswith("http://")
         return OTLPSpanExporterGRPC(endpoint=endpoint, headers={"x-api-key": api_key}, insecure=is_insecure)
-
 ```
 
 #### create_log_exporter
 
 ```python
-create_log_exporter(
-    endpoint: str,
-    api_key: str,
-    protocol: Optional[str] = None,
-) -> LogExporter
-
+create_log_exporter(endpoint: str, api_key: str, protocol: Optional[str] = None) -> LogExporter
 ```
 
 Create a configured log exporter instance.
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `endpoint` | `str` | The OTLP endpoint URL | *required* | | `api_key` | `str` | Authentication key for Patronus services | *required* | | `protocol` | `Optional[str]` | OTLP protocol override from Patronus configuration | `None` |
+| Name       | Type            | Description                                        | Default    |
+| ---------- | --------------- | -------------------------------------------------- | ---------- |
+| `endpoint` | `str`           | The OTLP endpoint URL                              | *required* |
+| `api_key`  | `str`           | Authentication key for Patronus services           | *required* |
+| `protocol` | `Optional[str]` | OTLP protocol override from Patronus configuration | `None`     |
 
 Returns:
 
-| Type | Description | | --- | --- | | `LogExporter` | Configured log exporter instance |
+| Type          | Description                      |
+| ------------- | -------------------------------- |
+| `LogExporter` | Configured log exporter instance |
 
 Source code in `src/patronus/tracing/exporters.py`
 
@@ -342,7 +335,6 @@ def create_log_exporter(endpoint: str, api_key: str, protocol: Optional[str] = N
         # For gRPC exporter, determine if connection should be insecure based on URL scheme
         is_insecure = endpoint.startswith("http://")
         return OTLPLogExporterGRPC(endpoint=endpoint, headers={"x-api-key": api_key}, insecure=is_insecure)
-
 ```
 
 ### tracer
@@ -352,12 +344,7 @@ This module provides the implementation for tracing support using the OpenTeleme
 #### PatronusAttributesSpanProcessor
 
 ```python
-PatronusAttributesSpanProcessor(
-    project_name: str,
-    app: Optional[str] = None,
-    experiment_id: Optional[str] = None,
-)
-
+PatronusAttributesSpanProcessor(project_name: str, app: Optional[str] = None, experiment_id: Optional[str] = None)
 ```
 
 Bases: `SpanProcessor`
@@ -378,19 +365,12 @@ def __init__(self, project_name: str, app: Optional[str] = None, experiment_id: 
         self.experiment_id = experiment_id
     else:
         self.app = app
-
 ```
 
 #### create_tracer_provider
 
 ```python
-create_tracer_provider(
-    exporter_endpoint: str,
-    api_key: str,
-    scope: PatronusScope,
-    protocol: Optional[str] = None,
-) -> TracerProvider
-
+create_tracer_provider(exporter_endpoint: str, api_key: str, scope: PatronusScope, protocol: Optional[str] = None) -> TracerProvider
 ```
 
 Creates and returns a cached TracerProvider configured with the specified exporter.
@@ -428,19 +408,12 @@ def create_tracer_provider(
         BatchSpanProcessor(_create_exporter(endpoint=exporter_endpoint, api_key=api_key, protocol=protocol))
     )
     return provider
-
 ```
 
 #### create_tracer
 
 ```python
-create_tracer(
-    scope: PatronusScope,
-    exporter_endpoint: str,
-    api_key: str,
-    protocol: Optional[str] = None,
-) -> trace.Tracer
-
+create_tracer(scope: PatronusScope, exporter_endpoint: str, api_key: str, protocol: Optional[str] = None) -> trace.Tracer
 ```
 
 Creates an OpenTelemetry (OTeL) tracer tied to the specified scope.
@@ -464,5 +437,4 @@ def create_tracer(
         protocol=protocol,
     )
     return provider.get_tracer("patronus.sdk")
-
 ```

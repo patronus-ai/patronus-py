@@ -30,7 +30,6 @@ def generate_response(prompt: str) -> str:
 
 # Call the traced function
 result = generate_response("Tell me about machine learning")
-
 ```
 
 ### Decorator Options
@@ -48,7 +47,6 @@ The `@traced()` decorator accepts several parameters for customization:
 )
 def my_function():
     pass
-
 ```
 
 See the API Reference for complete details.
@@ -77,7 +75,6 @@ def complex_workflow(data):
         final_results = postprocess(results)
 
     return final_results
-
 ```
 
 ### Context Manager Options
@@ -93,7 +90,6 @@ with start_span(
     # Your code here
     # You can also add attributes during execution:
     span.set_attribute("dynamic_value", 42)
-
 ```
 
 See the API Reference for complete details.
@@ -120,7 +116,6 @@ with start_span("Query processing", attributes={
 }):
     # Processing code
     pass
-
 ```
 
 ## Distributed Tracing
@@ -136,7 +131,6 @@ uv add opentelemetry-instrumentation-httpx \
     opentelemetry-instrumentation-fastapi \
     fastapi[all] \
     patronus
-
 ```
 
 Here's a complete example showing two FastAPI services with automatic trace context propagation:
@@ -166,7 +160,6 @@ FastAPIInstrumentor.instrument_app(app, tracer_provider=patronus_context.tracer_
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8001)
-
 ```
 
 **Gateway Service (`service_gateway.py`):**
@@ -206,7 +199,6 @@ FastAPIInstrumentor.instrument_app(app, tracer_provider=patronus_context.tracer_
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
-
 ```
 
 ### Running the Example
@@ -215,7 +207,6 @@ First, export your Patronus API key:
 
 ```bash
 export PATRONUS_API_KEY="your-api-key"
-
 ```
 
 Then run the services:

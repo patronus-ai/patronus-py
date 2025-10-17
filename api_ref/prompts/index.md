@@ -8,7 +8,6 @@
 
 ```python
 load_prompt = get
-
 ```
 
 Alias for PromptClient.get.
@@ -17,7 +16,6 @@ Alias for PromptClient.get.
 
 ```python
 aload_prompt = get
-
 ```
 
 Alias for AsyncPromptClient.get.
@@ -26,7 +24,6 @@ Alias for AsyncPromptClient.get.
 
 ```python
 push_prompt = push
-
 ```
 
 Alias for PromptClient.push.
@@ -35,7 +32,6 @@ Alias for PromptClient.push.
 
 ```python
 apush_prompt = push
-
 ```
 
 Alias for AsyncPromptClient.push.
@@ -43,13 +39,7 @@ Alias for AsyncPromptClient.push.
 #### PromptNotFoundError
 
 ```python
-PromptNotFoundError(
-    name: str,
-    project: Optional[str] = None,
-    revision: Optional[int] = None,
-    label: Optional[str] = None,
-)
-
+PromptNotFoundError(name: str, project: Optional[str] = None, revision: Optional[int] = None, label: Optional[str] = None)
 ```
 
 Bases: `Exception`
@@ -68,7 +58,6 @@ def __init__(
     self.label = label
     message = f"Prompt not found (name={name!r}, project={project!r}, revision={revision!r}, label={label!r})"
     super().__init__(message)
-
 ```
 
 #### PromptProviderError
@@ -96,14 +85,7 @@ Bases: `ABC`
 ##### get_prompt
 
 ```python
-get_prompt(
-    name: str,
-    revision: Optional[int],
-    label: Optional[str],
-    project: str,
-    engine: TemplateEngine,
-) -> Optional[LoadedPrompt]
-
+get_prompt(name: str, revision: Optional[int], label: Optional[str], project: str, engine: TemplateEngine) -> Optional[LoadedPrompt]
 ```
 
 Get prompts, returns None if prompt was not found
@@ -116,20 +98,12 @@ def get_prompt(
     self, name: str, revision: Optional[int], label: Optional[str], project: str, engine: TemplateEngine
 ) -> Optional[LoadedPrompt]:
     """Get prompts, returns None if prompt was not found"""
-
 ```
 
 ##### aget_prompt
 
 ```python
-aget_prompt(
-    name: str,
-    revision: Optional[int],
-    label: Optional[str],
-    project: str,
-    engine: TemplateEngine,
-) -> Optional[LoadedPrompt]
-
+aget_prompt(name: str, revision: Optional[int], label: Optional[str], project: str, engine: TemplateEngine) -> Optional[LoadedPrompt]
 ```
 
 Get prompts, returns None if prompt was not found
@@ -142,7 +116,6 @@ async def aget_prompt(
     self, name: str, revision: Optional[int], label: Optional[str], project: str, engine: TemplateEngine
 ) -> Optional[LoadedPrompt]:
     """Get prompts, returns None if prompt was not found"""
-
 ```
 
 #### PromptClientMixin
@@ -150,10 +123,7 @@ async def aget_prompt(
 #### PromptClient
 
 ```python
-PromptClient(
-    provider_factory: Optional[ProviderFactory] = None,
-)
-
+PromptClient(provider_factory: Optional[ProviderFactory] = None)
 ```
 
 Bases: `PromptClientMixin`
@@ -168,31 +138,12 @@ def __init__(self, provider_factory: Optional[ProviderFactory] = None) -> None:
         "api": lambda: APIPromptProvider(),
     }
     self._api_provider = APIPromptProvider()
-
 ```
 
 ##### get
 
 ```python
-get(
-    name: str,
-    revision: Optional[int] = None,
-    label: Optional[str] = None,
-    project: Union[str, Type[NOT_GIVEN]] = NOT_GIVEN,
-    disable_cache: bool = False,
-    provider: Union[
-        PromptProvider,
-        _DefaultProviders,
-        Sequence[Union[PromptProvider, _DefaultProviders]],
-        Type[NOT_GIVEN],
-    ] = NOT_GIVEN,
-    engine: Union[
-        TemplateEngine,
-        DefaultTemplateEngines,
-        Type[NOT_GIVEN],
-    ] = NOT_GIVEN,
-) -> LoadedPrompt
-
+get(name: str, revision: Optional[int] = None, label: Optional[str] = None, project: Union[str, Type[NOT_GIVEN]] = NOT_GIVEN, disable_cache: bool = False, provider: Union[PromptProvider, _DefaultProviders, Sequence[Union[PromptProvider, _DefaultProviders]], Type[NOT_GIVEN]] = NOT_GIVEN, engine: Union[TemplateEngine, DefaultTemplateEngines, Type[NOT_GIVEN]] = NOT_GIVEN) -> LoadedPrompt
 ```
 
 Get the prompt. If neither revision nor label is specified then the prompt with latest revision is returned.
@@ -203,15 +154,29 @@ By default, once a prompt is retrieved it's cached. You can disable caching.
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `name` | `str` | The name of the prompt to retrieve. | *required* | | `revision` | `Optional[int]` | Optional specific revision number to retrieve. If not specified, the latest revision is used. | `None` | | `label` | `Optional[str]` | Optional label to filter by. If specified, only prompts with this label will be returned. | `None` | | `project` | `Union[str, Type[NOT_GIVEN]]` | Optional project name override. If not specified, the project name from config is used. | `NOT_GIVEN` | | `disable_cache` | `bool` | If True, bypasses the cache for both reading and writing. | `False` | | `provider` | `Union[PromptProvider, _DefaultProviders, Sequence[Union[PromptProvider, _DefaultProviders]], Type[NOT_GIVEN]]` | The provider(s) to use for retrieving prompts. Can be a string identifier ('local', 'api'), a PromptProvider instance, or a sequence of these. If not specified, defaults to config setting. | `NOT_GIVEN` | | `engine` | `Union[TemplateEngine, DefaultTemplateEngines, Type[NOT_GIVEN]]` | The template engine to use for rendering prompts. Can be a string identifier ('f-string', 'mustache', 'jinja2') or a TemplateEngine instance. If not specified, defaults to config setting. | `NOT_GIVEN` |
+| Name            | Type                                                                                                            | Description                                                                                                                                                                                  | Default     |
+| --------------- | --------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| `name`          | `str`                                                                                                           | The name of the prompt to retrieve.                                                                                                                                                          | *required*  |
+| `revision`      | `Optional[int]`                                                                                                 | Optional specific revision number to retrieve. If not specified, the latest revision is used.                                                                                                | `None`      |
+| `label`         | `Optional[str]`                                                                                                 | Optional label to filter by. If specified, only prompts with this label will be returned.                                                                                                    | `None`      |
+| `project`       | `Union[str, Type[NOT_GIVEN]]`                                                                                   | Optional project name override. If not specified, the project name from config is used.                                                                                                      | `NOT_GIVEN` |
+| `disable_cache` | `bool`                                                                                                          | If True, bypasses the cache for both reading and writing.                                                                                                                                    | `False`     |
+| `provider`      | `Union[PromptProvider, _DefaultProviders, Sequence[Union[PromptProvider, _DefaultProviders]], Type[NOT_GIVEN]]` | The provider(s) to use for retrieving prompts. Can be a string identifier ('local', 'api'), a PromptProvider instance, or a sequence of these. If not specified, defaults to config setting. | `NOT_GIVEN` |
+| `engine`        | `Union[TemplateEngine, DefaultTemplateEngines, Type[NOT_GIVEN]]`                                                | The template engine to use for rendering prompts. Can be a string identifier ('f-string', 'mustache', 'jinja2') or a TemplateEngine instance. If not specified, defaults to config setting.  | `NOT_GIVEN` |
 
 Returns:
 
-| Name | Type | Description | | --- | --- | --- | | `LoadedPrompt` | `LoadedPrompt` | The retrieved prompt object. |
+| Name           | Type           | Description                  |
+| -------------- | -------------- | ---------------------------- |
+| `LoadedPrompt` | `LoadedPrompt` | The retrieved prompt object. |
 
 Raises:
 
-| Type | Description | | --- | --- | | `PromptNotFoundError` | If the prompt could not be found with the specified parameters. | | `ValueError` | If the provided provider or engine is invalid. | | `PromptProviderError` | If there was an error communicating with the prompt provider. |
+| Type                  | Description                                                     |
+| --------------------- | --------------------------------------------------------------- |
+| `PromptNotFoundError` | If the prompt could not be found with the specified parameters. |
+| `ValueError`          | If the provided provider or engine is invalid.                  |
+| `PromptProviderError` | If there was an error communicating with the prompt provider.   |
 
 Source code in `src/patronus/prompts/clients.py`
 
@@ -302,22 +267,12 @@ def get(
         self._cache.put(cache_key, prompt)
 
     return prompt
-
 ```
 
 ##### push
 
 ```python
-push(
-    prompt: Prompt,
-    project: Union[str, Type[NOT_GIVEN]] = NOT_GIVEN,
-    engine: Union[
-        TemplateEngine,
-        DefaultTemplateEngines,
-        Type[NOT_GIVEN],
-    ] = NOT_GIVEN,
-) -> LoadedPrompt
-
+push(prompt: Prompt, project: Union[str, Type[NOT_GIVEN]] = NOT_GIVEN, engine: Union[TemplateEngine, DefaultTemplateEngines, Type[NOT_GIVEN]] = NOT_GIVEN) -> LoadedPrompt
 ```
 
 Push a prompt to the API, creating a new revision only if needed.
@@ -330,15 +285,23 @@ Note that when a new prompt definition is created, the description is used as pr
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `prompt` | `Prompt` | The prompt to push | *required* | | `project` | `Union[str, Type[NOT_GIVEN]]` | Optional project name override. If not specified, the project name from config is used. | `NOT_GIVEN` | | `engine` | `Union[TemplateEngine, DefaultTemplateEngines, Type[NOT_GIVEN]]` | The template engine to use for rendering the returned prompt. If not specified, defaults to config setting. | `NOT_GIVEN` |
+| Name      | Type                                                             | Description                                                                                                 | Default     |
+| --------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ----------- |
+| `prompt`  | `Prompt`                                                         | The prompt to push                                                                                          | *required*  |
+| `project` | `Union[str, Type[NOT_GIVEN]]`                                    | Optional project name override. If not specified, the project name from config is used.                     | `NOT_GIVEN` |
+| `engine`  | `Union[TemplateEngine, DefaultTemplateEngines, Type[NOT_GIVEN]]` | The template engine to use for rendering the returned prompt. If not specified, defaults to config setting. | `NOT_GIVEN` |
 
 Returns:
 
-| Name | Type | Description | | --- | --- | --- | | `LoadedPrompt` | `LoadedPrompt` | The created or existing prompt revision |
+| Name           | Type           | Description                             |
+| -------------- | -------------- | --------------------------------------- |
+| `LoadedPrompt` | `LoadedPrompt` | The created or existing prompt revision |
 
 Raises:
 
-| Type | Description | | --- | --- | | `PromptProviderError` | If there was an error communicating with the prompt provider. |
+| Type                  | Description                                                   |
+| --------------------- | ------------------------------------------------------------- |
+| `PromptProviderError` | If there was an error communicating with the prompt provider. |
 
 Source code in `src/patronus/prompts/clients.py`
 
@@ -458,16 +421,12 @@ def push(
         prompt_def = resp_pd.prompt_definitions[0]
 
     return self._api_provider._create_loaded_prompt(prompt_revision, prompt_def, resolved_engine)
-
 ```
 
 #### AsyncPromptClient
 
 ```python
-AsyncPromptClient(
-    provider_factory: Optional[ProviderFactory] = None,
-)
-
+AsyncPromptClient(provider_factory: Optional[ProviderFactory] = None)
 ```
 
 Bases: `PromptClientMixin`
@@ -482,31 +441,12 @@ def __init__(self, provider_factory: Optional[ProviderFactory] = None) -> None:
         "api": lambda: APIPromptProvider(),
     }
     self._api_provider = APIPromptProvider()
-
 ```
 
 ##### get
 
 ```python
-get(
-    name: str,
-    revision: Optional[int] = None,
-    label: Optional[str] = None,
-    project: Union[str, Type[NOT_GIVEN]] = NOT_GIVEN,
-    disable_cache: bool = False,
-    provider: Union[
-        PromptProvider,
-        _DefaultProviders,
-        Sequence[Union[PromptProvider, _DefaultProviders]],
-        Type[NOT_GIVEN],
-    ] = NOT_GIVEN,
-    engine: Union[
-        TemplateEngine,
-        DefaultTemplateEngines,
-        Type[NOT_GIVEN],
-    ] = NOT_GIVEN,
-) -> LoadedPrompt
-
+get(name: str, revision: Optional[int] = None, label: Optional[str] = None, project: Union[str, Type[NOT_GIVEN]] = NOT_GIVEN, disable_cache: bool = False, provider: Union[PromptProvider, _DefaultProviders, Sequence[Union[PromptProvider, _DefaultProviders]], Type[NOT_GIVEN]] = NOT_GIVEN, engine: Union[TemplateEngine, DefaultTemplateEngines, Type[NOT_GIVEN]] = NOT_GIVEN) -> LoadedPrompt
 ```
 
 Get the prompt asynchronously. If neither revision nor label is specified then the prompt with latest revision is returned.
@@ -517,15 +457,29 @@ By default, once a prompt is retrieved it's cached. You can disable caching.
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `name` | `str` | The name of the prompt to retrieve. | *required* | | `revision` | `Optional[int]` | Optional specific revision number to retrieve. If not specified, the latest revision is used. | `None` | | `label` | `Optional[str]` | Optional label to filter by. If specified, only prompts with this label will be returned. | `None` | | `project` | `Union[str, Type[NOT_GIVEN]]` | Optional project name override. If not specified, the project name from config is used. | `NOT_GIVEN` | | `disable_cache` | `bool` | If True, bypasses the cache for both reading and writing. | `False` | | `provider` | `Union[PromptProvider, _DefaultProviders, Sequence[Union[PromptProvider, _DefaultProviders]], Type[NOT_GIVEN]]` | The provider(s) to use for retrieving prompts. Can be a string identifier ('local', 'api'), a PromptProvider instance, or a sequence of these. If not specified, defaults to config setting. | `NOT_GIVEN` | | `engine` | `Union[TemplateEngine, DefaultTemplateEngines, Type[NOT_GIVEN]]` | The template engine to use for rendering prompts. Can be a string identifier ('f-string', 'mustache', 'jinja2') or a TemplateEngine instance. If not specified, defaults to config setting. | `NOT_GIVEN` |
+| Name            | Type                                                                                                            | Description                                                                                                                                                                                  | Default     |
+| --------------- | --------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| `name`          | `str`                                                                                                           | The name of the prompt to retrieve.                                                                                                                                                          | *required*  |
+| `revision`      | `Optional[int]`                                                                                                 | Optional specific revision number to retrieve. If not specified, the latest revision is used.                                                                                                | `None`      |
+| `label`         | `Optional[str]`                                                                                                 | Optional label to filter by. If specified, only prompts with this label will be returned.                                                                                                    | `None`      |
+| `project`       | `Union[str, Type[NOT_GIVEN]]`                                                                                   | Optional project name override. If not specified, the project name from config is used.                                                                                                      | `NOT_GIVEN` |
+| `disable_cache` | `bool`                                                                                                          | If True, bypasses the cache for both reading and writing.                                                                                                                                    | `False`     |
+| `provider`      | `Union[PromptProvider, _DefaultProviders, Sequence[Union[PromptProvider, _DefaultProviders]], Type[NOT_GIVEN]]` | The provider(s) to use for retrieving prompts. Can be a string identifier ('local', 'api'), a PromptProvider instance, or a sequence of these. If not specified, defaults to config setting. | `NOT_GIVEN` |
+| `engine`        | `Union[TemplateEngine, DefaultTemplateEngines, Type[NOT_GIVEN]]`                                                | The template engine to use for rendering prompts. Can be a string identifier ('f-string', 'mustache', 'jinja2') or a TemplateEngine instance. If not specified, defaults to config setting.  | `NOT_GIVEN` |
 
 Returns:
 
-| Name | Type | Description | | --- | --- | --- | | `LoadedPrompt` | `LoadedPrompt` | The retrieved prompt object. |
+| Name           | Type           | Description                  |
+| -------------- | -------------- | ---------------------------- |
+| `LoadedPrompt` | `LoadedPrompt` | The retrieved prompt object. |
 
 Raises:
 
-| Type | Description | | --- | --- | | `PromptNotFoundError` | If the prompt could not be found with the specified parameters. | | `ValueError` | If the provided provider or engine is invalid. | | `PromptProviderError` | If there was an error communicating with the prompt provider. |
+| Type                  | Description                                                     |
+| --------------------- | --------------------------------------------------------------- |
+| `PromptNotFoundError` | If the prompt could not be found with the specified parameters. |
+| `ValueError`          | If the provided provider or engine is invalid.                  |
+| `PromptProviderError` | If there was an error communicating with the prompt provider.   |
 
 Source code in `src/patronus/prompts/clients.py`
 
@@ -613,22 +567,12 @@ async def get(
         await self._cache.put(cache_key, prompt)
 
     return prompt
-
 ```
 
 ##### push
 
 ```python
-push(
-    prompt: Prompt,
-    project: Union[str, Type[NOT_GIVEN]] = NOT_GIVEN,
-    engine: Union[
-        TemplateEngine,
-        DefaultTemplateEngines,
-        Type[NOT_GIVEN],
-    ] = NOT_GIVEN,
-) -> LoadedPrompt
-
+push(prompt: Prompt, project: Union[str, Type[NOT_GIVEN]] = NOT_GIVEN, engine: Union[TemplateEngine, DefaultTemplateEngines, Type[NOT_GIVEN]] = NOT_GIVEN) -> LoadedPrompt
 ```
 
 Push a prompt to the API asynchronously, creating a new revision only if needed.
@@ -641,15 +585,23 @@ Note that when a new prompt definition is created, the description is used as pr
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `prompt` | `Prompt` | The prompt to push | *required* | | `project` | `Union[str, Type[NOT_GIVEN]]` | Optional project name override. If not specified, the project name from config is used. | `NOT_GIVEN` | | `engine` | `Union[TemplateEngine, DefaultTemplateEngines, Type[NOT_GIVEN]]` | The template engine to use for rendering the returned prompt. If not specified, defaults to config setting. | `NOT_GIVEN` |
+| Name      | Type                                                             | Description                                                                                                 | Default     |
+| --------- | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ----------- |
+| `prompt`  | `Prompt`                                                         | The prompt to push                                                                                          | *required*  |
+| `project` | `Union[str, Type[NOT_GIVEN]]`                                    | Optional project name override. If not specified, the project name from config is used.                     | `NOT_GIVEN` |
+| `engine`  | `Union[TemplateEngine, DefaultTemplateEngines, Type[NOT_GIVEN]]` | The template engine to use for rendering the returned prompt. If not specified, defaults to config setting. | `NOT_GIVEN` |
 
 Returns:
 
-| Name | Type | Description | | --- | --- | --- | | `LoadedPrompt` | `LoadedPrompt` | The created or existing prompt revision |
+| Name           | Type           | Description                             |
+| -------------- | -------------- | --------------------------------------- |
+| `LoadedPrompt` | `LoadedPrompt` | The created or existing prompt revision |
 
 Raises:
 
-| Type | Description | | --- | --- | | `PromptProviderError` | If there was an error communicating with the prompt provider. |
+| Type                  | Description                                                   |
+| --------------------- | ------------------------------------------------------------- |
+| `PromptProviderError` | If there was an error communicating with the prompt provider. |
 
 Source code in `src/patronus/prompts/clients.py`
 
@@ -769,7 +721,6 @@ async def push(
         prompt_def = resp_pd.prompt_definitions[0]
 
     return self._api_provider._create_loaded_prompt(prompt_revision, prompt_def, resolved_engine)
-
 ```
 
 ### models
@@ -779,21 +730,22 @@ async def push(
 ##### with_engine
 
 ```python
-with_engine(
-    engine: Union[TemplateEngine, DefaultTemplateEngines],
-) -> typing.Self
-
+with_engine(engine: Union[TemplateEngine, DefaultTemplateEngines]) -> typing.Self
 ```
 
 Create a new prompt with the specified template engine.
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `engine` | `Union[TemplateEngine, DefaultTemplateEngines]` | Either a TemplateEngine instance or a string identifier ('f-string', 'mustache', 'jinja2') | *required* |
+| Name     | Type                                            | Description                                                                                | Default    |
+| -------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------ | ---------- |
+| `engine` | `Union[TemplateEngine, DefaultTemplateEngines]` | Either a TemplateEngine instance or a string identifier ('f-string', 'mustache', 'jinja2') | *required* |
 
 Returns:
 
-| Type | Description | | --- | --- | | `Self` | A new prompt instance with the specified engine |
+| Type   | Description                                     |
+| ------ | ----------------------------------------------- |
+| `Self` | A new prompt instance with the specified engine |
 
 Source code in `src/patronus/prompts/models.py`
 
@@ -810,14 +762,12 @@ def with_engine(self, engine: Union[TemplateEngine, DefaultTemplateEngines]) -> 
     """
     resolved_engine = get_template_engine(engine)
     return dataclasses.replace(self, _engine=resolved_engine)
-
 ```
 
 ##### render
 
 ```python
 render(**kwargs: Any) -> str
-
 ```
 
 Render the prompt template with the provided arguments.
@@ -826,11 +776,15 @@ If no engine is set on the prompt, the default engine from context/config will b
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `**kwargs` | `Any` | Template arguments to be rendered in the prompt body | `{}` |
+| Name       | Type  | Description                                          | Default |
+| ---------- | ----- | ---------------------------------------------------- | ------- |
+| `**kwargs` | `Any` | Template arguments to be rendered in the prompt body | `{}`    |
 
 Returns:
 
-| Type | Description | | --- | --- | | `str` | The rendered prompt |
+| Type  | Description         |
+| ----- | ------------------- |
+| `str` | The rendered prompt |
 
 Source code in `src/patronus/prompts/models.py`
 
@@ -858,14 +812,12 @@ def render(self, **kwargs: Any) -> str:
         engine = get_template_engine(engine_name)
 
     return engine.render(self.body, **kwargs)
-
 ```
 
 #### calculate_normalized_body_hash
 
 ```python
 calculate_normalized_body_hash(body: str) -> str
-
 ```
 
 Calculate the SHA-256 hash of normalized prompt body.
@@ -874,11 +826,15 @@ Normalization is done by stripping whitespace from the start and end of the body
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `body` | `str` | The prompt body | *required* |
+| Name   | Type  | Description     | Default    |
+| ------ | ----- | --------------- | ---------- |
+| `body` | `str` | The prompt body | *required* |
 
 Returns:
 
-| Type | Description | | --- | --- | | `str` | SHA-256 hash of the normalized body |
+| Type  | Description                         |
+| ----- | ----------------------------------- |
+| `str` | SHA-256 hash of the normalized body |
 
 Source code in `src/patronus/prompts/models.py`
 
@@ -896,7 +852,6 @@ def calculate_normalized_body_hash(body: str) -> str:
     """
     normalized_body = body.strip()
     return hashlib.sha256(normalized_body.encode()).hexdigest()
-
 ```
 
 ### templating
@@ -909,7 +864,6 @@ Bases: `ABC`
 
 ```python
 render(template: str, **kwargs) -> str
-
 ```
 
 Render the template with the given arguments.
@@ -920,31 +874,33 @@ Source code in `src/patronus/prompts/templating.py`
 @abc.abstractmethod
 def render(self, template: str, **kwargs) -> str:
     """Render the template with the given arguments."""
-
 ```
 
 #### get_template_engine
 
 ```python
-get_template_engine(
-    engine: Union[TemplateEngine, DefaultTemplateEngines],
-) -> TemplateEngine
-
+get_template_engine(engine: Union[TemplateEngine, DefaultTemplateEngines]) -> TemplateEngine
 ```
 
 Convert a template engine name to an actual engine instance.
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `engine` | `Union[TemplateEngine, DefaultTemplateEngines]` | Either a template engine instance or a string identifier ('f-string', 'mustache', 'jinja2') | *required* |
+| Name     | Type                                            | Description                                                                                 | Default    |
+| -------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------- | ---------- |
+| `engine` | `Union[TemplateEngine, DefaultTemplateEngines]` | Either a template engine instance or a string identifier ('f-string', 'mustache', 'jinja2') | *required* |
 
 Returns:
 
-| Type | Description | | --- | --- | | `TemplateEngine` | A template engine instance |
+| Type             | Description                |
+| ---------------- | -------------------------- |
+| `TemplateEngine` | A template engine instance |
 
 Raises:
 
-| Type | Description | | --- | --- | | `ValueError` | If the provided engine string is not recognized |
+| Type         | Description                                     |
+| ------------ | ----------------------------------------------- |
+| `ValueError` | If the provided engine string is not recognized |
 
 Source code in `src/patronus/prompts/templating.py`
 
@@ -977,5 +933,4 @@ def get_template_engine(engine: Union[TemplateEngine, DefaultTemplateEngines]) -
         "one of the default engines ('f-string', 'mustache', 'jinja2'). "
         f"Instead got {engine!r}"
     )
-
 ```

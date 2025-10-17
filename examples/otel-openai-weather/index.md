@@ -8,7 +8,6 @@ To run this example, you need to add your OpenAI API key to your environment:
 
 ```shell
 export OPENAI_API_KEY=your-api-key
-
 ```
 
 ### Running with `uv`
@@ -19,7 +18,6 @@ You can run the example as a one-liner with zero setup:
 # Remember to export environment variables before running the example
 uv run --no-cache --with "patronus-examples opentelemetry-api>=1.31.0 opentelemetry-sdk>=1.31.0 opentelemetry-exporter-otlp>=1.31.0 openinference-instrumentation-openai>=0.1.28 openai httpx>=0.27.0" \
     -m patronus_examples.tracking.otel_openai_weather
-
 ```
 
 ### Running with Patronus OTel collector
@@ -30,7 +28,6 @@ To export traces to Patronus OTel collector, set these additional environment va
 export PATRONUS_API_KEY=your-api-key
 export OTEL_EXPORTER_OTLP_ENDPOINT="https://otel.patronus.ai:4317"
 export OTEL_EXPORTER_OTLP_HEADERS="x-api-key=$PATRONUS_API_KEY"
-
 ```
 
 ### Manual installation
@@ -44,7 +41,6 @@ pip install opentelemetry-sdk
 pip install opentelemetry-exporter-otlp
 pip install openinference-instrumentation-openai
 pip install httpx
-
 ```
 
 ## Example overview
@@ -295,5 +291,4 @@ if __name__ == "__main__":
     main()
     # Ensure all spans are exported before the program exits
     trace_provider.shutdown()
-
 ```

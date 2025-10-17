@@ -9,14 +9,10 @@ A task function receives a dataset row and produces an output. The simplest task
 ```python
 def simple_task(row, **kwargs):
     # Process the input from the row
-    input_text = row.task_input
+    output = f"The output is: '{row.task_input}'"
 
-    # Generate an output (typically a score between 0 and 1)
-    quality_score = 0.85
-
-    # Return the output as a float
-    return quality_score
-
+    # Return the output
+    return output
 ```
 
 The framework automatically converts numeric outputs to `TaskResult` objects.
@@ -61,7 +57,6 @@ def complete_task(
 
     # Return the output
     return output
-
 ```
 
 ## Return Types
@@ -92,21 +87,9 @@ def classify_sentiment(row: Row, **kwargs) -> str:
         return "negative"
     else:
         return "neutral"
-
 ```
 
 The string output represents a specific classification category, which is a common pattern in text classification tasks.
-
-### Numeric Output (Float/Int)
-
-For score-based outputs:
-
-```python
-def score_task(row: Row, **kwargs) -> float:
-    # Calculate a relevance score between 0 and 1
-    return 0.92
-
-```
 
 ### TaskResult Object
 
@@ -132,13 +115,16 @@ def task_result(row: Row, **kwargs) -> TaskResult:
         "temperature": "0.7"
     }
 
+    # Generate context
+    context = "Context of the processing process"
+
     # Return a complete TaskResult
     return TaskResult(
         output=output,
         metadata=metadata,
-        tags=tags
+        tags=tags,
+        context=context,
     )
-
 ```
 
 ### None / Skipping Examples
@@ -153,7 +139,6 @@ def selective_task(row: Row, **kwargs) -> None:
 
     # Process valid examples
     return f"Processed: {row.task_input}"
-
 ```
 
 ## Calling LLMs
@@ -200,7 +185,6 @@ def openai_task(row: Row, **kwargs) -> TaskResult:
         output=output,
         metadata=metadata
     )
-
 ```
 
 ## Async Tasks
@@ -245,7 +229,6 @@ async def async_openai_task(
         output=output,
         metadata={"model": response.model}
     )
-
 ```
 
 The Patronus framework automatically handles both synchronous and asynchronous tasks.
@@ -271,7 +254,6 @@ def second_stage_task(
 
     # Fallback if no previous output
     return f"Starting fresh: {row.task_input}"
-
 ```
 
 ## Error Handling
@@ -295,7 +277,6 @@ def robust_task(row: Row, **kwargs):
         get_logger().exception(f"Error processing row {row.sid}: {e}")
         # Skip this example
         return None
-
 ```
 
 If an unhandled exception occurs, the experiment will log the error and skip that example.
@@ -325,7 +306,6 @@ def traced_task(row: Row, **kwargs):
         final_output = postprocess(output)
 
     return final_output
-
 ```
 
 This helps with debugging and performance analysis.

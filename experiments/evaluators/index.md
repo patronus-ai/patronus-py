@@ -30,7 +30,6 @@ experiment = run_experiment(
         RemoteEvaluator("judge", "patronus:is-helpful")
     ]
 )
-
 ```
 
 ## Class-Based Evaluators
@@ -80,7 +79,6 @@ experiment = run_experiment(
     ],
     evaluators=[BERTScore(pass_threshold=0.8)],
 )
-
 ```
 
 Class-based evaluators that inherit from `StructuredEvaluator` or `AsyncStructuredEvaluator` are automatically adapted for use in experiments.
@@ -128,7 +126,6 @@ experiment = run_experiment(
         FuncEvaluatorAdapter(standard_evaluator)
     ]
 )
-
 ```
 
 ### Custom Function Adapters
@@ -184,7 +181,6 @@ experiment = run_experiment(
         ExactMatchAdapter(case_sensitive=False)
     ]
 )
-
 ```
 
 The `transform()` method is the key to adapting any function to the experiment framework. It takes the standard arguments provided by the framework and transforms them into the format your evaluator function expects.
@@ -211,7 +207,6 @@ experiment = run_experiment(
         ExactMatchAdapter(case_sensitive=False, weight=0.1)
     ]
 )
-
 ```
 
 ## Evaluator Chains
@@ -255,7 +250,6 @@ def final_aggregate_evaluator(row, task_result, parent, **kwargs):
     # Use the previous results
     avg_score = ((conciseness.score or 0) + (coherence.score or 0)) / 2
     return EvaluationResult(score=avg_score, pass_=avg_score > 0.7)
-
 ```
 
 ## Evaluator Weights (Experiments Only)
@@ -289,7 +283,6 @@ experiment = run_experiment(
     task=my_task,
     evaluators=[pii_evaluator, conciseness_evaluator]
 )
-
 ```
 
 #### Function-Based Evaluators
@@ -313,7 +306,6 @@ experiment = run_experiment(
     task=my_task,
     evaluators=[exact_match_weighted]
 )
-
 ```
 
 #### Class-Based Evaluators
@@ -345,7 +337,6 @@ experiment = run_experiment(
     task=my_task,
     evaluators=[custom_evaluator]
 )
-
 ```
 
 ### Complete Example
@@ -386,7 +377,6 @@ experiment = run_experiment(
     ],
     experiment_name="Weighted Evaluators Demo"
 )
-
 ```
 
 ### Weight Validation and Rules
@@ -414,7 +404,6 @@ run_experiment(
         RemoteEvaluator("judge", "patronus:is-concise", weight="0.3"),  # Different weight!
     ]
 )
-
 ```
 
 ## Best Practices

@@ -15,14 +15,12 @@ The Patronus SDK provides tools for evaluating, monitoring, and improving LLM ap
 
 ```bash
 uv add patronus
-
 ```
 
 ### Using pip
 
 ```bash
 pip install patronus
-
 ```
 
 ## Optional Dependencies
@@ -37,7 +35,6 @@ uv add "patronus[experiments]"
 
 # Using pip
 pip install "patronus[experiments]"
-
 ```
 
 ## Quick Start with Examples
@@ -54,7 +51,6 @@ export OPENAI_API_KEY=your-api-key
 # Run the example with uv
 uv run --no-cache --with "patronus-examples[smolagents]" \
     -m patronus_examples.tracking.smolagents_weather
-
 ```
 
 See the [examples documentation](../../examples/) for more detailed information on running and understanding the available examples.

@@ -91,14 +91,12 @@ experiment = run_experiment(
 )
 
 experiment.to_csv("./experiment-result.csv")
-
 ```
 
 You can run the experiment by simply executing the python file:
 
 ```shell
 python ./exeriment.py
-
 ```
 
 The output of the script should look similar to this:
@@ -125,7 +123,6 @@ Score Range          Count      Histogram
 0.40 - 0.60          0
 0.60 - 0.80          0
 0.80 - 1.00          0
-
 ```
 
 In the following sections, we'll explore how to set up, run, and analyze experiments in detail.

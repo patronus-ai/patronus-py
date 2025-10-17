@@ -5,21 +5,7 @@
 ### init
 
 ```python
-init(
-    project_name: Optional[str] = None,
-    app: Optional[str] = None,
-    api_url: Optional[str] = None,
-    otel_endpoint: Optional[str] = None,
-    otel_exporter_otlp_protocol: Optional[str] = None,
-    api_key: Optional[str] = None,
-    service: Optional[str] = None,
-    resource_dir: Optional[str] = None,
-    prompt_providers: Optional[list[str]] = None,
-    prompt_templating_engine: Optional[str] = None,
-    integrations: Optional[list[Any]] = None,
-    **kwargs: Any,
-) -> context.PatronusContext
-
+init(project_name: Optional[str] = None, app: Optional[str] = None, api_url: Optional[str] = None, otel_endpoint: Optional[str] = None, otel_exporter_otlp_protocol: Optional[str] = None, api_key: Optional[str] = None, service: Optional[str] = None, resource_dir: Optional[str] = None, prompt_providers: Optional[list[str]] = None, prompt_templating_engine: Optional[str] = None, integrations: Optional[list[Any]] = None, **kwargs: Any) -> context.PatronusContext
 ```
 
 Initializes the Patronus SDK with the specified configuration.
@@ -32,11 +18,23 @@ Note
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `project_name` | `Optional[str]` | Name of the project for organizing evaluations and experiments. Falls back to configuration file, then defaults to "Global" if not provided. | `None` | | `app` | `Optional[str]` | Name of the application within the project. Falls back to configuration file, then defaults to "default" if not provided. | `None` | | `api_url` | `Optional[str]` | URL for the Patronus API service. Falls back to configuration file or environment variables if not provided. | `None` | | `otel_endpoint` | `Optional[str]` | Endpoint for OpenTelemetry data collection. Falls back to configuration file or environment variables if not provided. | `None` | | `otel_exporter_otlp_protocol` | `Optional[str]` | OpenTelemetry exporter protocol (grpc or http/protobuf). Falls back to configuration file or environment variables if not provided. | `None` | | `api_key` | `Optional[str]` | Authentication key for Patronus services. Falls back to configuration file or environment variables if not provided. | `None` | | `service` | `Optional[str]` | Service name for OpenTelemetry traces. Falls back to configuration file or environment variables if not provided. | `None` | | `integrations` | `Optional[list[Any]]` | List of integration to use. | `None` | | `**kwargs` | `Any` | Additional configuration options for the SDK. | `{}` |
+| Name                          | Type                  | Description                                                                                                                                  | Default |
+| ----------------------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| `project_name`                | `Optional[str]`       | Name of the project for organizing evaluations and experiments. Falls back to configuration file, then defaults to "Global" if not provided. | `None`  |
+| `app`                         | `Optional[str]`       | Name of the application within the project. Falls back to configuration file, then defaults to "default" if not provided.                    | `None`  |
+| `api_url`                     | `Optional[str]`       | URL for the Patronus API service. Falls back to configuration file or environment variables if not provided.                                 | `None`  |
+| `otel_endpoint`               | `Optional[str]`       | Endpoint for OpenTelemetry data collection. Falls back to configuration file or environment variables if not provided.                       | `None`  |
+| `otel_exporter_otlp_protocol` | `Optional[str]`       | OpenTelemetry exporter protocol (grpc or http/protobuf). Falls back to configuration file or environment variables if not provided.          | `None`  |
+| `api_key`                     | `Optional[str]`       | Authentication key for Patronus services. Falls back to configuration file or environment variables if not provided.                         | `None`  |
+| `service`                     | `Optional[str]`       | Service name for OpenTelemetry traces. Falls back to configuration file or environment variables if not provided.                            | `None`  |
+| `integrations`                | `Optional[list[Any]]` | List of integration to use.                                                                                                                  | `None`  |
+| `**kwargs`                    | `Any`                 | Additional configuration options for the SDK.                                                                                                | `{}`    |
 
 Returns:
 
-| Name | Type | Description | | --- | --- | --- | | `PatronusContext` | `PatronusContext` | The initialized context object. |
+| Name              | Type              | Description                     |
+| ----------------- | ----------------- | ------------------------------- |
+| `PatronusContext` | `PatronusContext` | The initialized context object. |
 
 Example
 
@@ -52,7 +50,6 @@ patronus.init(
     app="recommendation-service",
     api_key="your-api-key"
 )
-
 ```
 
 Source code in `src/patronus/init.py`
@@ -121,7 +118,10 @@ def init(
         )
         ```
     """
-    if api_url != config.DEFAULT_API_URL and otel_endpoint == config.DEFAULT_OTEL_ENDPOINT:
+    api_url = api_url and api_url.rstrip("/")
+    otel_endpoint = otel_endpoint and otel_endpoint.rstrip("/")
+
+    if (api_url and api_url != config.DEFAULT_API_URL) and (otel_endpoint is None or otel_endpoint == config.DEFAULT_OTEL_ENDPOINT):
         raise ValueError(
             "'api_url' is set to non-default value, "
             "but 'otel_endpoint' is a default. Change 'otel_endpoint' to point to the same environment as 'api_url'"
@@ -156,32 +156,12 @@ def init(
             stacklevel=2,
         )
     return context.get_current_context()
-
 ````
 
 ### build_context
 
 ```python
-build_context(
-    service: str,
-    project_name: str,
-    app: Optional[str],
-    experiment_id: Optional[str],
-    experiment_name: Optional[str],
-    api_url: Optional[str],
-    otel_endpoint: str,
-    otel_exporter_otlp_protocol: Optional[str],
-    api_key: str,
-    resource_dir: Optional[str] = None,
-    prompt_providers: Optional[list[str]] = None,
-    prompt_templating_engine: Optional[str] = None,
-    client_http: Optional[Client] = None,
-    client_http_async: Optional[AsyncClient] = None,
-    timeout_s: int = 60,
-    integrations: Optional[list[Any]] = None,
-    **kwargs: Any,
-) -> context.PatronusContext
-
+build_context(service: str, project_name: str, app: Optional[str], experiment_id: Optional[str], experiment_name: Optional[str], api_url: Optional[str], otel_endpoint: str, otel_exporter_otlp_protocol: Optional[str], api_key: str, resource_dir: Optional[str] = None, prompt_providers: Optional[list[str]] = None, prompt_templating_engine: Optional[str] = None, client_http: Optional[Client] = None, client_http_async: Optional[AsyncClient] = None, timeout_s: int = 60, verify_ssl: bool = True, integrations: Optional[list[Any]] = None, **kwargs: Any) -> context.PatronusContext
 ```
 
 Builds a Patronus context with the specified configuration parameters.
@@ -190,11 +170,28 @@ This function creates the context object that contains all necessary components 
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `service` | `str` | Service name for OpenTelemetry traces. | *required* | | `project_name` | `str` | Name of the project for organizing evaluations and experiments. | *required* | | `app` | `Optional[str]` | Name of the application within the project. | *required* | | `experiment_id` | `Optional[str]` | Unique identifier for an experiment when running in experiment mode. | *required* | | `experiment_name` | `Optional[str]` | Display name for an experiment when running in experiment mode. | *required* | | `api_url` | `Optional[str]` | URL for the Patronus API service. | *required* | | `otel_endpoint` | `str` | Endpoint for OpenTelemetry data collection. | *required* | | `otel_exporter_otlp_protocol` | `Optional[str]` | OpenTelemetry exporter protocol (grpc or http/protobuf). | *required* | | `api_key` | `str` | Authentication key for Patronus services. | *required* | | `client_http` | `Optional[Client]` | Custom HTTP client for synchronous API requests. If not provided, a new client will be created. | `None` | | `client_http_async` | `Optional[AsyncClient]` | Custom HTTP client for asynchronous API requests. If not provided, a new client will be created. | `None` | | `timeout_s` | `int` | Timeout in seconds for HTTP requests (default: 60). | `60` | | `integrations` | `Optional[list[Any]]` | List of PatronusIntegrator instances. | `None` | | `**kwargs` | `Any` | Additional configuration options, including: - integrations: List of OpenTelemetry instrumentors to enable. | `{}` |
+| Name                          | Type                    | Description                                                                                                 | Default    |
+| ----------------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------------- | ---------- |
+| `service`                     | `str`                   | Service name for OpenTelemetry traces.                                                                      | *required* |
+| `project_name`                | `str`                   | Name of the project for organizing evaluations and experiments.                                             | *required* |
+| `app`                         | `Optional[str]`         | Name of the application within the project.                                                                 | *required* |
+| `experiment_id`               | `Optional[str]`         | Unique identifier for an experiment when running in experiment mode.                                        | *required* |
+| `experiment_name`             | `Optional[str]`         | Display name for an experiment when running in experiment mode.                                             | *required* |
+| `api_url`                     | `Optional[str]`         | URL for the Patronus API service.                                                                           | *required* |
+| `otel_endpoint`               | `str`                   | Endpoint for OpenTelemetry data collection.                                                                 | *required* |
+| `otel_exporter_otlp_protocol` | `Optional[str]`         | OpenTelemetry exporter protocol (grpc or http/protobuf).                                                    | *required* |
+| `api_key`                     | `str`                   | Authentication key for Patronus services.                                                                   | *required* |
+| `client_http`                 | `Optional[Client]`      | Custom HTTP client for synchronous API requests. If not provided, a new client will be created.             | `None`     |
+| `client_http_async`           | `Optional[AsyncClient]` | Custom HTTP client for asynchronous API requests. If not provided, a new client will be created.            | `None`     |
+| `timeout_s`                   | `int`                   | Timeout in seconds for HTTP requests (default: 60).                                                         | `60`       |
+| `integrations`                | `Optional[list[Any]]`   | List of PatronusIntegrator instances.                                                                       | `None`     |
+| `**kwargs`                    | `Any`                   | Additional configuration options, including: - integrations: List of OpenTelemetry instrumentors to enable. | `{}`       |
 
 Returns:
 
-| Name | Type | Description | | --- | --- | --- | | `PatronusContext` | `PatronusContext` | The initialized context object containing all necessary components for SDK operation. |
+| Name              | Type              | Description                                                                           |
+| ----------------- | ----------------- | ------------------------------------------------------------------------------------- |
+| `PatronusContext` | `PatronusContext` | The initialized context object containing all necessary components for SDK operation. |
 
 Source code in `src/patronus/init.py`
 
@@ -215,6 +212,7 @@ def build_context(
     client_http: Optional[httpx.Client] = None,
     client_http_async: Optional[httpx.AsyncClient] = None,
     timeout_s: int = 60,
+    verify_ssl: bool = True,
     integrations: Optional[list[typing.Any]] = None,
     **kwargs: typing.Any,
 ) -> context.PatronusContext:
@@ -250,9 +248,9 @@ def build_context(
             components for SDK operation.
     """
     if client_http is None:
-        client_http = httpx.Client(timeout=timeout_s)
+        client_http = httpx.Client(timeout=timeout_s, verify=verify_ssl)
     if client_http_async is None:
-        client_http_async = httpx.AsyncClient(timeout=timeout_s)
+        client_http_async = httpx.AsyncClient(timeout=timeout_s, verify=verify_ssl)
 
     integrations = prepare_integrations(integrations)
 
@@ -303,5 +301,4 @@ def build_context(
     )
     apply_integrations(ctx, integrations)
     return ctx
-
 ```

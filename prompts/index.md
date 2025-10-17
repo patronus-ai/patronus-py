@@ -39,7 +39,6 @@ rendered = prompt.render(
     issue_type="authentication"
 )
 print(rendered)
-
 ```
 
 ### Loading a Prompt
@@ -64,7 +63,6 @@ rendered = prompt.render(
     issue_type="password reset"
 )
 print(rendered)
-
 ```
 
 ## Loading Prompts
@@ -81,7 +79,6 @@ patronus.init()
 prompt = load_prompt(name="content/writing/blog-instructions")
 rendered = prompt.render()
 print(rendered)
-
 ```
 
 For async applications:
@@ -90,7 +87,6 @@ For async applications:
 from patronus.prompts import aload_prompt
 
 prompt = await aload_prompt(name="content/writing/blog-instructions")
-
 ```
 
 ### Loading Specific Versions
@@ -103,7 +99,6 @@ prompt = load_prompt(name="content/blog/technical-explainer", revision=3)
 
 # Load by label (production environment)
 prompt = load_prompt(name="legal/contracts/privacy-policy", label="production")
-
 ```
 
 ## Creating and Updating Prompts
@@ -125,7 +120,6 @@ new_prompt = Prompt(
 )
 
 loaded_prompt = push_prompt(new_prompt)
-
 ````
 
 For async applications:
@@ -134,7 +128,6 @@ For async applications:
 from patronus.prompts import apush_prompt
 
 loaded_prompt = await apush_prompt(new_prompt)
-
 ```
 
 The `push_prompt` function automatically handles duplicate detection - if a prompt with identical content already exists, it returns the existing revision instead of creating a new one.
@@ -145,7 +138,6 @@ Render prompts with variables:
 
 ```python
 rendered = prompt.render(user_query="How do I optimize database performance?", expertise_level="intermediate")
-
 ```
 
 ### Template Engines
@@ -161,7 +153,6 @@ rendered = prompt.with_engine("mustache").render(**kwargs)
 
 # Jinja2 templating
 rendered = prompt.with_engine("jinja2").render(**kwargs)
-
 ```
 
 ## Working with Labels
@@ -193,7 +184,6 @@ client.add_label(
     revision=2,
     label="production"
 )
-
 ```
 
 ## Metadata Usage
@@ -223,7 +213,6 @@ creator = prompt.metadata.get("created_by", "unknown")
 
 print(f"Prompt supports models: {', '.join(supported_models)}")
 print(f"Created by: {creator}")
-
 ```
 
 ## Using Multiple Prompts Together
@@ -270,7 +259,6 @@ formatted_response = response_formatter.render(
     user_name="Alex",
     add_examples=True
 )
-
 ```
 
 ## Naming Conventions
@@ -279,7 +267,6 @@ Use a descriptive, hierarchical naming structure similar to file paths. This mak
 
 ```text
 [domain]/[use-case]/[component]/[prompt-type]
-
 ```
 
 Where `[prompt-type]` indicates the intended role of the prompt in an LLM conversation (optional but recommended):
@@ -314,7 +301,6 @@ onboarding/chat/intro/assistant
 # Support classifier prompts
 support/classifier/system
 support/classifier/categories/instruction
-
 ```
 
 This approach simplifies filtering and management of related prompts, making it easier to maintain and evolve complete prompt flows as your library grows.
@@ -330,7 +316,6 @@ patronus.init(
     # Default template engine for all prompts
     prompt_templating_engine="mustache"
 )
-
 ```
 
 For additional configuration options, see the [Configuration](../configuration/) page.
@@ -361,7 +346,6 @@ response = client.messages.create(
         {"role": "user", "content": "How do I configure the load balancer for high availability?"}
     ]
 )
-
 ```
 
 ## Additional Resources

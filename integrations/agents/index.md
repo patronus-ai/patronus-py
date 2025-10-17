@@ -12,7 +12,6 @@ Make sure you have both the Patronus SDK and Pydantic AI installed:
 
 ```bash
 pip install patronus pydantic-ai
-
 ```
 
 ### Usage
@@ -29,7 +28,6 @@ patronus_ctx = init(
 )
 
 # Now all Pydantic AI agents will automatically send telemetry to Patronus
-
 ```
 
 ### Configuration Options
@@ -49,5 +47,4 @@ from patronus.integrations.pydantic_ai import PydanticAIIntegrator
 patronus_ctx = init(
     integrations=[PydanticAIIntegrator(event_mode="logs")]
 )
-
 ```

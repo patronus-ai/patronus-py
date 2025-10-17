@@ -4,7 +4,10 @@
 
 The SDK supports two OTLP exporter protocols:
 
-| Protocol | Value | Default Endpoint | Available Ports | | --- | --- | --- | --- | | gRPC | `grpc` | `https://otel.patronus.ai:4317` | 4317 | | HTTP | `http/protobuf` | `https://otel.patronus.ai:4318` | 4318, 443 |
+| Protocol | Value           | Default Endpoint                | Available Ports |
+| -------- | --------------- | ------------------------------- | --------------- |
+| gRPC     | `grpc`          | `https://otel.patronus.ai:4317` | 4317            |
+| HTTP     | `http/protobuf` | `https://otel.patronus.ai:4318` | 4318, 443       |
 
 ## Configuration Methods
 
@@ -15,20 +18,17 @@ patronus.init(
     otel_endpoint="https://otel.patronus.ai:4318",
     otel_exporter_otlp_protocol="http/protobuf"
 )
-
 ```
 
 ```yaml
 # patronus.yaml
 otel_endpoint: "https://otel.patronus.ai:4318"
 otel_exporter_otlp_protocol: "http/protobuf"
-
 ```
 
 ```bash
 export PATRONUS_OTEL_ENDPOINT="https://otel.patronus.ai:4318"
 export PATRONUS_OTEL_EXPORTER_OTLP_PROTOCOL="http/protobuf"
-
 ```
 
 ### 2. OpenTelemetry Environment Variables
@@ -40,7 +40,6 @@ export OTEL_EXPORTER_OTLP_PROTOCOL="grpc"
 # Signal-specific
 export OTEL_EXPORTER_OTLP_TRACES_PROTOCOL="http/protobuf"
 export OTEL_EXPORTER_OTLP_LOGS_PROTOCOL="grpc"
-
 ```
 
 ## Configuration Priority
@@ -61,7 +60,6 @@ patronus.init(
     otel_endpoint="https://collector.example.com:4317",
     otel_exporter_otlp_protocol="grpc"
 )
-
 ```
 
 ### Connection Security
@@ -89,7 +87,6 @@ patronus.init(
     otel_endpoint="http://collector.example.com:4318",
     otel_exporter_otlp_protocol="http/protobuf"
 )
-
 ```
 
 ### HTTP Path Handling
@@ -108,7 +105,6 @@ patronus.init(
     otel_endpoint="http://internal-collector:8080",
     otel_exporter_otlp_protocol="http/protobuf"
 )
-
 ```
 
 ### HTTP Protocol on Standard HTTPS Port
@@ -118,7 +114,6 @@ patronus.init(
     otel_endpoint="https://otel.example.com:443",
     otel_exporter_otlp_protocol="http/protobuf"
 )
-
 ```
 
 ### gRPC with Insecure Connection
@@ -128,7 +123,6 @@ patronus.init(
     otel_endpoint="http://internal-collector:4317",
     otel_exporter_otlp_protocol="grpc"
 )
-
 ```
 
 ### Mixed Protocols
@@ -136,5 +130,4 @@ patronus.init(
 ```bash
 export OTEL_EXPORTER_OTLP_TRACES_PROTOCOL="http/protobuf"
 export OTEL_EXPORTER_OTLP_LOGS_PROTOCOL="grpc"
-
 ```

@@ -15,7 +15,6 @@ patronus.init(
     # This is the default and can be omitted
     api_key=os.environ.get("PATRONUS_API_KEY")
 )
-
 ```
 
 You can also use a configuration file instead of direct initialization:
@@ -26,7 +25,6 @@ You can also use a configuration file instead of direct initialization:
 api_key: "your-api-key"
 project_name:  "Global"
 app: "default"
-
 ```
 
 For experiments, you don't need to explicitly call init() as run_experiment() handles initialization automatically.
@@ -63,7 +61,6 @@ def main():
 
 if __name__ == "__main__":
     main()
-
 ```
 
 In this example:
@@ -124,7 +121,6 @@ Explanation: {resp.explanation}
 
 if __name__ == "__main__":
     main()
-
 ```
 
 In this example:
@@ -144,7 +140,6 @@ Before running Example 3, you'll need to install Pandas and the OpenAI SDK and O
 
 ```shell
 pip install pandas openai openinference-instrumentation-openai
-
 ```
 
 The OpenInference instrumentation automatically adds spans for all OpenAI API calls, capturing prompts, responses, and model parameters without any code changes. These details will appear in your Patronus traces for complete visibility into model interactions.
@@ -254,7 +249,6 @@ experiment = run_experiment(
 
 # Export results to CSV (optional)
 # experiment.to_csv("rag_evaluation_results.csv")
-
 ```
 
 In this example:

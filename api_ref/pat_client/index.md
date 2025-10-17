@@ -6,7 +6,6 @@
 
 ```python
 AsyncPatronus(max_workers: int = 10)
-
 ```
 
 Source code in `src/patronus/pat_client/client_async.py`
@@ -16,24 +15,12 @@ def __init__(self, max_workers: int = 10):
     self._pending_tasks = collections.deque()
     self._executor = ThreadPoolExecutor(max_workers=max_workers)
     self._semaphore = asyncio.Semaphore(max_workers)
-
 ```
 
 #### evaluate
 
 ```python
-evaluate(
-    evaluators: Union[List[Evaluator], Evaluator],
-    *,
-    system_prompt: Optional[str] = None,
-    task_context: Union[list[str], str, None] = None,
-    task_input: Optional[str] = None,
-    task_output: Optional[str] = None,
-    gold_answer: Optional[str] = None,
-    task_metadata: Optional[dict] = None,
-    return_exceptions: bool = False,
-) -> EvaluationContainer
-
+evaluate(evaluators: Union[List[Evaluator], Evaluator], *, system_prompt: Optional[str] = None, task_context: Union[list[str], str, None] = None, task_input: Optional[str] = None, task_output: Optional[str] = None, gold_answer: Optional[str] = None, task_metadata: Optional[dict] = None, return_exceptions: bool = False) -> EvaluationContainer
 ```
 
 Run multiple evaluators in parallel.
@@ -85,23 +72,12 @@ async def evaluate(
             return_exceptions=return_exceptions,
         )
     return EvaluationContainer(results)
-
 ```
 
 #### evaluate_bg
 
 ```python
-evaluate_bg(
-    evaluators: Union[List[Evaluator], Evaluator],
-    *,
-    system_prompt: Optional[str] = None,
-    task_context: Union[list[str], str, None] = None,
-    task_input: Optional[str] = None,
-    task_output: Optional[str] = None,
-    gold_answer: Optional[str] = None,
-    task_metadata: Optional[dict] = None,
-) -> Task[EvaluationContainer]
-
+evaluate_bg(evaluators: Union[List[Evaluator], Evaluator], *, system_prompt: Optional[str] = None, task_context: Union[list[str], str, None] = None, task_input: Optional[str] = None, task_output: Optional[str] = None, gold_answer: Optional[str] = None, task_metadata: Optional[dict] = None) -> Task[EvaluationContainer]
 ```
 
 Run multiple evaluators in parallel. The returned task will be a background task.
@@ -140,14 +116,12 @@ def evaluate_bg(
     self._pending_tasks.append(task)
     task.add_done_callback(self._consume_tasks)
     return task
-
 ```
 
 #### close
 
 ```python
 close()
-
 ```
 
 Gracefully close the client. This will wait for all background tasks to finish.
@@ -161,7 +135,6 @@ async def close(self):
     """
     while len(self._pending_tasks) != 0:
         await self._pending_tasks.popleft()
-
 ```
 
 ## client_sync
@@ -170,7 +143,6 @@ async def close(self):
 
 ```python
 Patronus(workers: int = 10, shutdown_on_exit: bool = True)
-
 ```
 
 Source code in `src/patronus/pat_client/client_sync.py`
@@ -183,24 +155,12 @@ def __init__(self, workers: int = 10, shutdown_on_exit: bool = True):
     self._at_exit_handler = None
     if shutdown_on_exit:
         self._at_exit_handler = atexit.register(self.close)
-
 ```
 
 #### evaluate
 
 ```python
-evaluate(
-    evaluators: Union[list[Evaluator], Evaluator],
-    *,
-    system_prompt: Optional[str] = None,
-    task_context: Union[list[str], str, None] = None,
-    task_input: Optional[str] = None,
-    task_output: Optional[str] = None,
-    gold_answer: Optional[str] = None,
-    task_metadata: Optional[dict[str, Any]] = None,
-    return_exceptions: bool = False,
-) -> EvaluationContainer
-
+evaluate(evaluators: Union[list[Evaluator], Evaluator], *, system_prompt: Optional[str] = None, task_context: Union[list[str], str, None] = None, task_input: Optional[str] = None, task_output: Optional[str] = None, gold_answer: Optional[str] = None, task_metadata: Optional[dict[str, Any]] = None, return_exceptions: bool = False) -> EvaluationContainer
 ```
 
 Run multiple evaluators in parallel.
@@ -242,23 +202,12 @@ def evaluate(
         ]
         results = self._process_batch(callables, return_exceptions=return_exceptions)
         return EvaluationContainer(results)
-
 ```
 
 #### evaluate_bg
 
 ```python
-evaluate_bg(
-    evaluators: list[StructuredEvaluator],
-    *,
-    system_prompt: Optional[str] = None,
-    task_context: Union[list[str], str, None] = None,
-    task_input: Optional[str] = None,
-    task_output: Optional[str] = None,
-    gold_answer: Optional[str] = None,
-    task_metadata: Optional[dict[str, Any]] = None,
-) -> TypedAsyncResult[EvaluationContainer]
-
+evaluate_bg(evaluators: list[StructuredEvaluator], *, system_prompt: Optional[str] = None, task_context: Union[list[str], str, None] = None, task_input: Optional[str] = None, task_output: Optional[str] = None, gold_answer: Optional[str] = None, task_metadata: Optional[dict[str, Any]] = None) -> TypedAsyncResult[EvaluationContainer]
 ```
 
 Run multiple evaluators in parallel. The returned task will be a background task.
@@ -301,14 +250,12 @@ def evaluate_bg(
     return typing.cast(
         TypedAsyncResult[EvaluationContainer], self._supervisor_pool.apply_async(_into_thread_run_fn(_run))
     )
-
 ```
 
 #### close
 
 ```python
 close()
-
 ```
 
 Gracefully close the client. This will wait for all background tasks to finish.
@@ -323,7 +270,6 @@ def close(self):
     self._close()
     if self._at_exit_handler:
         atexit.unregister(self._at_exit_handler)
-
 ```
 
 ## container
@@ -331,17 +277,13 @@ def close(self):
 ### EvaluationContainer
 
 ```python
-EvaluationContainer(
-    results: list[Union[EvaluationResult, None, Exception]],
-)
-
+EvaluationContainer(results: list[Union[EvaluationResult, None, Exception]])
 ```
 
 #### format
 
 ```python
 format() -> str
-
 ```
 
 Format the evaluation results into a readable summary.
@@ -379,21 +321,21 @@ def format(self) -> str:
         buf.write("---\n")
 
     return buf.getvalue()
-
 ```
 
 #### pretty_print
 
 ```python
 pretty_print(file: Optional[IO] = None) -> None
-
 ```
 
 Formats and prints the current object in a human-readable form.
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `file` | `Optional[IO]` | | `None` |
+| Name   | Type           | Description | Default |
+| ------ | -------------- | ----------- | ------- |
+| `file` | `Optional[IO]` |             | `None`  |
 
 Source code in `src/patronus/pat_client/container.py`
 
@@ -407,14 +349,12 @@ def pretty_print(self, file: Optional[IO] = None) -> None:
     """
     f = self.format()
     print(f, file=file)
-
 ```
 
 #### has_exception
 
 ```python
 has_exception() -> bool
-
 ```
 
 Checks if the results contain any exception.
@@ -427,14 +367,12 @@ def has_exception(self) -> bool:
     Checks if the results contain any exception.
     """
     return any(isinstance(r, Exception) for r in self.results)
-
 ```
 
 #### raise_on_exception
 
 ```python
 raise_on_exception() -> None
-
 ```
 
 Checks the results for any exceptions and raises them accordingly.
@@ -452,14 +390,12 @@ def raise_on_exception(self) -> None:
     if len(exceptions) == 1:
         raise exceptions[0]
     raise MultiException(exceptions)
-
 ```
 
 #### all_succeeded
 
 ```python
 all_succeeded(ignore_exceptions: bool = False) -> bool
-
 ```
 
 Check if all evaluations that were actually evaluated passed.
@@ -492,14 +428,12 @@ def all_succeeded(self, ignore_exceptions: bool = False) -> bool:
         if r is not None and r.pass_ is False:
             return False
     return True
-
 ```
 
 #### any_failed
 
 ```python
 any_failed(ignore_exceptions: bool = False) -> bool
-
 ```
 
 Check if any evaluation that was actually evaluated failed.
@@ -532,16 +466,12 @@ def any_failed(self, ignore_exceptions: bool = False) -> bool:
         if r is not None and r.pass_ is False:
             return True
     return False
-
 ```
 
 #### failed_evaluations
 
 ```python
-failed_evaluations() -> Generator[
-    EvaluationResult, None, None
-]
-
+failed_evaluations() -> Generator[EvaluationResult, None, None]
 ```
 
 Generates all failed evaluations from the results.
@@ -554,16 +484,12 @@ def failed_evaluations(self) -> Generator[EvaluationResult, None, None]:
     Generates all failed evaluations from the results.
     """
     return (r for r in self.results if not isinstance(r, (Exception, type(None))) and r.pass_ is False)
-
 ```
 
 #### succeeded_evaluations
 
 ```python
-succeeded_evaluations() -> Generator[
-    EvaluationResult, None, None
-]
-
+succeeded_evaluations() -> Generator[EvaluationResult, None, None]
 ```
 
 Generates all successfully passed evaluations from the `results` attribute.
@@ -576,5 +502,4 @@ def succeeded_evaluations(self) -> Generator[EvaluationResult, None, None]:
     Generates all successfully passed evaluations from the `results` attribute.
     """
     return (r for r in self.results if not isinstance(r, (Exception, type(None))) and r.pass_ is True)
-
 ```

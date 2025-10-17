@@ -8,7 +8,6 @@
 
 ```python
 Evaluator(weight: Optional[Union[str, float]] = None)
-
 ```
 
 Base Evaluator Class
@@ -25,14 +24,12 @@ def __init__(self, weight: Optional[Union[str, float]] = None):
                 f"{weight} is not a valid weight. Weight must be a valid decimal number (string or float)."
             )
     self.weight = weight
-
 ```
 
 ##### evaluate
 
 ```python
 evaluate(*args, **kwargs) -> Optional[EvaluationResult]
-
 ```
 
 Synchronous version of evaluate method. When inheriting directly from Evaluator class it's permitted to change parameters signature. Return type should stay unchanged.
@@ -47,14 +44,12 @@ def evaluate(self, *args, **kwargs) -> Optional[EvaluationResult]:
     When inheriting directly from Evaluator class it's permitted to change parameters signature.
     Return type should stay unchanged.
     """
-
 ```
 
 #### AsyncEvaluator
 
 ```python
 AsyncEvaluator(weight: Optional[Union[str, float]] = None)
-
 ```
 
 Bases: `Evaluator`
@@ -71,14 +66,12 @@ def __init__(self, weight: Optional[Union[str, float]] = None):
                 f"{weight} is not a valid weight. Weight must be a valid decimal number (string or float)."
             )
     self.weight = weight
-
 ```
 
 ##### evaluate
 
 ```python
 evaluate(*args, **kwargs) -> Optional[EvaluationResult]
-
 ```
 
 Asynchronous version of evaluate method. When inheriting directly from Evaluator class it's permitted to change parameters signature. Return type should stay unchanged.
@@ -93,16 +86,12 @@ async def evaluate(self, *args, **kwargs) -> Optional[EvaluationResult]:
     When inheriting directly from Evaluator class it's permitted to change parameters signature.
     Return type should stay unchanged.
     """
-
 ```
 
 #### StructuredEvaluator
 
 ```python
-StructuredEvaluator(
-    weight: Optional[Union[str, float]] = None,
-)
-
+StructuredEvaluator(weight: Optional[Union[str, float]] = None)
 ```
 
 Bases: `Evaluator`
@@ -121,16 +110,12 @@ def __init__(self, weight: Optional[Union[str, float]] = None):
                 f"{weight} is not a valid weight. Weight must be a valid decimal number (string or float)."
             )
     self.weight = weight
-
 ```
 
 #### AsyncStructuredEvaluator
 
 ```python
-AsyncStructuredEvaluator(
-    weight: Optional[Union[str, float]] = None,
-)
-
+AsyncStructuredEvaluator(weight: Optional[Union[str, float]] = None)
 ```
 
 Bases: `AsyncEvaluator`
@@ -149,32 +134,30 @@ def __init__(self, weight: Optional[Union[str, float]] = None):
                 f"{weight} is not a valid weight. Weight must be a valid decimal number (string or float)."
             )
     self.weight = weight
-
 ```
 
 #### RemoteEvaluatorMixin
 
 ```python
-RemoteEvaluatorMixin(
-    evaluator_id_or_alias: str,
-    criteria: Optional[str] = None,
-    *,
-    tags: Optional[dict[str, str]] = None,
-    explain_strategy: Literal[
-        "never", "on-fail", "on-success", "always"
-    ] = "always",
-    criteria_config: Optional[dict[str, Any]] = None,
-    allow_update: bool = False,
-    max_attempts: int = 3,
-    api_: Optional[PatronusAPIClient] = None,
-    weight: Optional[Union[str, float]] = None,
-)
-
+RemoteEvaluatorMixin(evaluator_id_or_alias: str, criteria: Optional[str] = None, *, tags: Optional[dict[str, str]] = None, explain_strategy: Literal['never', 'on-fail', 'on-success', 'always'] = 'always', criteria_config: Optional[dict[str, Any]] = None, allow_update: bool = False, max_attempts: int = 3, api_: Optional[PatronusAPIClient] = None, weight: Optional[Union[str, float]] = None, retry_max_attempts: Optional[int] = 3, retry_initial_delay: Optional[int] = 1, retry_backoff_factor: Optional[int] = 2)
 ```
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `evaluator_id_or_alias` | `str` | The ID or alias of the evaluator to use. | *required* | | `criteria` | `Optional[str]` | The criteria name to use for evaluation. If not provided, the evaluator's default criteria will be used. | `None` | | `tags` | `Optional[dict[str, str]]` | Optional tags to attach to evaluations. | `None` | | `explain_strategy` | `Literal['never', 'on-fail', 'on-success', 'always']` | When to generate explanations for evaluations. Options are "never", "on-fail", "on-success", or "always". | `'always'` | | `criteria_config` | `Optional[dict[str, Any]]` | Configuration for the criteria. (Currently unused) | `None` | | `allow_update` | `bool` | Whether to allow updates. (Currently unused) | `False` | | `max_attempts` | `int` | Maximum number of retry attempts. (Currently unused) | `3` | | `api_` | `Optional[PatronusAPIClient]` | Optional API client instance. If not provided, will use the default client from context. | `None` | | `weight` | `Optional[Union[str, float]]` | Optional weight for the evaluator. This is only used within the Patronus Experimentation Framework to indicate the relative importance of evaluators. Must be a valid decimal number (string or float). Weights are stored as experiment metadata and do not affect standalone evaluator usage. | `None` |
+| Name                    | Type                                                  | Description                                                                                                                                                                                                                                                                                     | Default    |
+| ----------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------- |
+| `evaluator_id_or_alias` | `str`                                                 | The ID or alias of the evaluator to use.                                                                                                                                                                                                                                                        | *required* |
+| `criteria`              | `Optional[str]`                                       | The criteria name to use for evaluation. If not provided, the evaluator's default criteria will be used.                                                                                                                                                                                        | `None`     |
+| `tags`                  | `Optional[dict[str, str]]`                            | Optional tags to attach to evaluations.                                                                                                                                                                                                                                                         | `None`     |
+| `explain_strategy`      | `Literal['never', 'on-fail', 'on-success', 'always']` | When to generate explanations for evaluations. Options are "never", "on-fail", "on-success", or "always".                                                                                                                                                                                       | `'always'` |
+| `criteria_config`       | `Optional[dict[str, Any]]`                            | Configuration for the criteria. (Currently unused)                                                                                                                                                                                                                                              | `None`     |
+| `allow_update`          | `bool`                                                | Whether to allow updates. (Currently unused)                                                                                                                                                                                                                                                    | `False`    |
+| `max_attempts`          | `int`                                                 | Maximum number of retry attempts. (Currently unused)                                                                                                                                                                                                                                            | `3`        |
+| `api_`                  | `Optional[PatronusAPIClient]`                         | Optional API client instance. If not provided, will use the default client from context.                                                                                                                                                                                                        | `None`     |
+| `weight`                | `Optional[Union[str, float]]`                         | Optional weight for the evaluator. This is only used within the Patronus Experimentation Framework to indicate the relative importance of evaluators. Must be a valid decimal number (string or float). Weights are stored as experiment metadata and do not affect standalone evaluator usage. | `None`     |
+| `retry_max_attempts`    | `Optional[int]`                                       | Maximum number of retry attempts.                                                                                                                                                                                                                                                               | `3`        |
+| `retry_initial_delay`   | `Optional[int]`                                       | Initial delay before next retry.                                                                                                                                                                                                                                                                | `1`        |
+| `retry_backoff_factor`  | `Optional[int]`                                       | Delay factor between retry attempts.                                                                                                                                                                                                                                                            | `2`        |
 
 Source code in `src/patronus/evals/evaluators.py`
 
@@ -191,6 +174,9 @@ def __init__(
     max_attempts: int = 3,
     api_: Optional[PatronusAPIClient] = None,
     weight: Optional[Union[str, float]] = None,
+    retry_max_attempts: Optional[int] = 3,
+    retry_initial_delay: Optional[int] = 1,
+    retry_backoff_factor: Optional[int] = 2,
 ):
     """Initialize a remote evaluator.
 
@@ -211,6 +197,9 @@ def __init__(
             importance of evaluators. Must be a valid decimal number (string
             or float). Weights are stored as experiment metadata and do not
             affect standalone evaluator usage.
+        retry_max_attempts: Maximum number of retry attempts.
+        retry_initial_delay: Initial delay before next retry.
+        retry_backoff_factor: Delay factor between retry attempts.
     """
     self.evaluator_id_or_alias = evaluator_id_or_alias
     self.evaluator_id = None
@@ -225,27 +214,15 @@ def __init__(
     self.weight = weight
     self._load_lock = threading.Lock()
     self._async_load_lock = asyncio.Lock()
-
+    self.retry_max_attempts = retry_max_attempts
+    self.retry_initial_delay = retry_initial_delay
+    self.retry_backoff_factor = retry_backoff_factor
 ```
 
 #### RemoteEvaluator
 
 ```python
-RemoteEvaluator(
-    evaluator_id_or_alias: str,
-    criteria: Optional[str] = None,
-    *,
-    tags: Optional[dict[str, str]] = None,
-    explain_strategy: Literal[
-        "never", "on-fail", "on-success", "always"
-    ] = "always",
-    criteria_config: Optional[dict[str, Any]] = None,
-    allow_update: bool = False,
-    max_attempts: int = 3,
-    api_: Optional[PatronusAPIClient] = None,
-    weight: Optional[Union[str, float]] = None,
-)
-
+RemoteEvaluator(evaluator_id_or_alias: str, criteria: Optional[str] = None, *, tags: Optional[dict[str, str]] = None, explain_strategy: Literal['never', 'on-fail', 'on-success', 'always'] = 'always', criteria_config: Optional[dict[str, Any]] = None, allow_update: bool = False, max_attempts: int = 3, api_: Optional[PatronusAPIClient] = None, weight: Optional[Union[str, float]] = None, retry_max_attempts: Optional[int] = 3, retry_initial_delay: Optional[int] = 1, retry_backoff_factor: Optional[int] = 2)
 ```
 
 Bases: `RemoteEvaluatorMixin`, `StructuredEvaluator`
@@ -267,6 +244,9 @@ def __init__(
     max_attempts: int = 3,
     api_: Optional[PatronusAPIClient] = None,
     weight: Optional[Union[str, float]] = None,
+    retry_max_attempts: Optional[int] = 3,
+    retry_initial_delay: Optional[int] = 1,
+    retry_backoff_factor: Optional[int] = 2,
 ):
     """Initialize a remote evaluator.
 
@@ -287,6 +267,9 @@ def __init__(
             importance of evaluators. Must be a valid decimal number (string
             or float). Weights are stored as experiment metadata and do not
             affect standalone evaluator usage.
+        retry_max_attempts: Maximum number of retry attempts.
+        retry_initial_delay: Initial delay before next retry.
+        retry_backoff_factor: Delay factor between retry attempts.
     """
     self.evaluator_id_or_alias = evaluator_id_or_alias
     self.evaluator_id = None
@@ -301,24 +284,15 @@ def __init__(
     self.weight = weight
     self._load_lock = threading.Lock()
     self._async_load_lock = asyncio.Lock()
-
+    self.retry_max_attempts = retry_max_attempts
+    self.retry_initial_delay = retry_initial_delay
+    self.retry_backoff_factor = retry_backoff_factor
 ```
 
 ##### evaluate
 
 ```python
-evaluate(
-    *,
-    system_prompt: Optional[str] = None,
-    task_context: Union[list[str], str, None] = None,
-    task_attachments: Union[list[Any], None] = None,
-    task_input: Optional[str] = None,
-    task_output: Optional[str] = None,
-    gold_answer: Optional[str] = None,
-    task_metadata: Optional[Dict[str, Any]] = None,
-    **kwargs: Any,
-) -> EvaluationResult
-
+evaluate(*, system_prompt: Optional[str] = None, task_context: Union[list[str], str, None] = None, task_attachments: Union[list[Any], None] = None, task_input: Optional[str] = None, task_output: Optional[str] = None, gold_answer: Optional[str] = None, task_metadata: Optional[Dict[str, Any]] = None, **kwargs: Any) -> EvaluationResult
 ```
 
 Evaluates data using remote Patronus Evaluator
@@ -363,29 +337,18 @@ def evaluate(
     if sid := attrs["dataset_sample_id"]:
         kws["dataset_sample_id"] = sid
 
-    resp = retry()(self._evaluate)(log_id=log_id, **kws)
+    resp = retry(
+        self.retry_max_attempts,
+        self.retry_initial_delay,
+        self.retry_backoff_factor,
+    )(self._evaluate)(log_id=log_id, **kws)
     return self._translate_response(resp)
-
 ```
 
 #### AsyncRemoteEvaluator
 
 ```python
-AsyncRemoteEvaluator(
-    evaluator_id_or_alias: str,
-    criteria: Optional[str] = None,
-    *,
-    tags: Optional[dict[str, str]] = None,
-    explain_strategy: Literal[
-        "never", "on-fail", "on-success", "always"
-    ] = "always",
-    criteria_config: Optional[dict[str, Any]] = None,
-    allow_update: bool = False,
-    max_attempts: int = 3,
-    api_: Optional[PatronusAPIClient] = None,
-    weight: Optional[Union[str, float]] = None,
-)
-
+AsyncRemoteEvaluator(evaluator_id_or_alias: str, criteria: Optional[str] = None, *, tags: Optional[dict[str, str]] = None, explain_strategy: Literal['never', 'on-fail', 'on-success', 'always'] = 'always', criteria_config: Optional[dict[str, Any]] = None, allow_update: bool = False, max_attempts: int = 3, api_: Optional[PatronusAPIClient] = None, weight: Optional[Union[str, float]] = None, retry_max_attempts: Optional[int] = 3, retry_initial_delay: Optional[int] = 1, retry_backoff_factor: Optional[int] = 2)
 ```
 
 Bases: `RemoteEvaluatorMixin`, `AsyncStructuredEvaluator`
@@ -407,6 +370,9 @@ def __init__(
     max_attempts: int = 3,
     api_: Optional[PatronusAPIClient] = None,
     weight: Optional[Union[str, float]] = None,
+    retry_max_attempts: Optional[int] = 3,
+    retry_initial_delay: Optional[int] = 1,
+    retry_backoff_factor: Optional[int] = 2,
 ):
     """Initialize a remote evaluator.
 
@@ -427,6 +393,9 @@ def __init__(
             importance of evaluators. Must be a valid decimal number (string
             or float). Weights are stored as experiment metadata and do not
             affect standalone evaluator usage.
+        retry_max_attempts: Maximum number of retry attempts.
+        retry_initial_delay: Initial delay before next retry.
+        retry_backoff_factor: Delay factor between retry attempts.
     """
     self.evaluator_id_or_alias = evaluator_id_or_alias
     self.evaluator_id = None
@@ -441,24 +410,15 @@ def __init__(
     self.weight = weight
     self._load_lock = threading.Lock()
     self._async_load_lock = asyncio.Lock()
-
+    self.retry_max_attempts = retry_max_attempts
+    self.retry_initial_delay = retry_initial_delay
+    self.retry_backoff_factor = retry_backoff_factor
 ```
 
 ##### evaluate
 
 ```python
-evaluate(
-    *,
-    system_prompt: Optional[str] = None,
-    task_context: Union[list[str], str, None] = None,
-    task_attachments: Union[list[Any], None] = None,
-    task_input: Optional[str] = None,
-    task_output: Optional[str] = None,
-    gold_answer: Optional[str] = None,
-    task_metadata: Optional[Dict[str, Any]] = None,
-    **kwargs: Any,
-) -> EvaluationResult
-
+evaluate(*, system_prompt: Optional[str] = None, task_context: Union[list[str], str, None] = None, task_attachments: Union[list[Any], None] = None, task_input: Optional[str] = None, task_output: Optional[str] = None, gold_answer: Optional[str] = None, task_metadata: Optional[Dict[str, Any]] = None, **kwargs: Any) -> EvaluationResult
 ```
 
 Evaluates data using remote Patronus Evaluator
@@ -503,18 +463,58 @@ async def evaluate(
     if sid := attrs["dataset_sample_id"]:
         kws["dataset_sample_id"] = sid
 
-    resp = await retry()(self._evaluate)(log_id=log_id, **kws)
+    resp = await retry(
+        self.retry_max_attempts,
+        self.retry_initial_delay,
+        self.retry_backoff_factor,
+    )(self._evaluate)(log_id=log_id, **kws)
     return self._translate_response(resp)
+```
 
+#### ensure_loading
+
+```python
+ensure_loading(func: Optional[Callable[..., Any]] = None)
+```
+
+Decorator that calls .load() on the decorated entity if the .load method exists. This ensures that remote evaluators are properly loaded before evaluation.
+
+Source code in `src/patronus/evals/evaluators.py`
+
+```python
+def ensure_loading(
+    func: Optional[typing.Callable[..., typing.Any]] = None,
+):
+    """
+    Decorator that calls .load() on the decorated entity if the .load method exists.
+    This ensures that remote evaluators are properly loaded before evaluation.
+    """
+
+    if func is None:
+        return ensure_loading()(func)
+
+    @functools.wraps(func)
+    def wrapper(self, *args, **kwargs):
+        if hasattr(self, 'load') and callable(getattr(self, 'load')) and not getattr(self, '_loaded', False):
+            self.load()
+        return func(self, *args, **kwargs)
+
+    @functools.wraps(func)
+    async def async_wrapper(self, *args, **kwargs):
+        if hasattr(self, 'load') and callable(getattr(self, 'load')) and not getattr(self, '_loaded', False):
+            await self.load()
+        return await func(self, *args, **kwargs)
+
+    if inspect.iscoroutinefunction(func):
+        return async_wrapper
+    else:
+        return wrapper
 ```
 
 #### get_current_log_id
 
 ```python
-get_current_log_id(
-    bound_arguments: dict[str, Any],
-) -> Optional[LogID]
-
+get_current_log_id(bound_arguments: dict[str, Any]) -> Optional[LogID]
 ```
 
 Return log_id for given arguments in current context. Returns None if there is no context - most likely SDK is not initialized.
@@ -534,17 +534,12 @@ def get_current_log_id(bound_arguments: dict[str, Any]) -> Optional[LogID]:
     if log_id is None:
         raise ValueError("Log not found for provided arguments")
     return log_id
-
 ```
 
 #### bundled_eval
 
 ```python
-bundled_eval(
-    span_name: str = "Evaluation bundle",
-    attributes: Optional[dict[str, str]] = None,
-)
-
+bundled_eval(span_name: str = 'Evaluation bundle', attributes: Optional[dict[str, str]] = None)
 ```
 
 Start a span that would automatically bundle evaluations.
@@ -561,7 +556,6 @@ with bundled_eval():
     foo_evaluator(x=10, y=20)
     bar_evaluator(x=10, y=20)
     tar_evaluator(spam="abc123")
-
 ```
 
 Source code in `src/patronus/evals/evaluators.py`
@@ -599,27 +593,12 @@ def bundled_eval(span_name: str = "Evaluation bundle", attributes: Optional[dict
     with tracer.start_as_current_span(span_name, attributes=attributes):
         with _start_evaluation_log_group():
             yield
-
 ````
 
 #### evaluator
 
 ```python
-evaluator(
-    _fn: Optional[Callable[..., Any]] = None,
-    *,
-    evaluator_id: Union[
-        str, Callable[[], str], None
-    ] = None,
-    criteria: Union[str, Callable[[], str], None] = None,
-    metric_name: Optional[str] = None,
-    metric_description: Optional[str] = None,
-    is_method: bool = False,
-    span_name: Optional[str] = None,
-    log_none_arguments: bool = False,
-    **kwargs: Any,
-) -> typing.Callable[..., typing.Any]
-
+evaluator(_fn: Optional[Callable[..., Any]] = None, *, evaluator_id: Union[str, Callable[[], str], None] = None, criteria: Union[str, Callable[[], str], None] = None, metric_name: Optional[str] = None, metric_description: Optional[str] = None, is_method: bool = False, span_name: Optional[str] = None, log_none_arguments: bool = False, **kwargs: Any) -> typing.Callable[..., typing.Any]
 ```
 
 Decorator for creating functional-style evaluators that log execution and results.
@@ -666,16 +645,27 @@ def semantic_match(actual: str, expected: str) -> EvaluationResult:
 # Use the evaluators
 result = exact_match("Hello world", "Hello world")
 print(f"Match: {result}")  # Output: Match: True
-
 ```
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `_fn` | `Optional[Callable[..., Any]]` | The function to be decorated. | `None` | | `evaluator_id` | `Union[str, Callable[[], str], None]` | Name for the evaluator. Defaults to function name (or class name in case of class based evaluators). | `None` | | `criteria` | `Union[str, Callable[[], str], None]` | Name of the criteria used by the evaluator. The use of the criteria is only recommended in more complex evaluator setups where evaluation algorithm changes depending on a criteria (think strategy pattern). | `None` | | `metric_name` | `Optional[str]` | Name for the evaluation metric. Defaults to evaluator_id value. | `None` | | `metric_description` | `Optional[str]` | The description of the metric used for evaluation. If not provided then the docstring of the wrapped function is used for this value. | `None` | | `is_method` | `bool` | Whether the wrapped function is a method. This value is used to determine whether to remove "self" argument from the log. It also allows for dynamic evaluator_id and criteria discovery based on get_evaluator_id() and get_criteria_id() methods. User-code usually shouldn't use it as long as user defined class-based evaluators inherit from the library provided Evaluator base classes. | `False` | | `span_name` | `Optional[str]` | Name of the span to represent this evaluation in the tracing system. Defaults to None, in which case a default name is generated based on the evaluator. | `None` | | `log_none_arguments` | `bool` | Controls whether arguments with None values are included in log output. This setting affects only logging behavior and has no impact on function execution. Note: Only applies to top-level arguments. For nested structures like dictionaries, None values will always be logged regardless of this setting. | `False` | | `**kwargs` | `Any` | Additional keyword arguments that may be passed to the decorator or its internal methods. | `{}` |
+| Name                 | Type                                  | Description                                                                                                                                                                                                                                                                                                                                                                                     | Default |
+| -------------------- | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| `_fn`                | `Optional[Callable[..., Any]]`        | The function to be decorated.                                                                                                                                                                                                                                                                                                                                                                   | `None`  |
+| `evaluator_id`       | `Union[str, Callable[[], str], None]` | Name for the evaluator. Defaults to function name (or class name in case of class based evaluators).                                                                                                                                                                                                                                                                                            | `None`  |
+| `criteria`           | `Union[str, Callable[[], str], None]` | Name of the criteria used by the evaluator. The use of the criteria is only recommended in more complex evaluator setups where evaluation algorithm changes depending on a criteria (think strategy pattern).                                                                                                                                                                                   | `None`  |
+| `metric_name`        | `Optional[str]`                       | Name for the evaluation metric. Defaults to evaluator_id value.                                                                                                                                                                                                                                                                                                                                 | `None`  |
+| `metric_description` | `Optional[str]`                       | The description of the metric used for evaluation. If not provided then the docstring of the wrapped function is used for this value.                                                                                                                                                                                                                                                           | `None`  |
+| `is_method`          | `bool`                                | Whether the wrapped function is a method. This value is used to determine whether to remove "self" argument from the log. It also allows for dynamic evaluator_id and criteria discovery based on get_evaluator_id() and get_criteria_id() methods. User-code usually shouldn't use it as long as user defined class-based evaluators inherit from the library provided Evaluator base classes. | `False` |
+| `span_name`          | `Optional[str]`                       | Name of the span to represent this evaluation in the tracing system. Defaults to None, in which case a default name is generated based on the evaluator.                                                                                                                                                                                                                                        | `None`  |
+| `log_none_arguments` | `bool`                                | Controls whether arguments with None values are included in log output. This setting affects only logging behavior and has no impact on function execution. Note: Only applies to top-level arguments. For nested structures like dictionaries, None values will always be logged regardless of this setting.                                                                                   | `False` |
+| `**kwargs`           | `Any`                                 | Additional keyword arguments that may be passed to the decorator or its internal methods.                                                                                                                                                                                                                                                                                                       | `{}`    |
 
 Returns:
 
-| Name | Type | Description | | --- | --- | --- | | `Callable` | `Callable[..., Any]` | Returns the decorated function with additional evaluation behavior, suitable for synchronous or asynchronous usage. |
+| Name       | Type                 | Description                                                                                                         |
+| ---------- | -------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `Callable` | `Callable[..., Any]` | Returns the decorated function with additional evaluation behavior, suitable for synchronous or asynchronous usage. |
 
 Note
 
@@ -931,14 +921,13 @@ def evaluator(
             return wrapper_sync
 
     return decorator
-
 ````
 
 ### types
 
 #### EvaluationResult
 
-Bases: `BaseModel`
+Bases: `BaseModel`, `LogSerializer`
 
 Container for evaluation outcomes including score, pass/fail status, explanations, and metadata.
 
@@ -946,13 +935,50 @@ This class stores complete evaluation results with numeric scores, boolean pass/
 
 Attributes:
 
-| Name | Type | Description | | --- | --- | --- | | `score` | `Optional[float]` | Score of the evaluation. Can be any numerical value, though typically ranges from 0 to 1, where 1 represents the best possible score. | | `pass_` | `Optional[bool]` | Whether the evaluation is considered to pass or fail. | | `text_output` | `Optional[str]` | Text output of the evaluation. Usually used for discrete human-readable category evaluation or as a label for score value. | | `metadata` | `Optional[dict[str, Any]]` | Arbitrary json-serializable metadata about evaluation. | | `explanation` | `Optional[str]` | Human-readable explanation of the evaluation. | | `tags` | `Optional[dict[str, str]]` | Key-value pair metadata. | | `dataset_id` | `Optional[str]` | ID of the dataset associated with evaluated sample. | | `dataset_sample_id` | `Optional[str]` | ID of the sample in a dataset associated with evaluated sample. | | `evaluation_duration` | `Optional[timedelta]` | Duration of the evaluation. In case value is not set, @evaluator decorator and Evaluator classes will set this value automatically. | | `explanation_duration` | `Optional[timedelta]` | Duration of the evaluation explanation. |
+| Name                   | Type                       | Description                                                                                                                           |
+| ---------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `score`                | `Optional[float]`          | Score of the evaluation. Can be any numerical value, though typically ranges from 0 to 1, where 1 represents the best possible score. |
+| `pass_`                | `Optional[bool]`           | Whether the evaluation is considered to pass or fail.                                                                                 |
+| `text_output`          | `Optional[str]`            | Text output of the evaluation. Usually used for discrete human-readable category evaluation or as a label for score value.            |
+| `metadata`             | `Optional[dict[str, Any]]` | Arbitrary json-serializable metadata about evaluation.                                                                                |
+| `explanation`          | `Optional[str]`            | Human-readable explanation of the evaluation.                                                                                         |
+| `tags`                 | `Optional[dict[str, str]]` | Key-value pair metadata.                                                                                                              |
+| `dataset_id`           | `Optional[str]`            | ID of the dataset associated with evaluated sample.                                                                                   |
+| `dataset_sample_id`    | `Optional[str]`            | ID of the sample in a dataset associated with evaluated sample.                                                                       |
+| `evaluation_duration`  | `Optional[timedelta]`      | Duration of the evaluation. In case value is not set, @evaluator decorator and Evaluator classes will set this value automatically.   |
+| `explanation_duration` | `Optional[timedelta]`      | Duration of the evaluation explanation.                                                                                               |
+
+##### dump_as_log
+
+```python
+dump_as_log() -> dict[str, Any]
+```
+
+Serialize the EvaluationResult into a dictionary format suitable for logging.
+
+Returns:
+
+| Type             | Description                                                                  |
+| ---------------- | ---------------------------------------------------------------------------- |
+| `dict[str, Any]` | A dictionary containing all evaluation result fields, excluding None values. |
+
+Source code in `src/patronus/evals/types.py`
+
+```python
+def dump_as_log(self) -> dict[str, Any]:
+    """
+    Serialize the EvaluationResult into a dictionary format suitable for logging.
+
+    Returns:
+        A dictionary containing all evaluation result fields, excluding None values.
+    """
+    return self.model_dump(mode='json')
+```
 
 ##### format
 
 ```python
 format() -> str
-
 ```
 
 Format the evaluation result into a readable summary.
@@ -966,14 +992,12 @@ def format(self) -> str:
     """
     md = self.model_dump(exclude_none=True, mode="json")
     return yaml.dump(md)
-
 ```
 
 ##### pretty_print
 
 ```python
 pretty_print(file=None) -> None
-
 ```
 
 Pretty prints the formatted content to the specified file or standard output.
@@ -987,5 +1011,4 @@ def pretty_print(self, file=None) -> None:
     """
     f = self.format()
     print(f, file=file)
-
 ```

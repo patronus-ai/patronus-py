@@ -32,7 +32,6 @@ with Patronus() as client:
         print("Some evaluations failed:")
         for failed in results.failed_evaluations():
             print(f"  - {failed.text_output}")
-
 ```
 
 The `Patronus` client provides:
@@ -73,7 +72,6 @@ async def evaluate_responses():
 
 # Run the async function
 asyncio.run(evaluate_responses())
-
 ```
 
 ## Background Evaluation
@@ -104,7 +102,6 @@ with Patronus() as client:
     results = future.get()  # Blocks until complete
 
     print(f"Evaluation complete: {results.all_succeeded()}")
-
 ```
 
 The async version works similarly:
@@ -123,7 +120,6 @@ async with AsyncPatronus() as client:
 
     # Get results when needed
     results = await task
-
 ```
 
 ## Working with Evaluation Results
@@ -147,7 +143,6 @@ for success in results.succeeded_evaluations():
 
 if results.has_exception():
     results.raise_on_exception()  # Re-raise any exceptions that occurred
-
 ```
 
 ## Example: Comprehensive Quality Check
@@ -189,7 +184,6 @@ check_content_quality(
     "What is the capital of France?",
     "The capital of France is Paris, which is located on the Seine River."
 )
-
 ```
 
 ## Using the `bundled_eval()` Context Manager
@@ -214,5 +208,4 @@ def iexact_match(actual: str, expected: str) -> bool:
 with bundled_eval():
     exact_match("string", "string")
     iexact_match("string", "string")
-
 ```

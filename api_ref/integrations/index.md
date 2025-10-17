@@ -18,7 +18,6 @@ This class defines the interface for integrating external libraries and tools wi
 
 ```python
 apply(ctx: PatronusContext, **kwargs: Any)
-
 ```
 
 Apply the integration to the given Patronus context.
@@ -27,7 +26,10 @@ This method must be implemented by subclasses to define how the integration is a
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `ctx` | `PatronusContext` | The Patronus context to apply the integration to. | *required* | | `**kwargs` | `Any` | Additional keyword arguments specific to the implementation. | `{}` |
+| Name       | Type              | Description                                                  | Default    |
+| ---------- | ----------------- | ------------------------------------------------------------ | ---------- |
+| `ctx`      | `PatronusContext` | The Patronus context to apply the integration to.            | *required* |
+| `**kwargs` | `Any`             | Additional keyword arguments specific to the implementation. | `{}`       |
 
 Source code in `src/patronus/integrations/instrumenter.py`
 
@@ -44,7 +46,6 @@ def apply(self, ctx: "context.PatronusContext", **kwargs: typing.Any):
         ctx: The Patronus context to apply the integration to.
         **kwargs: Additional keyword arguments specific to the implementation.
     """
-
 ```
 
 ### otel
@@ -53,7 +54,6 @@ def apply(self, ctx: "context.PatronusContext", **kwargs: typing.Any):
 
 ```python
 OpenTelemetryIntegrator(instrumentor: BaseInstrumentor)
-
 ```
 
 Bases: `BasePatronusIntegrator`
@@ -64,7 +64,9 @@ This class provides an adapter between OpenTelemetry instrumentors and the Patro
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `instrumentor` | `BaseInstrumentor` | An OpenTelemetry instrumentor instance that will be applied to the Patronus context. | *required* |
+| Name           | Type               | Description                                                                          | Default    |
+| -------------- | ------------------ | ------------------------------------------------------------------------------------ | ---------- |
+| `instrumentor` | `BaseInstrumentor` | An OpenTelemetry instrumentor instance that will be applied to the Patronus context. | *required* |
 
 Source code in `src/patronus/integrations/otel.py`
 
@@ -78,14 +80,12 @@ def __init__(self, instrumentor: "BaseInstrumentor"):
             applied to the Patronus context.
     """
     self.instrumentor = instrumentor
-
 ```
 
 ##### apply
 
 ```python
 apply(ctx: PatronusContext, **kwargs: Any)
-
 ```
 
 Apply OpenTelemetry instrumentation to the Patronus context.
@@ -94,7 +94,10 @@ This method configures the OpenTelemetry instrumentor with the tracer provider f
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `ctx` | `PatronusContext` | The Patronus context containing the tracer provider. | *required* | | `**kwargs` | `Any` | Additional keyword arguments (unused). | `{}` |
+| Name       | Type              | Description                                          | Default    |
+| ---------- | ----------------- | ---------------------------------------------------- | ---------- |
+| `ctx`      | `PatronusContext` | The Patronus context containing the tracer provider. | *required* |
+| `**kwargs` | `Any`             | Additional keyword arguments (unused).               | `{}`       |
 
 Source code in `src/patronus/integrations/otel.py`
 
@@ -111,7 +114,6 @@ def apply(self, ctx: "context.PatronusContext", **kwargs: typing.Any):
         **kwargs: Additional keyword arguments (unused).
     """
     self.instrumentor.instrument(tracer_provider=ctx.tracer_provider)
-
 ```
 
 ### pydantic_ai
@@ -119,10 +121,7 @@ def apply(self, ctx: "context.PatronusContext", **kwargs: typing.Any):
 #### PydanticAIIntegrator
 
 ```python
-PydanticAIIntegrator(
-    event_mode: Literal["attributes", "logs"] = "logs",
-)
-
+PydanticAIIntegrator(event_mode: Literal['attributes', 'logs'] = 'logs')
 ```
 
 Bases: `BasePatronusIntegrator`
@@ -133,7 +132,9 @@ This class provides integration between Pydantic-AI agents and the Patronus obse
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `event_mode` | `Literal['attributes', 'logs']` | The mode for capturing events, either as span attributes or as logs. Default is "logs". | `'logs'` |
+| Name         | Type                            | Description                                                                             | Default  |
+| ------------ | ------------------------------- | --------------------------------------------------------------------------------------- | -------- |
+| `event_mode` | `Literal['attributes', 'logs']` | The mode for capturing events, either as span attributes or as logs. Default is "logs". | `'logs'` |
 
 Source code in `src/patronus/integrations/pydantic_ai.py`
 
@@ -147,14 +148,12 @@ def __init__(self, event_mode: Literal["attributes", "logs"] = "logs"):
             or as logs. Default is "logs".
     """
     self._instrumentation_settings = {"event_mode": event_mode}
-
 ```
 
 ##### apply
 
 ```python
 apply(ctx: PatronusContext, **kwargs: Any)
-
 ```
 
 Apply Pydantic-AI instrumentation to the Patronus context.
@@ -163,7 +162,10 @@ This method configures all Pydantic-AI agents to use the tracer and logger provi
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `ctx` | `PatronusContext` | The Patronus context containing the tracer and logger providers. | *required* | | `**kwargs` | `Any` | Additional keyword arguments (unused). | `{}` |
+| Name       | Type              | Description                                                      | Default    |
+| ---------- | ----------------- | ---------------------------------------------------------------- | ---------- |
+| `ctx`      | `PatronusContext` | The Patronus context containing the tracer and logger providers. | *required* |
+| `**kwargs` | `Any`             | Additional keyword arguments (unused).                           | `{}`       |
 
 Source code in `src/patronus/integrations/pydantic_ai.py`
 
@@ -188,5 +190,4 @@ def apply(self, ctx: "context.PatronusContext", **kwargs: Any):
     }
     settings = InstrumentationSettings(**settings_kwargs)
     Agent.instrument_all(instrument=settings)
-
 ```

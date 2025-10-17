@@ -15,7 +15,6 @@ To instrument Anthropic's Claude API calls:
 ```shell
 # Install the required package
 pip install openinference-instrumentation-anthropic
-
 ```
 
 ```python
@@ -29,7 +28,6 @@ patronus_ctx = init(
 
 # Now all Claude API calls will be automatically instrumented
 # and the telemetry will be sent to Patronus
-
 ```
 
 ### OpenAI Integration
@@ -39,7 +37,6 @@ To instrument OpenAI API calls:
 ```shell
 # Install the required package
 pip install openinference-instrumentation-openai
-
 ```
 
 ```python
@@ -53,7 +50,6 @@ patronus_ctx = init(
 
 # Now all OpenAI API calls will be automatically instrumented
 # and the telemetry will be sent to Patronus
-
 ```
 
 ### Using Multiple LLM Instrumentors
@@ -76,5 +72,4 @@ patronus_ctx = init(
 )
 
 # Now both Anthropic and OpenAI API calls will be automatically instrumented
-
 ```

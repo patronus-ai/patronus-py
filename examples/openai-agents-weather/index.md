@@ -5,7 +5,6 @@ To run this example, you need to add API keys to your environment:
 ```shell
 export PATRONUS_API_KEY=your-api-key
 export OPENAI_API_KEY=your-api-key
-
 ```
 
 ### Running with `uv`
@@ -16,7 +15,6 @@ You can run the example as a one-liner with zero setup:
 # Remember to export environment variables before running the example.
 uv run --no-cache --with "patronus-examples[openai-agents]" \
     -m patronus_examples.tracking.openai_agents_weather
-
 ```
 
 ### Running the script directly
@@ -30,7 +28,6 @@ cd patronus-py
 
 # Run the example script (requires uv)
 ./examples/patronus_examples/tracking/openai_agents_weather.py
-
 ```
 
 ### Manual installation
@@ -43,7 +40,6 @@ pip install openai-agents
 pip install openinference-instrumentation-openai-agents
 pip install opentelemetry-instrumentation-threading
 pip install opentelemetry-instrumentation-asyncio
-
 ```
 
 ## Example overview
@@ -111,5 +107,4 @@ if __name__ == "__main__":
     print("Starting agent...")
     result = asyncio.run(main())
     print(result)
-
 ```

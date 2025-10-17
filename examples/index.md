@@ -13,7 +13,6 @@ Most examples require you to set up authentication with Patronus and other servi
 ```bash
 export PATRONUS_API_KEY=your-api-key
 export OPENAI_API_KEY=your-api-key
-
 ```
 
 Some examples may require additional API keys (like `ANTHROPIC_API_KEY`).
@@ -30,7 +29,6 @@ You can run examples with `uv`, which automatically installs the required depend
 # Remember to export environment variables before running the example.
 uv run --no-cache --with "patronus-examples[smolagents]" \
     -m patronus_examples.tracking.smolagents_weather
-
 ```
 
 This installs the `patronus-examples` package with the necessary optional dependencies.
@@ -46,7 +44,6 @@ cd patronus-py
 
 # Run the example script (requires uv)
 ./examples/patronus_examples/tracking/smolagents_weather.py
-
 ```
 
 See the script files for more information. They use uv script annotations to handle dependencies.

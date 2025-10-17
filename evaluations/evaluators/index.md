@@ -17,7 +17,6 @@ def keyword_match(text: str, keywords: list[str]) -> float:
     """
     matches = sum(keyword.lower() in text.lower() for keyword in keywords)
     return matches / len(keywords) if keywords else 0.0
-
 ```
 
 This decorator automatically:
@@ -61,7 +60,6 @@ def tone_classifier(text: str) -> str:
         return "negative"
     else:
         return "neutral"
-
 ```
 
 ### Return Types
@@ -98,7 +96,6 @@ def comprehensive_evaluation(response: str, reference: str) -> EvaluationResult:
             "accuracy": accuracy
         }
     )
-
 ```
 
 The `EvaluationResult` object can include:
@@ -126,5 +123,4 @@ result = safety_check.evaluate(
     task_output="This is a helpful and safe response."
 )
 print(f"Safety check passed: {result.pass_}")  # Output: Safety check passed: True
-
 ```

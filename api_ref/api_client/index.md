@@ -3,14 +3,7 @@
 ## patronus.api.api_client.PatronusAPIClient
 
 ```python
-PatronusAPIClient(
-    *,
-    client_http_async: AsyncClient,
-    client_http: Client,
-    base_url: str,
-    api_key: str,
-)
-
+PatronusAPIClient(*, client_http_async: AsyncClient, client_http: Client, base_url: str, api_key: str)
 ```
 
 Bases: `BaseAPIClient`
@@ -31,17 +24,12 @@ def __init__(
     self.http_sync = client_http
     self.base_url = base_url.rstrip("/")
     self.api_key = api_key
-
 ```
 
 ### add_evaluator_criteria_revision
 
 ```python
-add_evaluator_criteria_revision(
-    evaluator_criteria_id,
-    request: AddEvaluatorCriteriaRevisionRequest,
-) -> api_types.AddEvaluatorCriteriaRevisionResponse
-
+add_evaluator_criteria_revision(evaluator_criteria_id, request: AddEvaluatorCriteriaRevisionRequest) -> api_types.AddEvaluatorCriteriaRevisionResponse
 ```
 
 Adds a revision to existing evaluator criteria.
@@ -63,17 +51,12 @@ async def add_evaluator_criteria_revision(
     )
     resp.raise_for_status()
     return resp.data
-
 ```
 
 ### add_evaluator_criteria_revision_sync
 
 ```python
-add_evaluator_criteria_revision_sync(
-    evaluator_criteria_id,
-    request: AddEvaluatorCriteriaRevisionRequest,
-) -> api_types.AddEvaluatorCriteriaRevisionResponse
-
+add_evaluator_criteria_revision_sync(evaluator_criteria_id, request: AddEvaluatorCriteriaRevisionRequest) -> api_types.AddEvaluatorCriteriaRevisionResponse
 ```
 
 Adds a revision to existing evaluator criteria.
@@ -95,16 +78,12 @@ def add_evaluator_criteria_revision_sync(
     )
     resp.raise_for_status()
     return resp.data
-
 ```
 
 ### annotate
 
 ```python
-annotate(
-    request: AnnotateRequest,
-) -> api_types.AnnotateResponse
-
+annotate(request: AnnotateRequest) -> api_types.AnnotateResponse
 ```
 
 Annotates log based on the given request.
@@ -122,16 +101,12 @@ async def annotate(self, request: api_types.AnnotateRequest) -> api_types.Annota
     )
     resp.raise_for_status()
     return resp.data
-
 ```
 
 ### annotate_sync
 
 ```python
-annotate_sync(
-    request: AnnotateRequest,
-) -> api_types.AnnotateResponse
-
+annotate_sync(request: AnnotateRequest) -> api_types.AnnotateResponse
 ```
 
 Annotates log based on the given request.
@@ -149,16 +124,12 @@ def annotate_sync(self, request: api_types.AnnotateRequest) -> api_types.Annotat
     )
     resp.raise_for_status()
     return resp.data
-
 ```
 
 ### batch_create_evaluations
 
 ```python
-batch_create_evaluations(
-    request: BatchCreateEvaluationsRequest,
-) -> api_types.BatchCreateEvaluationsResponse
-
+batch_create_evaluations(request: BatchCreateEvaluationsRequest) -> api_types.BatchCreateEvaluationsResponse
 ```
 
 Creates multiple evaluations in a single request.
@@ -178,16 +149,12 @@ async def batch_create_evaluations(
     )
     resp.raise_for_status()
     return resp.data
-
 ```
 
 ### batch_create_evaluations_sync
 
 ```python
-batch_create_evaluations_sync(
-    request: BatchCreateEvaluationsRequest,
-) -> api_types.BatchCreateEvaluationsResponse
-
+batch_create_evaluations_sync(request: BatchCreateEvaluationsRequest) -> api_types.BatchCreateEvaluationsResponse
 ```
 
 Creates multiple evaluations in a single request.
@@ -207,16 +174,12 @@ def batch_create_evaluations_sync(
     )
     resp.raise_for_status()
     return resp.data
-
 ```
 
 ### create_annotation_criteria
 
 ```python
-create_annotation_criteria(
-    request: CreateAnnotationCriteriaRequest,
-) -> api_types.CreateAnnotationCriteriaResponse
-
+create_annotation_criteria(request: CreateAnnotationCriteriaRequest) -> api_types.CreateAnnotationCriteriaResponse
 ```
 
 Creates annotation criteria based on the given request.
@@ -236,16 +199,12 @@ async def create_annotation_criteria(
     )
     resp.raise_for_status()
     return resp.data
-
 ```
 
 ### create_annotation_criteria_sync
 
 ```python
-create_annotation_criteria_sync(
-    request: CreateAnnotationCriteriaRequest,
-) -> api_types.CreateAnnotationCriteriaResponse
-
+create_annotation_criteria_sync(request: CreateAnnotationCriteriaRequest) -> api_types.CreateAnnotationCriteriaResponse
 ```
 
 Creates annotation criteria based on the given request.
@@ -265,16 +224,12 @@ def create_annotation_criteria_sync(
     )
     resp.raise_for_status()
     return resp.data
-
 ```
 
 ### create_criteria
 
 ```python
-create_criteria(
-    request: CreateCriteriaRequest,
-) -> api_types.CreateCriteriaResponse
-
+create_criteria(request: CreateCriteriaRequest) -> api_types.CreateCriteriaResponse
 ```
 
 Creates evaluation criteria based on the given request.
@@ -292,16 +247,12 @@ async def create_criteria(self, request: api_types.CreateCriteriaRequest) -> api
     )
     resp.raise_for_status()
     return resp.data
-
 ```
 
 ### create_criteria_sync
 
 ```python
-create_criteria_sync(
-    request: CreateCriteriaRequest,
-) -> api_types.CreateCriteriaResponse
-
+create_criteria_sync(request: CreateCriteriaRequest) -> api_types.CreateCriteriaResponse
 ```
 
 Creates evaluation criteria based on the given request.
@@ -319,16 +270,12 @@ def create_criteria_sync(self, request: api_types.CreateCriteriaRequest) -> api_
     )
     resp.raise_for_status()
     return resp.data
-
 ```
 
 ### create_experiment
 
 ```python
-create_experiment(
-    request: CreateExperimentRequest,
-) -> api_types.Experiment
-
+create_experiment(request: CreateExperimentRequest) -> api_types.Experiment
 ```
 
 Creates a new experiment based on the given request.
@@ -346,16 +293,12 @@ async def create_experiment(self, request: api_types.CreateExperimentRequest) ->
     )
     resp.raise_for_status()
     return resp.data.experiment
-
 ```
 
 ### create_experiment_sync
 
 ```python
-create_experiment_sync(
-    request: CreateExperimentRequest,
-) -> api_types.Experiment
-
+create_experiment_sync(request: CreateExperimentRequest) -> api_types.Experiment
 ```
 
 Creates a new experiment based on the given request.
@@ -373,16 +316,12 @@ def create_experiment_sync(self, request: api_types.CreateExperimentRequest) -> 
     )
     resp.raise_for_status()
     return resp.data.experiment
-
 ```
 
 ### create_project
 
 ```python
-create_project(
-    request: CreateProjectRequest,
-) -> api_types.Project
-
+create_project(request: CreateProjectRequest) -> api_types.Project
 ```
 
 Creates a new project based on the given request.
@@ -395,16 +334,12 @@ async def create_project(self, request: api_types.CreateProjectRequest) -> api_t
     resp = await self.call("POST", "/v1/projects", body=request, response_cls=api_types.Project)
     resp.raise_for_status()
     return resp.data
-
 ```
 
 ### create_project_sync
 
 ```python
-create_project_sync(
-    request: CreateProjectRequest,
-) -> api_types.Project
-
+create_project_sync(request: CreateProjectRequest) -> api_types.Project
 ```
 
 Creates a new project based on the given request.
@@ -417,14 +352,12 @@ def create_project_sync(self, request: api_types.CreateProjectRequest) -> api_ty
     resp = self.call_sync("POST", "/v1/projects", body=request, response_cls=api_types.Project)
     resp.raise_for_status()
     return resp.data
-
 ```
 
 ### delete_annotation_criteria
 
 ```python
 delete_annotation_criteria(criteria_id: str) -> None
-
 ```
 
 Deletes annotation criteria by its ID.
@@ -440,14 +373,12 @@ async def delete_annotation_criteria(self, criteria_id: str) -> None:
         response_cls=None,
     )
     resp.raise_for_status()
-
 ```
 
 ### delete_annotation_criteria_sync
 
 ```python
 delete_annotation_criteria_sync(criteria_id: str) -> None
-
 ```
 
 Deletes annotation criteria by its ID.
@@ -463,16 +394,12 @@ def delete_annotation_criteria_sync(self, criteria_id: str) -> None:
         response_cls=None,
     )
     resp.raise_for_status()
-
 ```
 
 ### evaluate
 
 ```python
-evaluate(
-    request: EvaluateRequest,
-) -> api_types.EvaluateResponse
-
+evaluate(request: EvaluateRequest) -> api_types.EvaluateResponse
 ```
 
 Evaluates content using the specified evaluators.
@@ -490,16 +417,12 @@ async def evaluate(self, request: api_types.EvaluateRequest) -> api_types.Evalua
     )
     resp.raise_for_status()
     return resp.data
-
 ```
 
 ### evaluate_one
 
 ```python
-evaluate_one(
-    request: EvaluateRequest,
-) -> api_types.EvaluationResult
-
+evaluate_one(request: EvaluateRequest) -> api_types.EvaluationResult
 ```
 
 Evaluates content using a single evaluator.
@@ -518,16 +441,12 @@ async def evaluate_one(self, request: api_types.EvaluateRequest) -> api_types.Ev
         response_cls=api_types.EvaluateResponse,
     )
     return self._evaluate_one_process_resp(resp)
-
 ```
 
 ### evaluate_one_sync
 
 ```python
-evaluate_one_sync(
-    request: EvaluateRequest,
-) -> api_types.EvaluationResult
-
+evaluate_one_sync(request: EvaluateRequest) -> api_types.EvaluationResult
 ```
 
 Evaluates content using a single evaluator.
@@ -546,16 +465,12 @@ def evaluate_one_sync(self, request: api_types.EvaluateRequest) -> api_types.Eva
         response_cls=api_types.EvaluateResponse,
     )
     return self._evaluate_one_process_resp(resp)
-
 ```
 
 ### evaluate_sync
 
 ```python
-evaluate_sync(
-    request: EvaluateRequest,
-) -> api_types.EvaluateResponse
-
+evaluate_sync(request: EvaluateRequest) -> api_types.EvaluateResponse
 ```
 
 Evaluates content using the specified evaluators.
@@ -573,16 +488,12 @@ def evaluate_sync(self, request: api_types.EvaluateRequest) -> api_types.Evaluat
     )
     resp.raise_for_status()
     return resp.data
-
 ```
 
 ### export_evaluations
 
 ```python
-export_evaluations(
-    request: ExportEvaluationRequest,
-) -> api_types.ExportEvaluationResponse
-
+export_evaluations(request: ExportEvaluationRequest) -> api_types.ExportEvaluationResponse
 ```
 
 Exports evaluations based on the given request.
@@ -602,16 +513,12 @@ async def export_evaluations(
     )
     resp.raise_for_status()
     return resp.data
-
 ```
 
 ### export_evaluations_sync
 
 ```python
-export_evaluations_sync(
-    request: ExportEvaluationRequest,
-) -> api_types.ExportEvaluationResponse
-
+export_evaluations_sync(request: ExportEvaluationRequest) -> api_types.ExportEvaluationResponse
 ```
 
 Exports evaluations based on the given request.
@@ -629,16 +536,12 @@ def export_evaluations_sync(self, request: api_types.ExportEvaluationRequest) ->
     )
     resp.raise_for_status()
     return resp.data
-
 ```
 
 ### get_experiment
 
 ```python
-get_experiment(
-    experiment_id: str,
-) -> Optional[api_types.Experiment]
-
+get_experiment(experiment_id: str) -> Optional[api_types.Experiment]
 ```
 
 Fetches an experiment by its ID or returns None if not found.
@@ -657,16 +560,12 @@ async def get_experiment(self, experiment_id: str) -> Optional[api_types.Experim
         return None
     resp.raise_for_status()
     return resp.data.experiment
-
 ```
 
 ### get_experiment_sync
 
 ```python
-get_experiment_sync(
-    experiment_id: str,
-) -> Optional[api_types.Experiment]
-
+get_experiment_sync(experiment_id: str) -> Optional[api_types.Experiment]
 ```
 
 Fetches an experiment by its ID or returns None if not found.
@@ -685,14 +584,12 @@ def get_experiment_sync(self, experiment_id: str) -> Optional[api_types.Experime
         return None
     resp.raise_for_status()
     return resp.data.experiment
-
 ```
 
 ### get_project
 
 ```python
 get_project(project_id: str) -> api_types.Project
-
 ```
 
 Fetches a project by its ID.
@@ -709,14 +606,12 @@ async def get_project(self, project_id: str) -> api_types.Project:
     )
     resp.raise_for_status()
     return resp.data.project
-
 ```
 
 ### get_project_sync
 
 ```python
 get_project_sync(project_id: str) -> api_types.Project
-
 ```
 
 Fetches a project by its ID.
@@ -733,19 +628,12 @@ def get_project_sync(self, project_id: str) -> api_types.Project:
     )
     resp.raise_for_status()
     return resp.data.project
-
 ```
 
 ### list_annotation_criteria
 
 ```python
-list_annotation_criteria(
-    *,
-    project_id: Optional[str] = None,
-    limit: Optional[int] = None,
-    offset: Optional[int] = None,
-) -> api_types.ListAnnotationCriteriaResponse
-
+list_annotation_criteria(*, project_id: Optional[str] = None, limit: Optional[int] = None, offset: Optional[int] = None) -> api_types.ListAnnotationCriteriaResponse
 ```
 
 Retrieves a list of annotation criteria with optional filtering.
@@ -772,19 +660,12 @@ async def list_annotation_criteria(
     )
     resp.raise_for_status()
     return resp.data
-
 ```
 
 ### list_annotation_criteria_sync
 
 ```python
-list_annotation_criteria_sync(
-    *,
-    project_id: Optional[str] = None,
-    limit: Optional[int] = None,
-    offset: Optional[int] = None,
-) -> api_types.ListAnnotationCriteriaResponse
-
+list_annotation_criteria_sync(*, project_id: Optional[str] = None, limit: Optional[int] = None, offset: Optional[int] = None) -> api_types.ListAnnotationCriteriaResponse
 ```
 
 Retrieves a list of annotation criteria with optional filtering.
@@ -811,16 +692,12 @@ def list_annotation_criteria_sync(
     )
     resp.raise_for_status()
     return resp.data
-
 ```
 
 ### list_criteria
 
 ```python
-list_criteria(
-    request: ListCriteriaRequest,
-) -> api_types.ListCriteriaResponse
-
+list_criteria(request: ListCriteriaRequest) -> api_types.ListCriteriaResponse
 ```
 
 Retrieves a list of evaluation criteria based on the given request.
@@ -839,16 +716,12 @@ async def list_criteria(self, request: api_types.ListCriteriaRequest) -> api_typ
     )
     resp.raise_for_status()
     return resp.data
-
 ```
 
 ### list_criteria_sync
 
 ```python
-list_criteria_sync(
-    request: ListCriteriaRequest,
-) -> api_types.ListCriteriaResponse
-
+list_criteria_sync(request: ListCriteriaRequest) -> api_types.ListCriteriaResponse
 ```
 
 Retrieves a list of evaluation criteria based on the given request.
@@ -867,16 +740,12 @@ def list_criteria_sync(self, request: api_types.ListCriteriaRequest) -> api_type
     )
     resp.raise_for_status()
     return resp.data
-
 ```
 
 ### list_dataset_data
 
 ```python
-list_dataset_data(
-    dataset_id: str,
-) -> api_types.ListDatasetData
-
+list_dataset_data(dataset_id: str) -> api_types.ListDatasetData
 ```
 
 Retrieves data from a dataset by its ID.
@@ -893,16 +762,12 @@ async def list_dataset_data(self, dataset_id: str) -> api_types.ListDatasetData:
     )
     resp.raise_for_status()
     return resp.data
-
 ```
 
 ### list_dataset_data_sync
 
 ```python
-list_dataset_data_sync(
-    dataset_id: str,
-) -> api_types.ListDatasetData
-
+list_dataset_data_sync(dataset_id: str) -> api_types.ListDatasetData
 ```
 
 Retrieves data from a dataset by its ID.
@@ -919,16 +784,12 @@ def list_dataset_data_sync(self, dataset_id: str) -> api_types.ListDatasetData:
     )
     resp.raise_for_status()
     return resp.data
-
 ```
 
 ### list_datasets
 
 ```python
-list_datasets(
-    dataset_type: Optional[str] = None,
-) -> list[api_types.Dataset]
-
+list_datasets(dataset_type: Optional[str] = None) -> list[api_types.Dataset]
 ```
 
 Retrieves a list of datasets, optionally filtered by type.
@@ -952,16 +813,12 @@ async def list_datasets(self, dataset_type: Optional[str] = None) -> list[api_ty
     )
     resp.raise_for_status()
     return resp.data.datasets
-
 ```
 
 ### list_datasets_sync
 
 ```python
-list_datasets_sync(
-    dataset_type: Optional[str] = None,
-) -> list[api_types.Dataset]
-
+list_datasets_sync(dataset_type: Optional[str] = None) -> list[api_types.Dataset]
 ```
 
 Retrieves a list of datasets, optionally filtered by type.
@@ -985,16 +842,12 @@ def list_datasets_sync(self, dataset_type: Optional[str] = None) -> list[api_typ
     )
     resp.raise_for_status()
     return resp.data.datasets
-
 ```
 
 ### list_evaluators
 
 ```python
-list_evaluators(
-    by_alias_or_id: Optional[str] = None,
-) -> list[api_types.Evaluator]
-
+list_evaluators(by_alias_or_id: Optional[str] = None) -> list[api_types.Evaluator]
 ```
 
 Retrieves a list of available evaluators.
@@ -1011,16 +864,12 @@ async def list_evaluators(self, by_alias_or_id: Optional[str] = None) -> list[ap
     resp = await self.call("GET", "/v1/evaluators", params=params, response_cls=api_types.ListEvaluatorsResponse)
     resp.raise_for_status()
     return resp.data.evaluators
-
 ```
 
 ### list_evaluators_sync
 
 ```python
-list_evaluators_sync(
-    by_alias_or_id: Optional[str] = None,
-) -> list[api_types.Evaluator]
-
+list_evaluators_sync(by_alias_or_id: Optional[str] = None) -> list[api_types.Evaluator]
 ```
 
 Retrieves a list of available evaluators.
@@ -1037,16 +886,12 @@ def list_evaluators_sync(self, by_alias_or_id: Optional[str] = None) -> list[api
     resp = self.call_sync("GET", "/v1/evaluators", params=params, response_cls=api_types.ListEvaluatorsResponse)
     resp.raise_for_status()
     return resp.data.evaluators
-
 ```
 
 ### search_evaluations
 
 ```python
-search_evaluations(
-    request: SearchEvaluationsRequest,
-) -> api_types.SearchEvaluationsResponse
-
+search_evaluations(request: SearchEvaluationsRequest) -> api_types.SearchEvaluationsResponse
 ```
 
 Searches for evaluations based on the given criteria.
@@ -1066,16 +911,12 @@ async def search_evaluations(
     )
     resp.raise_for_status()
     return resp.data
-
 ```
 
 ### search_evaluations_sync
 
 ```python
-search_evaluations_sync(
-    request: SearchEvaluationsRequest,
-) -> api_types.SearchEvaluationsResponse
-
+search_evaluations_sync(request: SearchEvaluationsRequest) -> api_types.SearchEvaluationsResponse
 ```
 
 Searches for evaluations based on the given criteria.
@@ -1095,16 +936,12 @@ def search_evaluations_sync(
     )
     resp.raise_for_status()
     return resp.data
-
 ```
 
 ### search_logs
 
 ```python
-search_logs(
-    request: SearchLogsRequest,
-) -> api_types.SearchLogsResponse
-
+search_logs(request: SearchLogsRequest) -> api_types.SearchLogsResponse
 ```
 
 Searches for logs based on the given request.
@@ -1122,16 +959,12 @@ async def search_logs(self, request: api_types.SearchLogsRequest) -> api_types.S
     )
     resp.raise_for_status()
     return resp.data
-
 ```
 
 ### search_logs_sync
 
 ```python
-search_logs_sync(
-    request: SearchLogsRequest,
-) -> api_types.SearchLogsResponse
-
+search_logs_sync(request: SearchLogsRequest) -> api_types.SearchLogsResponse
 ```
 
 Searches for logs based on the given request.
@@ -1149,17 +982,12 @@ def search_logs_sync(self, request: api_types.SearchLogsRequest) -> api_types.Se
     )
     resp.raise_for_status()
     return resp.data
-
 ```
 
 ### update_annotation_criteria
 
 ```python
-update_annotation_criteria(
-    criteria_id: str,
-    request: UpdateAnnotationCriteriaRequest,
-) -> api_types.UpdateAnnotationCriteriaResponse
-
+update_annotation_criteria(criteria_id: str, request: UpdateAnnotationCriteriaRequest) -> api_types.UpdateAnnotationCriteriaResponse
 ```
 
 Creates annotation criteria based on the given request.
@@ -1179,17 +1007,12 @@ async def update_annotation_criteria(
     )
     resp.raise_for_status()
     return resp.data
-
 ```
 
 ### update_annotation_criteria_sync
 
 ```python
-update_annotation_criteria_sync(
-    criteria_id: str,
-    request: UpdateAnnotationCriteriaRequest,
-) -> api_types.UpdateAnnotationCriteriaResponse
-
+update_annotation_criteria_sync(criteria_id: str, request: UpdateAnnotationCriteriaRequest) -> api_types.UpdateAnnotationCriteriaResponse
 ```
 
 Creates annotation criteria based on the given request.
@@ -1209,16 +1032,12 @@ def update_annotation_criteria_sync(
     )
     resp.raise_for_status()
     return resp.data
-
 ```
 
 ### update_experiment
 
 ```python
-update_experiment(
-    experiment_id: str, request: UpdateExperimentRequest
-) -> api_types.Experiment
-
+update_experiment(experiment_id: str, request: UpdateExperimentRequest) -> api_types.Experiment
 ```
 
 Updates an existing experiment based on the given request.
@@ -1238,16 +1057,12 @@ async def update_experiment(
     )
     resp.raise_for_status()
     return resp.data.experiment
-
 ```
 
 ### update_experiment_sync
 
 ```python
-update_experiment_sync(
-    experiment_id: str, request: UpdateExperimentRequest
-) -> api_types.Experiment
-
+update_experiment_sync(experiment_id: str, request: UpdateExperimentRequest) -> api_types.Experiment
 ```
 
 Updates an existing experiment based on the given request.
@@ -1267,32 +1082,30 @@ def update_experiment_sync(
     )
     resp.raise_for_status()
     return resp.data.experiment
-
 ```
 
 ### upload_dataset
 
 ```python
-upload_dataset(
-    file_path: str,
-    dataset_name: str,
-    dataset_description: Optional[str] = None,
-    custom_field_mapping: Optional[
-        dict[str, Union[str, list[str]]]
-    ] = None,
-) -> api_types.Dataset
-
+upload_dataset(file_path: str, dataset_name: str, dataset_description: Optional[str] = None, custom_field_mapping: Optional[dict[str, Union[str, list[str]]]] = None) -> api_types.Dataset
 ```
 
 Upload a dataset file to create a new dataset in Patronus.
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `file_path` | `str` | Path to the dataset file (CSV or JSONL format) | *required* | | `dataset_name` | `str` | Name for the created dataset | *required* | | `dataset_description` | `Optional[str]` | Optional description for the dataset | `None` | | `custom_field_mapping` | `Optional[dict[str, Union[str, list[str]]]]` | Optional mapping of standard field names to custom field names in the dataset | `None` |
+| Name                   | Type                                         | Description                                                                   | Default    |
+| ---------------------- | -------------------------------------------- | ----------------------------------------------------------------------------- | ---------- |
+| `file_path`            | `str`                                        | Path to the dataset file (CSV or JSONL format)                                | *required* |
+| `dataset_name`         | `str`                                        | Name for the created dataset                                                  | *required* |
+| `dataset_description`  | `Optional[str]`                              | Optional description for the dataset                                          | `None`     |
+| `custom_field_mapping` | `Optional[dict[str, Union[str, list[str]]]]` | Optional mapping of standard field names to custom field names in the dataset | `None`     |
 
 Returns:
 
-| Type | Description | | --- | --- | | `Dataset` | Dataset object representing the created dataset |
+| Type      | Description                                     |
+| --------- | ----------------------------------------------- |
+| `Dataset` | Dataset object representing the created dataset |
 
 Source code in `src/patronus/api/api_client.py`
 
@@ -1318,32 +1131,30 @@ async def upload_dataset(
     """
     with open(file_path, "rb") as f:
         return await self.upload_dataset_from_buffer(f, dataset_name, dataset_description, custom_field_mapping)
-
 ```
 
 ### upload_dataset_from_buffer
 
 ```python
-upload_dataset_from_buffer(
-    file_obj: BinaryIO,
-    dataset_name: str,
-    dataset_description: Optional[str] = None,
-    custom_field_mapping: Optional[
-        dict[str, Union[str, list[str]]]
-    ] = None,
-) -> api_types.Dataset
-
+upload_dataset_from_buffer(file_obj: BinaryIO, dataset_name: str, dataset_description: Optional[str] = None, custom_field_mapping: Optional[dict[str, Union[str, list[str]]]] = None) -> api_types.Dataset
 ```
 
 Upload a dataset file to create a new dataset in Patronus AI Platform.
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `file_obj` | `BinaryIO` | File-like object containing dataset content (CSV or JSONL format) | *required* | | `dataset_name` | `str` | Name for the created dataset | *required* | | `dataset_description` | `Optional[str]` | Optional description for the dataset | `None` | | `custom_field_mapping` | `Optional[dict[str, Union[str, list[str]]]]` | Optional mapping of standard field names to custom field names in the dataset | `None` |
+| Name                   | Type                                         | Description                                                                   | Default    |
+| ---------------------- | -------------------------------------------- | ----------------------------------------------------------------------------- | ---------- |
+| `file_obj`             | `BinaryIO`                                   | File-like object containing dataset content (CSV or JSONL format)             | *required* |
+| `dataset_name`         | `str`                                        | Name for the created dataset                                                  | *required* |
+| `dataset_description`  | `Optional[str]`                              | Optional description for the dataset                                          | `None`     |
+| `custom_field_mapping` | `Optional[dict[str, Union[str, list[str]]]]` | Optional mapping of standard field names to custom field names in the dataset | `None`     |
 
 Returns:
 
-| Type | Description | | --- | --- | | `Dataset` | Dataset object representing the created dataset |
+| Type      | Description                                     |
+| --------- | ----------------------------------------------- |
+| `Dataset` | Dataset object representing the created dataset |
 
 Source code in `src/patronus/api/api_client.py`
 
@@ -1389,32 +1200,30 @@ async def upload_dataset_from_buffer(
 
     resp.raise_for_status()
     return resp.data.dataset
-
 ```
 
 ### upload_dataset_from_buffer_sync
 
 ```python
-upload_dataset_from_buffer_sync(
-    file_obj: BinaryIO,
-    dataset_name: str,
-    dataset_description: Optional[str] = None,
-    custom_field_mapping: Optional[
-        dict[str, Union[str, list[str]]]
-    ] = None,
-) -> api_types.Dataset
-
+upload_dataset_from_buffer_sync(file_obj: BinaryIO, dataset_name: str, dataset_description: Optional[str] = None, custom_field_mapping: Optional[dict[str, Union[str, list[str]]]] = None) -> api_types.Dataset
 ```
 
 Upload a dataset file to create a new dataset in Patronus AI Platform.
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `file_obj` | `BinaryIO` | File-like object containing dataset content (CSV or JSONL format) | *required* | | `dataset_name` | `str` | Name for the created dataset | *required* | | `dataset_description` | `Optional[str]` | Optional description for the dataset | `None` | | `custom_field_mapping` | `Optional[dict[str, Union[str, list[str]]]]` | Optional mapping of standard field names to custom field names in the dataset | `None` |
+| Name                   | Type                                         | Description                                                                   | Default    |
+| ---------------------- | -------------------------------------------- | ----------------------------------------------------------------------------- | ---------- |
+| `file_obj`             | `BinaryIO`                                   | File-like object containing dataset content (CSV or JSONL format)             | *required* |
+| `dataset_name`         | `str`                                        | Name for the created dataset                                                  | *required* |
+| `dataset_description`  | `Optional[str]`                              | Optional description for the dataset                                          | `None`     |
+| `custom_field_mapping` | `Optional[dict[str, Union[str, list[str]]]]` | Optional mapping of standard field names to custom field names in the dataset | `None`     |
 
 Returns:
 
-| Type | Description | | --- | --- | | `Dataset` | Dataset object representing the created dataset |
+| Type      | Description                                     |
+| --------- | ----------------------------------------------- |
+| `Dataset` | Dataset object representing the created dataset |
 
 Source code in `src/patronus/api/api_client.py`
 
@@ -1460,32 +1269,30 @@ def upload_dataset_from_buffer_sync(
 
     resp.raise_for_status()
     return resp.data.dataset
-
 ```
 
 ### upload_dataset_sync
 
 ```python
-upload_dataset_sync(
-    file_path: str,
-    dataset_name: str,
-    dataset_description: Optional[str] = None,
-    custom_field_mapping: Optional[
-        dict[str, Union[str, list[str]]]
-    ] = None,
-) -> api_types.Dataset
-
+upload_dataset_sync(file_path: str, dataset_name: str, dataset_description: Optional[str] = None, custom_field_mapping: Optional[dict[str, Union[str, list[str]]]] = None) -> api_types.Dataset
 ```
 
 Upload a dataset file to create a new dataset in Patronus AI Platform.
 
 Parameters:
 
-| Name | Type | Description | Default | | --- | --- | --- | --- | | `file_path` | `str` | Path to the dataset file (CSV or JSONL format) | *required* | | `dataset_name` | `str` | Name for the created dataset | *required* | | `dataset_description` | `Optional[str]` | Optional description for the dataset | `None` | | `custom_field_mapping` | `Optional[dict[str, Union[str, list[str]]]]` | Optional mapping of standard field names to custom field names in the dataset | `None` |
+| Name                   | Type                                         | Description                                                                   | Default    |
+| ---------------------- | -------------------------------------------- | ----------------------------------------------------------------------------- | ---------- |
+| `file_path`            | `str`                                        | Path to the dataset file (CSV or JSONL format)                                | *required* |
+| `dataset_name`         | `str`                                        | Name for the created dataset                                                  | *required* |
+| `dataset_description`  | `Optional[str]`                              | Optional description for the dataset                                          | `None`     |
+| `custom_field_mapping` | `Optional[dict[str, Union[str, list[str]]]]` | Optional mapping of standard field names to custom field names in the dataset | `None`     |
 
 Returns:
 
-| Type | Description | | --- | --- | | `Dataset` | Dataset object representing the created dataset |
+| Type      | Description                                     |
+| --------- | ----------------------------------------------- |
+| `Dataset` | Dataset object representing the created dataset |
 
 Source code in `src/patronus/api/api_client.py`
 
@@ -1511,14 +1318,12 @@ def upload_dataset_sync(
     """
     with open(file_path, "rb") as f:
         return self.upload_dataset_from_buffer_sync(f, dataset_name, dataset_description, custom_field_mapping)
-
 ```
 
 ### whoami
 
 ```python
 whoami() -> api_types.WhoAmIResponse
-
 ```
 
 Fetches information about the authenticated user.
@@ -1531,14 +1336,12 @@ async def whoami(self) -> api_types.WhoAmIResponse:
     resp = await self.call("GET", "/v1/whoami", response_cls=api_types.WhoAmIResponse)
     resp.raise_for_status()
     return resp.data
-
 ```
 
 ### whoami_sync
 
 ```python
 whoami_sync() -> api_types.WhoAmIResponse
-
 ```
 
 Fetches information about the authenticated user.
@@ -1551,7 +1354,6 @@ def whoami_sync(self) -> api_types.WhoAmIResponse:
     resp = self.call_sync("GET", "/v1/whoami", response_cls=api_types.WhoAmIResponse)
     resp.raise_for_status()
     return resp.data
-
 ```
 
 ## patronus.api.api_types
@@ -1559,45 +1361,25 @@ def whoami_sync(self) -> api_types.WhoAmIResponse:
 ### SanitizedApp
 
 ```python
-SanitizedApp = Annotated[
-    str,
-    _create_field_sanitizer(
-        "[^a-zA-Z0-9-_./ -]", max_len=50, replace_with="_"
-    ),
-]
-
+SanitizedApp = Annotated[str, _create_field_sanitizer('[^a-zA-Z0-9-_./ -]', max_len=50, replace_with='_')]
 ```
 
 ### SanitizedLocalEvaluatorID
 
 ```python
-SanitizedLocalEvaluatorID = Annotated[
-    Optional[str],
-    _create_field_sanitizer(
-        "[^a-zA-Z0-9\\-_./]", max_len=50, replace_with="-"
-    ),
-]
-
+SanitizedLocalEvaluatorID = Annotated[Optional[str], _create_field_sanitizer('[^a-zA-Z0-9\\-_./]', max_len=50, replace_with='-')]
 ```
 
 ### SanitizedProjectName
 
 ```python
-SanitizedProjectName = Annotated[
-    str, project_name_sanitizer
-]
-
+SanitizedProjectName = Annotated[str, project_name_sanitizer]
 ```
 
 ### project_name_sanitizer
 
 ```python
-project_name_sanitizer = (
-    _create_field_sanitizer(
-        "[^a-zA-Z0-9_ -]", max_len=50, replace_with="_"
-    ),
-)
-
+project_name_sanitizer = (_create_field_sanitizer('[^a-zA-Z0-9_ -]', max_len=50, replace_with='_'),)
 ```
 
 ### Account
@@ -1608,14 +1390,12 @@ Bases: `BaseModel`
 
 ```python
 id: str
-
 ```
 
 #### name
 
 ```python
 name: str
-
 ```
 
 ### AddEvaluatorCriteriaRevisionRequest
@@ -1626,7 +1406,6 @@ Bases: `BaseModel`
 
 ```python
 config: dict[str, Any]
-
 ```
 
 ### AddEvaluatorCriteriaRevisionResponse
@@ -1637,7 +1416,6 @@ Bases: `BaseModel`
 
 ```python
 evaluator_criteria: EvaluatorCriteria
-
 ```
 
 ### AnnotateRequest
@@ -1648,42 +1426,36 @@ Bases: `BaseModel`
 
 ```python
 annotation_criteria_id: str
-
 ```
 
 #### explanation
 
 ```python
 explanation: Optional[str] = None
-
 ```
 
 #### log_id
 
 ```python
 log_id: str
-
 ```
 
 #### value_pass
 
 ```python
 value_pass: Optional[bool] = None
-
 ```
 
 #### value_score
 
 ```python
 value_score: Optional[float] = None
-
 ```
 
 #### value_text
 
 ```python
 value_text: Optional[str] = None
-
 ```
 
 ### AnnotateResponse
@@ -1694,7 +1466,6 @@ Bases: `BaseModel`
 
 ```python
 evaluation: Evaluation
-
 ```
 
 ### AnnotationCategory
@@ -1705,14 +1476,12 @@ Bases: `BaseModel`
 
 ```python
 label: Optional[str] = None
-
 ```
 
 #### score
 
 ```python
 score: Optional[float] = None
-
 ```
 
 ### AnnotationCriteria
@@ -1723,56 +1492,48 @@ Bases: `BaseModel`
 
 ```python
 annotation_type: AnnotationType
-
 ```
 
 #### categories
 
 ```python
 categories: Optional[list[AnnotationCategory]] = None
-
 ```
 
 #### created_at
 
 ```python
 created_at: datetime
-
 ```
 
 #### description
 
 ```python
 description: Optional[str] = None
-
 ```
 
 #### id
 
 ```python
 id: str
-
 ```
 
 #### name
 
 ```python
 name: str
-
 ```
 
 #### project_id
 
 ```python
 project_id: str
-
 ```
 
 #### updated_at
 
 ```python
 updated_at: datetime
-
 ```
 
 ### AnnotationType
@@ -1783,35 +1544,30 @@ Bases: `str`, `Enum`
 
 ```python
 binary = 'binary'
-
 ```
 
 #### categorical
 
 ```python
 categorical = 'categorical'
-
 ```
 
 #### continuous
 
 ```python
 continuous = 'continuous'
-
 ```
 
 #### discrete
 
 ```python
 discrete = 'discrete'
-
 ```
 
 #### text_annotation
 
 ```python
 text_annotation = 'text_annotation'
-
 ```
 
 ### BatchCreateEvaluationsRequest
@@ -1821,10 +1577,7 @@ Bases: `BaseModel`
 #### evaluations
 
 ```python
-evaluations: list[ClientEvaluation] = Field(
-    min_length=1, max_length=1000
-)
-
+evaluations: list[ClientEvaluation] = Field(min_length=1, max_length=1000)
 ```
 
 ### BatchCreateEvaluationsResponse
@@ -1835,7 +1588,6 @@ Bases: `BaseModel`
 
 ```python
 evaluations: list[Evaluation]
-
 ```
 
 ### ClientEvaluation
@@ -1846,156 +1598,132 @@ Bases: `BaseModel`
 
 ```python
 app: Optional[SanitizedApp] = None
-
 ```
 
 #### created_at
 
 ```python
 created_at: Optional[datetime] = None
-
 ```
 
 #### criteria
 
 ```python
 criteria: Optional[str] = None
-
 ```
 
 #### dataset_id
 
 ```python
 dataset_id: Optional[str] = None
-
 ```
 
 #### dataset_sample_id
 
 ```python
 dataset_sample_id: Optional[str] = None
-
 ```
 
 #### evaluation_duration
 
 ```python
 evaluation_duration: Optional[timedelta] = None
-
 ```
 
 #### evaluator_id
 
 ```python
 evaluator_id: SanitizedLocalEvaluatorID
-
 ```
 
 #### experiment_id
 
 ```python
 experiment_id: Optional[str] = None
-
 ```
 
 #### explanation
 
 ```python
 explanation: Optional[str] = None
-
 ```
 
 #### explanation_duration
 
 ```python
 explanation_duration: Optional[timedelta] = None
-
 ```
 
 #### log_id
 
 ```python
 log_id: UUID
-
 ```
 
 #### metadata
 
 ```python
 metadata: Optional[dict[str, Any]] = None
-
 ```
 
 #### metric_description
 
 ```python
 metric_description: Optional[str] = None
-
 ```
 
 #### metric_name
 
 ```python
 metric_name: Optional[str] = None
-
 ```
 
 #### pass\_
 
 ```python
-pass_: Optional[bool] = Field(
-    default=None, serialization_alias="pass"
-)
-
+pass_: Optional[bool] = Field(default=None, serialization_alias='pass')
 ```
 
 #### project_id
 
 ```python
 project_id: Optional[str] = None
-
 ```
 
 #### project_name
 
 ```python
 project_name: Optional[SanitizedProjectName] = None
-
 ```
 
 #### score
 
 ```python
 score: Optional[float] = None
-
 ```
 
 #### span_id
 
 ```python
 span_id: Optional[str] = None
-
 ```
 
 #### tags
 
 ```python
 tags: Optional[dict[str, str]] = None
-
 ```
 
 #### text_output
 
 ```python
 text_output: Optional[str] = None
-
 ```
 
 #### trace_id
 
 ```python
 trace_id: Optional[str] = None
-
 ```
 
 ### CreateAnnotationCriteriaRequest
@@ -2006,35 +1734,30 @@ Bases: `BaseModel`
 
 ```python
 annotation_type: AnnotationType
-
 ```
 
 #### categories
 
 ```python
 categories: Optional[list[AnnotationCategory]] = None
-
 ```
 
 #### description
 
 ```python
 description: Optional[str] = None
-
 ```
 
 #### name
 
 ```python
 name: str = Field(min_length=1, max_length=100)
-
 ```
 
 #### project_id
 
 ```python
 project_id: str
-
 ```
 
 ### CreateAnnotationCriteriaResponse
@@ -2045,7 +1768,6 @@ Bases: `BaseModel`
 
 ```python
 annotation_criteria: AnnotationCriteria
-
 ```
 
 ### CreateCriteriaRequest
@@ -2056,21 +1778,18 @@ Bases: `BaseModel`
 
 ```python
 config: dict[str, Any]
-
 ```
 
 #### evaluator_family
 
 ```python
 evaluator_family: str
-
 ```
 
 #### name
 
 ```python
 name: str
-
 ```
 
 ### CreateCriteriaResponse
@@ -2081,7 +1800,6 @@ Bases: `BaseModel`
 
 ```python
 evaluator_criteria: EvaluatorCriteria
-
 ```
 
 ### CreateDatasetResponse
@@ -2092,14 +1810,12 @@ Bases: `BaseModel`
 
 ```python
 dataset: Dataset
-
 ```
 
 #### dataset_id
 
 ```python
 dataset_id: str
-
 ```
 
 ### CreateExperimentRequest
@@ -2110,28 +1826,24 @@ Bases: `BaseModel`
 
 ```python
 metadata: Optional[dict[str, Any]] = None
-
 ```
 
 #### name
 
 ```python
 name: str
-
 ```
 
 #### project_id
 
 ```python
 project_id: str
-
 ```
 
 #### tags
 
 ```python
 tags: dict[str, str] = Field(default_factory=dict)
-
 ```
 
 ### CreateExperimentResponse
@@ -2142,7 +1854,6 @@ Bases: `BaseModel`
 
 ```python
 experiment: Experiment
-
 ```
 
 ### CreateProjectRequest
@@ -2153,7 +1864,6 @@ Bases: `BaseModel`
 
 ```python
 name: SanitizedProjectName
-
 ```
 
 ### Dataset
@@ -2164,49 +1874,42 @@ Bases: `BaseModel`
 
 ```python
 created_at: datetime
-
 ```
 
 #### creation_at
 
 ```python
 creation_at: Optional[datetime] = None
-
 ```
 
 #### description
 
 ```python
 description: Optional[str] = None
-
 ```
 
 #### id
 
 ```python
 id: str
-
 ```
 
 #### name
 
 ```python
 name: str
-
 ```
 
 #### samples
 
 ```python
 samples: int
-
 ```
 
 #### type
 
 ```python
 type: str
-
 ```
 
 ### DatasetDatum
@@ -2217,81 +1920,66 @@ Bases: `BaseModel`
 
 ```python
 dataset_id: str
-
 ```
 
 #### evaluated_model_gold_answer
 
 ```python
 evaluated_model_gold_answer: Optional[str] = None
-
 ```
 
 #### evaluated_model_input
 
 ```python
 evaluated_model_input: Optional[str] = None
-
 ```
 
 #### evaluated_model_output
 
 ```python
 evaluated_model_output: Optional[str] = None
-
 ```
 
 #### evaluated_model_retrieved_context
 
 ```python
-evaluated_model_retrieved_context: Optional[list[str]] = (
-    None
-)
-
+evaluated_model_retrieved_context: Optional[list[str]] = None
 ```
 
 #### evaluated_model_system_prompt
 
 ```python
 evaluated_model_system_prompt: Optional[str] = None
-
 ```
 
 #### meta_evaluated_model_name
 
 ```python
 meta_evaluated_model_name: Optional[str] = None
-
 ```
 
 #### meta_evaluated_model_params
 
 ```python
-meta_evaluated_model_params: Optional[
-    dict[str, Union[str, int, float]]
-] = None
-
+meta_evaluated_model_params: Optional[dict[str, Union[str, int, float]]] = None
 ```
 
 #### meta_evaluated_model_provider
 
 ```python
 meta_evaluated_model_provider: Optional[str] = None
-
 ```
 
 #### meta_evaluated_model_selected_model
 
 ```python
 meta_evaluated_model_selected_model: Optional[str] = None
-
 ```
 
 #### sid
 
 ```python
 sid: int
-
 ```
 
 ### EvaluateEvaluator
@@ -2302,21 +1990,18 @@ Bases: `BaseModel`
 
 ```python
 criteria: Optional[str] = None
-
 ```
 
 #### evaluator
 
 ```python
 evaluator: str
-
 ```
 
 #### explain_strategy
 
 ```python
 explain_strategy: str = 'always'
-
 ```
 
 ### EvaluateRequest
@@ -2327,130 +2012,108 @@ Bases: `BaseModel`
 
 ```python
 app: Optional[str] = None
-
 ```
 
 #### capture
 
 ```python
 capture: str = 'all'
-
 ```
 
 #### dataset_id
 
 ```python
 dataset_id: Optional[str] = None
-
 ```
 
 #### dataset_sample_id
 
 ```python
 dataset_sample_id: Optional[str] = None
-
 ```
 
 #### evaluated_model_attachments
 
 ```python
-evaluated_model_attachments: Optional[
-    list[EvaluatedModelAttachment]
-] = None
-
+evaluated_model_attachments: Optional[list[EvaluatedModelAttachment]] = None
 ```
 
 #### evaluated_model_gold_answer
 
 ```python
 evaluated_model_gold_answer: Optional[str] = None
-
 ```
 
 #### evaluated_model_input
 
 ```python
 evaluated_model_input: Optional[str] = None
-
 ```
 
 #### evaluated_model_output
 
 ```python
 evaluated_model_output: Optional[str] = None
-
 ```
 
 #### evaluated_model_retrieved_context
 
 ```python
-evaluated_model_retrieved_context: Optional[
-    Union[list[str], str]
-] = None
-
+evaluated_model_retrieved_context: Optional[Union[list[str], str]] = None
 ```
 
 #### evaluated_model_system_prompt
 
 ```python
 evaluated_model_system_prompt: Optional[str] = None
-
 ```
 
 #### evaluators
 
 ```python
 evaluators: list[EvaluateEvaluator] = Field(min_length=1)
-
 ```
 
 #### experiment_id
 
 ```python
 experiment_id: Optional[str] = None
-
 ```
 
 #### log_id
 
 ```python
 log_id: Optional[str] = None
-
 ```
 
 #### project_id
 
 ```python
 project_id: Optional[str] = None
-
 ```
 
 #### project_name
 
 ```python
 project_name: Optional[str] = None
-
 ```
 
 #### span_id
 
 ```python
 span_id: Optional[str] = None
-
 ```
 
 #### tags
 
 ```python
 tags: Optional[dict[str, str]] = None
-
 ```
 
 #### trace_id
 
 ```python
 trace_id: Optional[str] = None
-
 ```
 
 ### EvaluateResponse
@@ -2461,7 +2124,6 @@ Bases: `BaseModel`
 
 ```python
 results: list[EvaluateResult]
-
 ```
 
 ### EvaluateResult
@@ -2472,35 +2134,30 @@ Bases: `BaseModel`
 
 ```python
 criteria: str
-
 ```
 
 #### error_message
 
 ```python
 error_message: Optional[str]
-
 ```
 
 #### evaluation_result
 
 ```python
 evaluation_result: Optional[EvaluationResult]
-
 ```
 
 #### evaluator_id
 
 ```python
 evaluator_id: str
-
 ```
 
 #### status
 
 ```python
 status: str
-
 ```
 
 ### EvaluatedModelAttachment
@@ -2511,21 +2168,18 @@ Bases: `BaseModel`
 
 ```python
 media_type: str
-
 ```
 
 #### url
 
 ```python
 url: str
-
 ```
 
 #### usage_type
 
 ```python
 usage_type: Optional[str] = 'evaluated_model_input'
-
 ```
 
 ### Evaluation
@@ -2536,196 +2190,168 @@ Bases: `BaseModel`
 
 ```python
 annotation_criteria_id: Optional[str] = None
-
 ```
 
 #### app
 
 ```python
 app: Optional[str] = None
-
 ```
 
 #### created_at
 
 ```python
 created_at: datetime
-
 ```
 
 #### criteria
 
 ```python
 criteria: Optional[str] = None
-
 ```
 
 #### criteria_id
 
 ```python
 criteria_id: Optional[str] = None
-
 ```
 
 #### dataset_id
 
 ```python
 dataset_id: Optional[str] = None
-
 ```
 
 #### dataset_sample_id
 
 ```python
 dataset_sample_id: Optional[str] = None
-
 ```
 
 #### evaluation_duration
 
 ```python
 evaluation_duration: Optional[timedelta] = None
-
 ```
 
 #### evaluation_type
 
 ```python
 evaluation_type: Optional[str] = None
-
 ```
 
 #### evaluator_family
 
 ```python
 evaluator_family: Optional[str] = None
-
 ```
 
 #### evaluator_id
 
 ```python
 evaluator_id: Optional[str] = None
-
 ```
 
 #### experiment_id
 
 ```python
 experiment_id: Optional[int] = None
-
 ```
 
 #### explain_strategy
 
 ```python
 explain_strategy: Optional[str] = None
-
 ```
 
 #### explanation
 
 ```python
 explanation: Optional[str] = None
-
 ```
 
 #### explanation_duration
 
 ```python
 explanation_duration: Optional[timedelta] = None
-
 ```
 
 #### id
 
 ```python
 id: int
-
 ```
 
 #### log_id
 
 ```python
 log_id: str
-
 ```
 
 #### metadata
 
 ```python
 metadata: Optional[dict[str, Any]] = None
-
 ```
 
 #### metric_description
 
 ```python
 metric_description: Optional[str] = None
-
 ```
 
 #### metric_name
 
 ```python
 metric_name: Optional[str] = None
-
 ```
 
 #### pass\_
 
 ```python
 pass_: Optional[bool] = Field(default=None, alias='pass')
-
 ```
 
 #### project_id
 
 ```python
 project_id: Optional[str] = None
-
 ```
 
 #### score
 
 ```python
 score: Optional[float] = None
-
 ```
 
 #### span_id
 
 ```python
 span_id: Optional[str] = None
-
 ```
 
 #### tags
 
 ```python
 tags: Optional[dict[str, str]] = None
-
 ```
 
 #### text_output
 
 ```python
 text_output: Optional[str] = None
-
 ```
 
 #### trace_id
 
 ```python
 trace_id: Optional[str] = None
-
 ```
 
 #### usage
 
 ```python
 usage: Optional[dict[str, Any]] = None
-
 ```
 
 ### EvaluationResult
@@ -2736,177 +2362,150 @@ Bases: `BaseModel`
 
 ```python
 additional_info: Optional[dict[str, Any]] = None
-
 ```
 
 #### app
 
 ```python
 app: Optional[str] = None
-
 ```
 
 #### created_at
 
 ```python
 created_at: Optional[AwareDatetime] = None
-
 ```
 
 #### criteria
 
 ```python
 criteria: str
-
 ```
 
 #### dataset_id
 
 ```python
 dataset_id: Optional[str] = None
-
 ```
 
 #### dataset_sample_id
 
 ```python
 dataset_sample_id: Optional[int] = None
-
 ```
 
 #### evaluated_model_gold_answer
 
 ```python
 evaluated_model_gold_answer: Optional[str] = None
-
 ```
 
 #### evaluated_model_input
 
 ```python
 evaluated_model_input: Optional[str] = None
-
 ```
 
 #### evaluated_model_output
 
 ```python
 evaluated_model_output: Optional[str] = None
-
 ```
 
 #### evaluated_model_retrieved_context
 
 ```python
-evaluated_model_retrieved_context: Optional[list[str]] = (
-    None
-)
-
+evaluated_model_retrieved_context: Optional[list[str]] = None
 ```
 
 #### evaluated_model_system_prompt
 
 ```python
 evaluated_model_system_prompt: Optional[str] = None
-
 ```
 
 #### evaluation_duration
 
 ```python
 evaluation_duration: Optional[timedelta] = None
-
 ```
 
 #### evaluation_metadata
 
 ```python
 evaluation_metadata: Optional[dict] = None
-
 ```
 
 #### evaluator_family
 
 ```python
 evaluator_family: str
-
 ```
 
 #### evaluator_id
 
 ```python
 evaluator_id: str
-
 ```
 
 #### evaluator_profile_public_id
 
 ```python
 evaluator_profile_public_id: str
-
 ```
 
 #### experiment_id
 
 ```python
 experiment_id: Optional[str] = None
-
 ```
 
 #### explanation
 
 ```python
 explanation: Optional[str] = None
-
 ```
 
 #### explanation_duration
 
 ```python
 explanation_duration: Optional[timedelta] = None
-
 ```
 
 #### id
 
 ```python
 id: Optional[str] = None
-
 ```
 
 #### pass\_
 
 ```python
 pass_: Optional[bool] = Field(default=None, alias='pass')
-
 ```
 
 #### project_id
 
 ```python
 project_id: Optional[str] = None
-
 ```
 
 #### score_raw
 
 ```python
 score_raw: Optional[float] = None
-
 ```
 
 #### tags
 
 ```python
 tags: Optional[dict[str, str]] = None
-
 ```
 
 #### text_output
 
 ```python
 text_output: Optional[str] = None
-
 ```
 
 ### Evaluator
@@ -2917,35 +2516,30 @@ Bases: `BaseModel`
 
 ```python
 aliases: Optional[list[str]]
-
 ```
 
 #### default_criteria
 
 ```python
 default_criteria: Optional[str] = None
-
 ```
 
 #### evaluator_family
 
 ```python
 evaluator_family: Optional[str]
-
 ```
 
 #### id
 
 ```python
 id: str
-
 ```
 
 #### name
 
 ```python
 name: str
-
 ```
 
 ### EvaluatorCriteria
@@ -2956,56 +2550,48 @@ Bases: `BaseModel`
 
 ```python
 config: Optional[dict[str, Any]]
-
 ```
 
 #### created_at
 
 ```python
 created_at: datetime
-
 ```
 
 #### description
 
 ```python
 description: Optional[str]
-
 ```
 
 #### evaluator_family
 
 ```python
 evaluator_family: str
-
 ```
 
 #### is_patronus_managed
 
 ```python
 is_patronus_managed: bool
-
 ```
 
 #### name
 
 ```python
 name: str
-
 ```
 
 #### public_id
 
 ```python
 public_id: str
-
 ```
 
 #### revision
 
 ```python
 revision: int
-
 ```
 
 ### Experiment
@@ -3016,35 +2602,30 @@ Bases: `BaseModel`
 
 ```python
 id: str
-
 ```
 
 #### metadata
 
 ```python
 metadata: Optional[dict[str, Any]] = None
-
 ```
 
 #### name
 
 ```python
 name: str
-
 ```
 
 #### project_id
 
 ```python
 project_id: str
-
 ```
 
 #### tags
 
 ```python
 tags: Optional[dict[str, str]] = None
-
 ```
 
 ### ExportEvaluationRequest
@@ -3055,7 +2636,6 @@ Bases: `BaseModel`
 
 ```python
 evaluation_results: list[ExportEvaluationResult]
-
 ```
 
 ### ExportEvaluationResponse
@@ -3066,7 +2646,6 @@ Bases: `BaseModel`
 
 ```python
 evaluation_results: list[ExportEvaluationResultPartial]
-
 ```
 
 ### ExportEvaluationResult
@@ -3077,176 +2656,144 @@ Bases: `BaseModel`
 
 ```python
 app: Optional[str] = None
-
 ```
 
 #### criteria
 
 ```python
 criteria: Optional[str] = None
-
 ```
 
 #### dataset_id
 
 ```python
 dataset_id: Optional[str] = None
-
 ```
 
 #### dataset_sample_id
 
 ```python
 dataset_sample_id: Optional[int] = None
-
 ```
 
 #### evaluated_model_attachments
 
 ```python
-evaluated_model_attachments: Optional[
-    list[EvaluatedModelAttachment]
-] = None
-
+evaluated_model_attachments: Optional[list[EvaluatedModelAttachment]] = None
 ```
 
 #### evaluated_model_gold_answer
 
 ```python
 evaluated_model_gold_answer: Optional[str] = None
-
 ```
 
 #### evaluated_model_input
 
 ```python
 evaluated_model_input: Optional[str] = None
-
 ```
 
 #### evaluated_model_name
 
 ```python
 evaluated_model_name: Optional[str] = None
-
 ```
 
 #### evaluated_model_output
 
 ```python
 evaluated_model_output: Optional[str] = None
-
 ```
 
 #### evaluated_model_params
 
 ```python
-evaluated_model_params: Optional[
-    dict[str, Union[str, int, float]]
-] = None
-
+evaluated_model_params: Optional[dict[str, Union[str, int, float]]] = None
 ```
 
 #### evaluated_model_provider
 
 ```python
 evaluated_model_provider: Optional[str] = None
-
 ```
 
 #### evaluated_model_retrieved_context
 
 ```python
-evaluated_model_retrieved_context: Optional[list[str]] = (
-    None
-)
-
+evaluated_model_retrieved_context: Optional[list[str]] = None
 ```
 
 #### evaluated_model_selected_model
 
 ```python
 evaluated_model_selected_model: Optional[str] = None
-
 ```
 
 #### evaluated_model_system_prompt
 
 ```python
 evaluated_model_system_prompt: Optional[str] = None
-
 ```
 
 #### evaluation_duration
 
 ```python
 evaluation_duration: Optional[timedelta] = None
-
 ```
 
 #### evaluation_metadata
 
 ```python
 evaluation_metadata: Optional[dict[str, Any]] = None
-
 ```
 
 #### evaluator_id
 
 ```python
 evaluator_id: SanitizedLocalEvaluatorID
-
 ```
 
 #### experiment_id
 
 ```python
 experiment_id: Optional[str] = None
-
 ```
 
 #### explanation
 
 ```python
 explanation: Optional[str] = None
-
 ```
 
 #### explanation_duration
 
 ```python
 explanation_duration: Optional[timedelta] = None
-
 ```
 
 #### pass\_
 
 ```python
-pass_: Optional[bool] = Field(
-    default=None, serialization_alias="pass"
-)
-
+pass_: Optional[bool] = Field(default=None, serialization_alias='pass')
 ```
 
 #### score_raw
 
 ```python
 score_raw: Optional[float] = None
-
 ```
 
 #### tags
 
 ```python
 tags: Optional[dict[str, str]] = None
-
 ```
 
 #### text_output
 
 ```python
 text_output: Optional[str] = None
-
 ```
 
 ### ExportEvaluationResultPartial
@@ -3257,28 +2804,24 @@ Bases: `BaseModel`
 
 ```python
 app: Optional[str]
-
 ```
 
 #### created_at
 
 ```python
 created_at: AwareDatetime
-
 ```
 
 #### evaluator_id
 
 ```python
 evaluator_id: str
-
 ```
 
 #### id
 
 ```python
 id: str
-
 ```
 
 ### GetAnnotationCriteriaResponse
@@ -3289,7 +2832,6 @@ Bases: `BaseModel`
 
 ```python
 annotation_criteria: AnnotationCriteria
-
 ```
 
 ### GetEvaluationResponse
@@ -3300,7 +2842,6 @@ Bases: `BaseModel`
 
 ```python
 evaluation: Evaluation
-
 ```
 
 ### GetExperimentResponse
@@ -3311,7 +2852,6 @@ Bases: `BaseModel`
 
 ```python
 experiment: Experiment
-
 ```
 
 ### GetProjectResponse
@@ -3322,7 +2862,6 @@ Bases: `BaseModel`
 
 ```python
 project: Project
-
 ```
 
 ### ListAnnotationCriteriaResponse
@@ -3333,7 +2872,6 @@ Bases: `BaseModel`
 
 ```python
 annotation_criteria: list[AnnotationCriteria]
-
 ```
 
 ### ListCriteriaRequest
@@ -3344,63 +2882,54 @@ Bases: `BaseModel`
 
 ```python
 evaluator_family: Optional[str] = None
-
 ```
 
 #### evaluator_id
 
 ```python
 evaluator_id: Optional[str] = None
-
 ```
 
 #### get_last_revision
 
 ```python
 get_last_revision: bool = False
-
 ```
 
 #### is_patronus_managed
 
 ```python
 is_patronus_managed: Optional[bool] = None
-
 ```
 
 #### limit
 
 ```python
 limit: int = 1000
-
 ```
 
 #### name
 
 ```python
 name: Optional[str] = None
-
 ```
 
 #### offset
 
 ```python
 offset: int = 0
-
 ```
 
 #### public_id
 
 ```python
 public_id: Optional[str] = None
-
 ```
 
 #### revision
 
 ```python
 revision: Optional[str] = None
-
 ```
 
 ### ListCriteriaResponse
@@ -3411,7 +2940,6 @@ Bases: `BaseModel`
 
 ```python
 evaluator_criteria: list[EvaluatorCriteria]
-
 ```
 
 ### ListDatasetData
@@ -3422,7 +2950,6 @@ Bases: `BaseModel`
 
 ```python
 data: list[DatasetDatum]
-
 ```
 
 ### ListDatasetsResponse
@@ -3433,7 +2960,6 @@ Bases: `BaseModel`
 
 ```python
 datasets: list[Dataset]
-
 ```
 
 ### ListEvaluatorsResponse
@@ -3444,7 +2970,6 @@ Bases: `BaseModel`
 
 ```python
 evaluators: list[Evaluator]
-
 ```
 
 ### Log
@@ -3455,105 +2980,90 @@ Bases: `BaseModel`
 
 ```python
 body: Any = None
-
 ```
 
 #### log_attributes
 
 ```python
 log_attributes: Optional[dict[str, str]] = None
-
 ```
 
 #### resource_attributes
 
 ```python
 resource_attributes: Optional[dict[str, str]] = None
-
 ```
 
 #### resource_schema_url
 
 ```python
 resource_schema_url: Optional[str] = None
-
 ```
 
 #### scope_attributes
 
 ```python
 scope_attributes: Optional[dict[str, str]] = None
-
 ```
 
 #### scope_name
 
 ```python
 scope_name: Optional[str] = None
-
 ```
 
 #### scope_schema_url
 
 ```python
 scope_schema_url: Optional[str] = None
-
 ```
 
 #### scope_version
 
 ```python
 scope_version: Optional[str] = None
-
 ```
 
 #### service_name
 
 ```python
 service_name: Optional[str] = None
-
 ```
 
 #### severity_number
 
 ```python
 severity_number: Optional[int] = None
-
 ```
 
 #### severity_test
 
 ```python
 severity_test: Optional[str] = None
-
 ```
 
 #### span_id
 
 ```python
 span_id: Optional[str] = None
-
 ```
 
 #### timestamp
 
 ```python
 timestamp: Optional[datetime] = None
-
 ```
 
 #### trace_flags
 
 ```python
 trace_flags: Optional[int] = None
-
 ```
 
 #### trace_id
 
 ```python
 trace_id: Optional[str] = None
-
 ```
 
 ### Project
@@ -3564,14 +3074,12 @@ Bases: `BaseModel`
 
 ```python
 id: str
-
 ```
 
 #### name
 
 ```python
 name: str
-
 ```
 
 ### SearchEvaluationsFilter
@@ -3582,35 +3090,30 @@ Bases: `BaseModel`
 
 ```python
 and_: Optional[list[SearchEvaluationsFilter]] = None
-
 ```
 
 #### field
 
 ```python
 field: Optional[str] = None
-
 ```
 
 #### operation
 
 ```python
 operation: Optional[str] = None
-
 ```
 
 #### or\_
 
 ```python
 or_: Optional[list[SearchEvaluationsFilter]] = None
-
 ```
 
 #### value
 
 ```python
 value: Optional[Any] = None
-
 ```
 
 ### SearchEvaluationsRequest
@@ -3621,7 +3124,6 @@ Bases: `BaseModel`
 
 ```python
 filters: Optional[list[SearchEvaluationsFilter]] = None
-
 ```
 
 ### SearchEvaluationsResponse
@@ -3632,7 +3134,6 @@ Bases: `BaseModel`
 
 ```python
 evaluations: list[Evaluation]
-
 ```
 
 ### SearchLogsFilter
@@ -3643,35 +3144,30 @@ Bases: `BaseModel`
 
 ```python
 and_: Optional[list[SearchLogsFilter]] = None
-
 ```
 
 #### field
 
 ```python
 field: Optional[str] = None
-
 ```
 
 #### op
 
 ```python
 op: Optional[str] = None
-
 ```
 
 #### or\_
 
 ```python
 or_: Optional[list[SearchLogsFilter]] = None
-
 ```
 
 #### value
 
 ```python
 value: Optional[Any] = None
-
 ```
 
 ### SearchLogsRequest
@@ -3682,21 +3178,18 @@ Bases: `BaseModel`
 
 ```python
 filters: Optional[list[SearchLogsFilter]] = None
-
 ```
 
 #### limit
 
 ```python
 limit: int = 1000
-
 ```
 
 #### order
 
 ```python
 order: str = 'timestamp desc'
-
 ```
 
 ### SearchLogsResponse
@@ -3707,7 +3200,6 @@ Bases: `BaseModel`
 
 ```python
 logs: list[Log]
-
 ```
 
 ### UpdateAnnotationCriteriaRequest
@@ -3718,28 +3210,24 @@ Bases: `BaseModel`
 
 ```python
 annotation_type: AnnotationType
-
 ```
 
 #### categories
 
 ```python
 categories: Optional[list[AnnotationCategory]] = None
-
 ```
 
 #### description
 
 ```python
 description: Optional[str] = None
-
 ```
 
 #### name
 
 ```python
 name: str = Field(min_length=1, max_length=100)
-
 ```
 
 ### UpdateAnnotationCriteriaResponse
@@ -3750,7 +3238,6 @@ Bases: `BaseModel`
 
 ```python
 annotation_criteria: AnnotationCriteria
-
 ```
 
 ### UpdateExperimentRequest
@@ -3761,7 +3248,6 @@ Bases: `BaseModel`
 
 ```python
 metadata: dict[str, Any]
-
 ```
 
 ### UpdateExperimentResponse
@@ -3772,7 +3258,6 @@ Bases: `BaseModel`
 
 ```python
 experiment: Experiment
-
 ```
 
 ### WhoAmIAPIKey
@@ -3783,14 +3268,12 @@ Bases: `BaseModel`
 
 ```python
 account: Account
-
 ```
 
 #### id
 
 ```python
 id: str
-
 ```
 
 ### WhoAmICaller
@@ -3801,7 +3284,6 @@ Bases: `BaseModel`
 
 ```python
 api_key: WhoAmIAPIKey
-
 ```
 
 ### WhoAmIResponse
@@ -3812,14 +3294,12 @@ Bases: `BaseModel`
 
 ```python
 caller: WhoAmICaller
-
 ```
 
 ### sanitize_field
 
 ```python
 sanitize_field(max_length: int, sub_pattern: str)
-
 ```
 
 Source code in `src/patronus/api/api_types.py`
@@ -3833,5 +3313,4 @@ def sanitize_field(max_length: int, sub_pattern: str):
         return re.sub(sub_pattern, "_", value).strip()
 
     return wrapper
-
 ```

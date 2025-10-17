@@ -45,7 +45,6 @@ experiment = run_experiment(
     task=my_task,
     evaluators=[my_evaluator]
 )
-
 ```
 
 ### Pandas DataFrame
@@ -61,7 +60,6 @@ df = pd.DataFrame({
 })
 
 experiment = run_experiment(dataset=df, ...)
-
 ```
 
 ### CSV or JSONL Files
@@ -80,7 +78,6 @@ dataset = read_jsonl(
     system_prompt_field="instruction", # Map "instruction" field to "system_prompt"
     tags_field="metadata"            # Map "metadata" field to "tags"
 )
-
 ```
 
 ### Remote Datasets
@@ -101,7 +98,6 @@ experiment = run_experiment(
     task=my_task,
     evaluators=[my_evaluator],
 )
-
 ```
 
 The `RemoteDatasetLoader` asynchronously fetches the dataset from the Patronus API when the experiment runs. It handles the data mapping automatically, transforming the API response into the standard dataset structure with all the expected fields (`system_prompt`, `task_input`, `gold_answer`, etc.).
@@ -130,7 +126,6 @@ def my_task(row, **kwargs):
     sample_id = row.sid
 
     return f"Answering {difficulty} question (ID: {sample_id}): {question}"
-
 ```
 
 The `Row` object automatically provides attributes for all fields in your dataset, making access straightforward for both standard and custom fields.
@@ -148,7 +143,6 @@ If your dataset uses a different schema than the standard field names, you have 
                      task_input_field="question",
                      gold_answer_field="answer",
                      tags_field="metadata")
-
    ```
 
 1. **Use evaluator adapters**: Create adapters that transform your data structure to match what evaluators expect
@@ -176,7 +170,6 @@ experiment = run_experiment(
     dataset=custom_dataset,
     evaluators=[CustomAdapter(my_evaluator_function)]
 )
-
 ```
 
 This adapter approach is particularly important for function-based evaluators, which need to be explicitly adapted for use in experiments.
@@ -199,7 +192,6 @@ dataset = Dataset.from_records([
     {"sid": "q1", "task_input": "Question 1", "gold_answer": "Answer 1"},
     {"sid": "q2", "task_input": "Question 2", "gold_answer": "Answer 2"}
 ])
-
 ```
 
 If not provided, sample IDs (`sid`) are automatically generated.

@@ -32,7 +32,6 @@ experiment = run_experiment(
     project_name="My Project",        # Optional: Override the global project name
     experiment_name="Test Run"        # Optional: Name this experiment run
 )
-
 ```
 
 ## Creating a Simple Experiment
@@ -80,7 +79,6 @@ run_experiment(
     ],
     tags={"model": "simulated", "version": "v1"}
 )
-
 ```
 
 ## Experiment Execution Flow
@@ -108,7 +106,6 @@ experiment = run_experiment(dataset, task, evaluators)
 
 # Asynchronous usage:
 experiment = await run_experiment(dataset, task, evaluators)
-
 ```
 
 ## Manual Experiment Control
@@ -128,7 +125,6 @@ experiment = await Experiment.create(
 
 # Run the experiment when ready
 experiment = await experiment.run()
-
 ```
 
 This approach is useful when you need to perform additional setup between experiment creation and execution.
@@ -146,7 +142,6 @@ experiment.to_csv("results.csv")
 
 # Access the built-in summary
 # (This is automatically printed at the end of the experiment)
-
 ```
 
 The experiment results include:

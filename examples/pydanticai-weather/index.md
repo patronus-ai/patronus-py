@@ -5,7 +5,6 @@ To run this example, you need to add API keys to your environment:
 ```shell
 export PATRONUS_API_KEY=your-api-key
 export OPENAI_API_KEY=your-api-key
-
 ```
 
 ### Running with `uv`
@@ -16,7 +15,6 @@ You can run the example as a one-liner with zero setup:
 # Remember to export environment variables before running the example.
 uv run --no-cache --with "patronus-examples[pydantic-ai]" \
     -m patronus_examples.tracking.pydanticai_weather
-
 ```
 
 ### Running the script directly
@@ -30,7 +28,6 @@ cd patronus-py
 
 # Run the example script (requires uv)
 ./examples/patronus_examples/tracking/pydanticai_weather.py
-
 ```
 
 ### Manual installation
@@ -42,7 +39,6 @@ pip install patronus
 pip install pydantic-ai-slim[openai]
 pip install opentelemetry-instrumentation-asyncio
 pip install opentelemetry-instrumentation-threading
-
 ```
 
 ## Example overview
@@ -117,5 +113,4 @@ async def main():
 if __name__ == "__main__":
     result = asyncio.run(main())
     print(result)
-
 ```
