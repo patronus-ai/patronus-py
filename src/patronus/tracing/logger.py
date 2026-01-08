@@ -7,9 +7,8 @@ from time import time_ns
 from types import MappingProxyType
 from typing import Optional, Union
 
-from opentelemetry._logs import SeverityNumber
+from opentelemetry._logs import SeverityNumber, LogRecord
 from patronus.tracing.exporters import create_log_exporter
-from opentelemetry.sdk._logs import LogRecord
 from opentelemetry.sdk._logs import Logger as OTELLogger
 from opentelemetry.sdk._logs import LoggerProvider as OTELLoggerProvider
 from opentelemetry.sdk._logs import LoggingHandler as OTeLLoggingHandler
@@ -203,7 +202,6 @@ class Logger(OTELLogger):
             severity_number=severity,
             body=transform_body(body),
             attributes=log_attrs,
-            resource=self.resource,
         )
         self.emit(record)
         return log_id
