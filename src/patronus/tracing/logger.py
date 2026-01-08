@@ -7,14 +7,33 @@ from time import time_ns
 from types import MappingProxyType
 from typing import Optional, Union
 
-from opentelemetry._logs import SeverityNumber
+try:
+    from opentelemetry.logs import SeverityNumber
+except ImportError:  # pragma: no cover - fallback for older OTel
+    from opentelemetry._logs import SeverityNumber
 from patronus.tracing.exporters import create_log_exporter
-from opentelemetry.sdk._logs import LogRecord
-from opentelemetry.sdk._logs import Logger as OTELLogger
-from opentelemetry.sdk._logs import LoggerProvider as OTELLoggerProvider
-from opentelemetry.sdk._logs import LoggingHandler as OTeLLoggingHandler
-from opentelemetry.sdk._logs._internal import ConcurrentMultiLogRecordProcessor, SynchronousMultiLogRecordProcessor
-from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
+try:
+    from opentelemetry.sdk.logs import LogRecord
+    from opentelemetry.sdk.logs import Logger as OTELLogger
+    from opentelemetry.sdk.logs import LoggerProvider as OTELLoggerProvider
+    from opentelemetry.sdk.logs import LoggingHandler as OTeLLoggingHandler
+    try:
+        from opentelemetry.sdk.logs._internal import ConcurrentMultiLogRecordProcessor, SynchronousMultiLogRecordProcessor
+    except ImportError:  # pragma: no cover - fallback if processors are public
+        from opentelemetry.sdk.logs import ConcurrentMultiLogRecordProcessor, SynchronousMultiLogRecordProcessor
+except ImportError:  # pragma: no cover - fallback for older OTel
+    from opentelemetry.sdk._logs import LogRecord
+    from opentelemetry.sdk._logs import Logger as OTELLogger
+    from opentelemetry.sdk._logs import LoggerProvider as OTELLoggerProvider
+    from opentelemetry.sdk._logs import LoggingHandler as OTeLLoggingHandler
+    from opentelemetry.sdk._logs._internal import ConcurrentMultiLogRecordProcessor, SynchronousMultiLogRecordProcessor
+try:
+    from opentelemetry.sdk.logs.export import BatchLogRecordProcessor
+except ImportError:  # pragma: no cover - fallback for older OTel
+    try:
+        from opentelemetry.sdk.logs import BatchLogRecordProcessor
+    except ImportError:  # pragma: no cover - fallback for older OTel
+        from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 from opentelemetry.trace import get_current_span, SpanContext

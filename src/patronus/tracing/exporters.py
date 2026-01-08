@@ -10,7 +10,13 @@ from opentelemetry.exporter.otlp.proto.grpc._log_exporter import OTLPLogExporter
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter as OTLPSpanExporterGRPC
 from opentelemetry.exporter.otlp.proto.http._log_exporter import OTLPLogExporter as OTLPLogExporterHTTP
 from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter as OTLPSpanExporterHTTP
-from opentelemetry.sdk._logs.export import LogExporter
+try:
+    from opentelemetry.sdk.logs.export import LogExporter
+except ImportError:  # pragma: no cover - fallback for older OTel
+    try:
+        from opentelemetry.sdk.logs import LogExporter
+    except ImportError:  # pragma: no cover - fallback for older OTel
+        from opentelemetry.sdk._logs.export import LogExporter
 from opentelemetry.sdk.trace.export import SpanExporter
 
 

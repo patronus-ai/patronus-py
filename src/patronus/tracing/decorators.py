@@ -5,7 +5,10 @@ import typing
 from typing import Optional, Iterator
 
 from opentelemetry.util.types import Attributes
-from opentelemetry._logs import SeverityNumber
+try:
+    from opentelemetry.logs import SeverityNumber
+except ImportError:  # pragma: no cover - fallback for older OTel
+    from opentelemetry._logs import SeverityNumber
 
 from patronus.tracing.attributes import LogTypes
 from patronus import context

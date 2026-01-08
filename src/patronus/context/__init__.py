@@ -22,7 +22,10 @@ if TYPE_CHECKING:
     from patronus.tracing.logger import Logger as PatLogger
     from patronus.api import PatronusAPIClient
     from opentelemetry.sdk.trace import TracerProvider
-    from opentelemetry._logs import LoggerProvider
+    try:
+        from opentelemetry.sdk.logs import LoggerProvider
+    except ImportError:  # pragma: no cover - fallback for older OTel
+        from opentelemetry._logs import LoggerProvider
 
 
 @dataclasses.dataclass(frozen=True)
